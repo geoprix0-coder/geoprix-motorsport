@@ -45,7 +45,30 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
    }
   }
  }
- return {id:crypto.randomUUID(),roundId:current.id,round:current.round,circuitName:current.circuitName,createdAt:new Date().toISOString(),recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","Race Pace é estimado pela comparação das posições finais do piloto com as de seu companheiro de equipe nas etapas em que ambos finalizaram; isso é um indicador limitado, não uma medição isolada de velocidade.","Consistency considera a estabilidade das posições nas três últimas chegadas e a frequência de não conclusão. Resultados insuficientes ou inconclusivos não geram recomendação.","Power e Downforce não são alterados com base apenas em resultados individuais, pois a posição final não permite identificar qual característica do carro causou o desempenho.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
+ // Avaliação coletiva das equipes: compara a média de posições dos pilotos de cada equipe
+ // com a média dos pilotos das demais equipes em cada etapa concluída.
+ const teamIds=[...new Set(recent.flatMap(r=>r.results.map(x=>x.teamId)))];
+ for(const teamId of teamIds){
+  const teamRounds=recent.map(r=>{
+   const own=r.results.filter(x=>x.teamId===teamId&&x.status==="finished"&&x.position!==null);
+   const others=r.results.filter(x=>x.teamId!==teamId&&x.status==="finished"&&x.position!==null);
+   if(!own.length||!others.length)return null;
+   const ownAverage=own.reduce((sum,x)=>sum+(x.position as number),0)/own.length;
+   const othersAverage=others.reduce((sum,x)=>sum+(x.position as number),0)/others.length;
+   return ownAverage-othersAverage;
+  }).filter((x):x is number=>x!==null);
+  if(teamRounds.length<2)continue;
+  const averageDifference=teamRounds.reduce((a,b)=>a+b,0)/teamRounds.length;
+  const teamResult=recent.flatMap(r=>r.results).find(x=>x.teamId===teamId);
+  if(!teamResult)continue;
+  const direction=averageDifference<=-2?"increase":averageDifference>=2?"decrease":null;
+  if(!direction)continue;
+  const tendency=direction==="increase"?"ficou, em média, pelo menos duas posições à frente da média das demais equipes":"ficou, em média, pelo menos duas posições atrás da média das demais equipes";
+  for(const attribute of ["Power","Downforce"]){
+   recommendations.push({subjectType:"team",subjectId:teamId,subjectName:teamResult.teamName,attribute,direction,reason:`Nas últimas etapas comparáveis, os pilotos da equipe ${tendency}. É um sinal geral de competitividade para revisar este atributo, não uma medição direta de ${attribute}.`});
+  }
+ }
+ return {id:crypto.randomUUID(),roundId:current.id,round:current.round,circuitName:current.circuitName,createdAt:new Date().toISOString(),recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","Race Pace é estimado pela comparação das posições finais do piloto com as de seu companheiro de equipe nas etapas em que ambos finalizaram; isso é um indicador limitado, não uma medição isolada de velocidade.","Consistency considera a estabilidade das posições nas três últimas chegadas e a frequência de não conclusão. Resultados insuficientes ou inconclusivos não geram recomendação.","Power e Downforce agora recebem recomendações com base na competitividade coletiva da equipe frente às demais nas últimas etapas. Como não há telemetria nem dados específicos do carro, essa comparação não identifica diretamente qual característica técnica causou o resultado; trate-a como um sinal para revisão.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
 }
 export default function ChampionshipCalendarPage({params}:{params:Promise<{id:string}>}){
  const [championshipId,setChampionshipId]=useState(""),[rounds,setRounds]=useState<Round[]>([]),[circuits,setCircuits]=useState<Circuit[]>([]),[teams,setTeams]=useState<Team[]>([]),[showForm,setShowForm]=useState(false),[editing,setEditing]=useState<string|null>(null),[resultRound,setResultRound]=useState<string|null>(null),[draftResults,setDraftResults]=useState<DriverResult[]>([]),[positionPoints,setPositionPoints]=useState<number[]>(defaultPoints),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
