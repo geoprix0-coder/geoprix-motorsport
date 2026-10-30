@@ -1,0 +1,2 @@
+import { CalendarDays } from "lucide-react";
+export default function ChampionshipCalendarPage(){return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">GESTÃO DO CAMPEONATO</span><h1>Calendário</h1><p>Etapas e datas da temporada.</p></div></div><section className="team-list"><div className="empty-state"><CalendarDays size={28}/><b>Calendário ainda não cadastrado</b><span>As etapas deste campeonato serão organizadas aqui.</span></div></section></div></main>}
