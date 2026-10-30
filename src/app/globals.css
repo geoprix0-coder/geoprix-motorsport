@@ -36,3 +36,12 @@
 .standing-row>strong{text-align:right;color:var(--accent);font:600 13px 'DM Mono'}
 .list-heading h2{display:flex;align-items:center;gap:8px}
 @media(max-width:600px){.standing-row{grid-template-columns:30px minmax(0,1fr) 65px;gap:8px}.standing-detail{display:none}.standing-row>strong{font-size:11px}}
+
+.development-recommendation{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.development-recommendation .standing-name b,.development-recommendation .standing-name small{display:block}
+.development-recommendation .standing-name b{font-size:12px}
+.development-recommendation .standing-name small{font-size:10px;color:var(--muted);margin-top:4px}
+.development-recommendation>strong{font:600 12px 'DM Mono';text-align:right}
+.development-recommendation .recommendation-up{color:#8bcf83}
+.development-recommendation .recommendation-down{color:#e18b83}
+.development-recommendation>.storage-note{grid-column:1/-1;margin:0}
