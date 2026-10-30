@@ -1,2 +1,2 @@
-import TeamsManager from "./teams-manager";
-export default function TeamsPage(){return <TeamsManager/>}
+import { redirect } from "next/navigation";
+export default function TeamsPage(){redirect("/championships/formula-1-2026/teams/")}
