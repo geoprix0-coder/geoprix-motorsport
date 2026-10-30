@@ -10,7 +10,7 @@ type Regulation={positionPoints:number[];bonusRules:{id:string;name:string;point
 const defaultPoints=[25,18,15,12,10,8,6,4,2,1,...Array(10).fill(0)];
 const statusLabels:Record<ResultStatus,string>={finished:"Finalizou",retired:"Abandonou (DNF)",disqualified:"Desclassificado (DSQ)",dns:"Não largou (DNS)"};
 
-type DevelopmentRecommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
+type DevelopmentRecommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";points?:number;reason:string};
 type DevelopmentReport={id:string;roundId:string;round:number;circuitName:string;createdAt:string;kind?:"race"|"season-end";season?:number;recommendations:DevelopmentRecommendation[];notes:string[]};
 function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:Round,seasonEnd=false,seasonNumber=2026):DevelopmentReport{
  const completed=allRounds.map(r=>r.id===current.id?current:r).filter(r=>r.status==="completed").sort((a,b)=>a.round-b.round);
@@ -48,30 +48,48 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
   }
  }
  }
- // Avaliação coletiva das equipes: compara a média de posições dos pilotos de cada equipe
- // com a média dos pilotos das demais equipes em cada etapa concluída.
- const teamIds=[...new Set(recent.flatMap(r=>r.results.map(x=>x.teamId)))];
+ // Desenvolvimento das equipes: durante a temporada usa a tendência recente;
+ // no encerramento combina 60% de aleatoriedade com 40% de desempenho real.
+ const teamIds=[...new Set(completed.flatMap(r=>r.results.map(x=>x.teamId)))];
+ const teamPerformance=teamIds.map(teamId=>{
+  const positions=completed.flatMap(r=>r.results.filter(x=>x.teamId===teamId&&x.status==="finished"&&x.position!==null).map(x=>x.position as number));
+  const average=positions.length?positions.reduce((a,b)=>a+b,0)/positions.length:Number.POSITIVE_INFINITY;
+  const teamResult=completed.flatMap(r=>r.results).find(x=>x.teamId===teamId);
+  return {teamId,average,teamResult};
+ }).filter(x=>x.teamResult&&Number.isFinite(x.average)).sort((a,b)=>a.average-b.average);
  for(const teamId of teamIds){
   const teamRounds=recent.map(r=>{
    const own=r.results.filter(x=>x.teamId===teamId&&x.status==="finished"&&x.position!==null);
    const others=r.results.filter(x=>x.teamId!==teamId&&x.status==="finished"&&x.position!==null);
    if(!own.length||!others.length)return null;
-   const ownAverage=own.reduce((sum,x)=>sum+(x.position as number),0)/own.length;
-   const othersAverage=others.reduce((sum,x)=>sum+(x.position as number),0)/others.length;
-   return ownAverage-othersAverage;
+   return own.reduce((sum,x)=>sum+(x.position as number),0)/own.length-others.reduce((sum,x)=>sum+(x.position as number),0)/others.length;
   }).filter((x):x is number=>x!==null);
-  if(teamRounds.length<2)continue;
-  const averageDifference=teamRounds.reduce((a,b)=>a+b,0)/teamRounds.length;
-  const teamResult=recent.flatMap(r=>r.results).find(x=>x.teamId===teamId);
+  const teamResult=completed.flatMap(r=>r.results).find(x=>x.teamId===teamId);
   if(!teamResult)continue;
-  const direction=averageDifference<=-2?"increase":averageDifference>=2?"decrease":null;
-  if(!direction)continue;
-  const tendency=direction==="increase"?"ficou, em média, pelo menos duas posições à frente da média das demais equipes":"ficou, em média, pelo menos duas posições atrás da média das demais equipes";
-  for(const attribute of ["Power","Downforce"]){
-   recommendations.push({subjectType:"team",subjectId:teamId,subjectName:teamResult.teamName,attribute,direction,reason:`Nas últimas etapas comparáveis, os pilotos da equipe ${tendency}. É um sinal geral de competitividade para revisar este atributo, não uma medição direta de ${attribute}.`});
+  if(seasonEnd){
+   if(teamPerformance.length<2)continue;
+   const rank=teamPerformance.findIndex(x=>x.teamId===teamId);
+   if(rank<0)continue;
+   const performanceScore=10-(20*rank/(teamPerformance.length-1));
+   for(const attribute of ["Power","Downforce"]){
+    const randomComponent=Math.floor(Math.random()*21)-10;
+    let points=Math.round(randomComponent*0.6+performanceScore*0.4);
+    if(points===0)points=Math.random()<0.5?-1:1;
+    points=Math.max(-10,Math.min(10,points));
+    recommendations.push({subjectType:"team",subjectId:teamId,subjectName:teamResult.teamName,attribute,direction:points>0?"increase":"decrease",points:Math.abs(points),reason:`Ajuste de encerramento: ${Math.abs(points)} ponto(s) ${points>0?"para cima":"para baixo"}. O cálculo combina 60% de aleatoriedade e 40% do desempenho relativo da equipe nesta temporada. Isso permite reviravoltas entre temporadas; o resultado não mede diretamente ${attribute}.`});
+   }
+  }else{
+   if(teamRounds.length<2)continue;
+   const averageDifference=teamRounds.reduce((a,b)=>a+b,0)/teamRounds.length;
+   const direction=averageDifference<=-2?"increase":averageDifference>=2?"decrease":null;
+   if(!direction)continue;
+   const tendency=direction==="increase"?"ficou, em média, pelo menos duas posições à frente da média das demais equipes":"ficou, em média, pelo menos duas posições atrás da média das demais equipes";
+   for(const attribute of ["Power","Downforce"]){
+    recommendations.push({subjectType:"team",subjectId:teamId,subjectName:teamResult.teamName,attribute,direction,reason:`Nas últimas etapas comparáveis, os pilotos da equipe ${tendency}. É um sinal geral de competitividade para revisar este atributo, não uma medição direta de ${attribute}.`});
+   }
   }
  }
- return {id:crypto.randomUUID(),roundId:seasonEnd?"season-end-"+seasonNumber:current.id,round:current.round,circuitName:seasonEnd?"Encerramento da temporada "+seasonNumber:current.circuitName,createdAt:new Date().toISOString(),kind:seasonEnd?"season-end":"race",season:seasonNumber,recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","As recomendações para pilotos são geradas somente no encerramento da temporada. Race Pace compara as posições finais com as dos companheiros ao longo da temporada; Consistency considera as últimas três corridas e a frequência de não conclusão.","Power e Downforce das equipes recebem recomendações após cada corrida e também no encerramento, com base na competitividade coletiva frente às demais equipes. Sem telemetria, a comparação não identifica diretamente qual característica técnica causou o resultado.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
+ return {id:crypto.randomUUID(),roundId:seasonEnd?"season-end-"+seasonNumber:current.id,round:current.round,circuitName:seasonEnd?"Encerramento da temporada "+seasonNumber:current.circuitName,createdAt:new Date().toISOString(),kind:seasonEnd?"season-end":"race",season:seasonNumber,recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","As recomendações para pilotos são geradas somente no encerramento da temporada. Race Pace compara as posições finais com as dos companheiros ao longo da temporada; Consistency considera as últimas três corridas e a frequência de não conclusão.","Power e Downforce recebem recomendações durante a temporada com base nas últimas etapas. No encerramento, cada atributo recebe uma variação de 1 a 10 pontos, combinando 60% de aleatoriedade e 40% do desempenho relativo da equipe, permitindo reviravoltas entre temporadas.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
 }
 export default function ChampionshipCalendarPage({params}:{params:Promise<{id:string}>}){
  const [championshipId,setChampionshipId]=useState(""),[rounds,setRounds]=useState<Round[]>([]),[circuits,setCircuits]=useState<Circuit[]>([]),[teams,setTeams]=useState<Team[]>([]),[showForm,setShowForm]=useState(false),[editing,setEditing]=useState<string|null>(null),[resultRound,setResultRound]=useState<string|null>(null),[draftResults,setDraftResults]=useState<DriverResult[]>([]),[positionPoints,setPositionPoints]=useState<number[]>(defaultPoints),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
