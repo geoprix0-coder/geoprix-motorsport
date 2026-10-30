@@ -1,26 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import { RotateCcw } from "lucide-react";
 
 export default function ResetUniverseButton() {
+  const [resetting, setResetting] = useState(false);
+
   function resetUniverse() {
     const confirmed = window.confirm(
-      "Isso apagará os dados GEOPRIX salvos neste navegador: campeonatos personalizados, equipes e pilotos editados, circuitos, contratos, calendários, resultados, regulamentos e históricos. A base inicial da temporada 2026 será restaurada. Deseja continuar?"
+      "ATENÇÃO: todos os dados salvos neste site serão apagados: equipes e pilotos personalizados, circuitos, contratos, calendários, resultados, regulamentos, relatórios e temporadas avançadas. O GEOPRIX será reiniciado com a base original da FORMULA 1 2026. Deseja continuar?"
     );
     if (!confirmed) return;
 
-    const keysToRemove: string[] = [];
-    for (let index = 0; index < window.localStorage.length; index += 1) {
-      const key = window.localStorage.key(index);
-      if (key && key.startsWith("geoprix-")) keysToRemove.push(key);
+    setResetting(true);
+    try {
+      // O GEOPRIX usa o armazenamento local deste domínio como banco de dados.
+      // Limpar a origem inteira evita deixar para trás chaves com prefixos antigos.
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.location.assign("/geoprix-motorsport/");
+    } catch (error) {
+      setResetting(false);
+      window.alert("Não foi possível limpar os dados do navegador. Verifique se o armazenamento do site está permitido e tente novamente.");
     }
-    keysToRemove.forEach((key) => window.localStorage.removeItem(key));
-    window.location.reload();
   }
 
   return (
-    <button className="quiet-button" type="button" onClick={resetUniverse}>
-      <RotateCcw size={14} /> Reiniciar universo 2026
+    <button className="quiet-button" type="button" onClick={resetUniverse} disabled={resetting}>
+      <RotateCcw size={14} /> {resetting ? "Reiniciando..." : "APAGAR DADOS E REINICIAR 2026"}
     </button>
   );
 }
