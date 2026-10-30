@@ -14,7 +14,7 @@ export default function DevelopmentReportsPage(){
   try{
    const raw=localStorage.getItem("geoprix-development-reports-"+id);
    const parsed=raw?JSON.parse(raw):[];
-   if(Array.isArray(parsed))setReports(parsed.sort((a:Report,b:Report)=>b.round-a.round));
+   if(Array.isArray(parsed))setReports(parsed.map((report:Report)=>({...report,kind:report.kind||"race",recommendations:report.kind==="season-end"?report.recommendations:report.recommendations.filter(item=>item.subjectType==="team")})).sort((a:Report,b:Report)=>b.round-a.round));
   }catch{setReports([])}
   setLoaded(true);
  },[id]);
@@ -32,7 +32,7 @@ export default function DevelopmentReportsPage(){
      const items=report.recommendations.filter(item=>item.subjectType===type);
      return <section className="development-group" key={type}>
       <div className="development-group-heading"><h3>{type==="driver"?"Desenvolvimento dos Pilotos":"Desenvolvimento das Equipes"}</h3><span>{items.length} {items.length===1?"recomendação":"recomendações"}</span></div>
-      {items.length===0?<div className="empty-state"><b>Nenhuma recomendação para {type==="driver"?"os pilotos":"as equipes"}</b><span>Os resultados disponíveis ainda não indicaram uma alteração suficientemente consistente.</span></div>:items.map((item,i)=><article className="development-recommendation" key={item.subjectType+"-"+item.subjectId+"-"+item.attribute+"-"+i}>
+      {items.length===0?<div className="empty-state"><b>Nenhuma recomendação para {type==="driver"?"os pilotos":"as equipes"}</b><span>{type==="driver"&&report.kind!=="season-end"?"As recomendações para os pilotos são geradas somente quando a temporada é finalizada.":"Os resultados disponíveis ainda não indicaram uma alteração suficientemente consistente."}</span></div>:items.map((item,i)=><article className="development-recommendation" key={item.subjectType+"-"+item.subjectId+"-"+item.attribute+"-"+i}>
        <div className="standing-name"><b>{item.subjectName}</b><small>{type==="driver"?"Piloto":"Equipe"} · {item.attribute}</small></div>
        <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}</strong>
        <p className="storage-note">{item.reason}</p>
