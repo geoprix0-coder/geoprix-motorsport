@@ -55,3 +55,8 @@
 .development-group .empty-state{padding:22px 8px}
 .development-group .development-recommendation:first-of-type{border-top:0}
 @media(max-width:760px){.development-groups{grid-template-columns:1fr}}
+
+
+.calendar-heading-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.calendar-heading-actions button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:600px){.calendar-heading-actions{width:100%}.calendar-heading-actions button{flex:1}}
