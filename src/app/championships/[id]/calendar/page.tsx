@@ -132,11 +132,27 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    const savedReports=localStorage.getItem(reportKey);
    const seasonReports=savedReports?JSON.parse(savedReports) as DevelopmentReport[]:[];
    const finalReport=buildDevelopmentReport(championshipId,rounds,finalRound,true,seasonNumber);
-   const archivedReports=[...seasonReports.filter(r=>r.kind!=="season-end"),finalReport];
+   const driverMap=new Map<string,{id:string;name:string;teamName:string;points:number;wins:number;podiums:number}>();
+   const teamMap=new Map<string,{id:string;name:string;points:number;wins:number}>();
+   for(const race of rounds){
+    for(const result of race.results){
+     const driver=driverMap.get(result.driverId)||{id:result.driverId,name:result.driverName,teamName:result.teamName,points:0,wins:0,podiums:0};
+     driver.points+=Number(result.points)||0;
+     if(result.status==="finished"&&result.position===1)driver.wins++;
+     if(result.status==="finished"&&result.position!==null&&result.position<=3)driver.podiums++;
+     driverMap.set(result.driverId,driver);
+     const team=teamMap.get(result.teamId)||{id:result.teamId,name:result.teamName,points:0,wins:0};
+     team.points+=Number(result.points)||0;
+     if(result.status==="finished"&&result.position===1)team.wins++;
+     teamMap.set(result.teamId,team);
+    }
+   }
+   const driverStandings=[...driverMap.values()].sort((a,b)=>b.points-a.points||b.wins-a.wins||b.podiums-a.podiums).map((item,index)=>({...item,position:index+1}));
+   const teamStandings=[...teamMap.values()].sort((a,b)=>b.points-a.points||b.wins-a.wins).map((item,index)=>({...item,position:index+1}));
    const historyKey="geoprix-season-history-"+championshipId;
    const savedHistory=localStorage.getItem(historyKey);
    const history=savedHistory?JSON.parse(savedHistory) as any[]:[];
-   history.push({season:seasonNumber,completedAt:new Date().toISOString(),rounds,reports:archivedReports});
+   history.push({season:seasonNumber,completedAt:new Date().toISOString(),driverStandings,teamStandings});
    localStorage.setItem(historyKey,JSON.stringify(history));
    const nextSeason=seasonNumber+1;
    localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
