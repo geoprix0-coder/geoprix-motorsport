@@ -11,7 +11,7 @@ const attrs:[keyof Driver,string][]=[["racePace","Race Pace"],["qualifying","Qua
 function Range({label,value,change}:{label:string;value:number;change:(v:number)=>void}){return <label className="range-field"><span>{label}<b>{value}</b></span><input type="range" min="0" max="100" value={value} onChange={e=>change(Number(e.target.value))}/></label>}
 export default function TeamsManager(){
 const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
-useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");if(raw)setTeams(JSON.parse(raw));else setTeams(initialTeams)}catch{setTeams(initialTeams)}setReady(true)},[]);
+useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");if(raw){const saved=JSON.parse(raw);setTeams(Array.isArray(saved)&&saved.length>0?saved:initialTeams)}else setTeams(initialTeams)}catch{setTeams(initialTeams)}setReady(true)},[]);
 useEffect(()=>{if(ready)localStorage.setItem("geoprix-teams-v1",JSON.stringify(teams))},[teams,ready]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
