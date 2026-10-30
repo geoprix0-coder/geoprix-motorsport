@@ -15,7 +15,7 @@ export default function ChampionshipResultsPage(){
  useEffect(()=>{
   try{
    const raw=localStorage.getItem("geoprix-calendar-"+id);
-   const rounds=raw?JSON.parse(raw) as SavedRound[]:[];
+   const rounds=raw?JSON.parse(raw) as SavedRound[]:[];\n   const rawRegulation=localStorage.getItem("geoprix-regulations-"+id);\n   const regulation=rawRegulation?JSON.parse(rawRegulation) as {positionPoints?:number[]}:{};\n   const pointsTable=Array.from({length:20},(_,i)=>Number(regulation.positionPoints?.[i]??[25,18,15,12,10,8,6,4,2,1,...Array(10).fill(0)][i]));
    const driverMap=new Map<string,Standing>();
    const teamMap=new Map<string,{id:string;name:string;points:number;wins:number}>();
    for(const round of rounds){
@@ -23,12 +23,12 @@ export default function ChampionshipResultsPage(){
     const classified=round.results.filter(r=>r.status==="finished"&&r.position!==null);
     for(const result of round.results){
      const d=driverMap.get(result.driverId)||{id:result.driverId,name:result.driverName,teamName:result.teamName,points:0,wins:0,podiums:0};
-     d.points+=Number(result.points)||0;
+     const awarded=result.status==="finished"&&result.position&&result.position>=1&&result.position<=20?pointsTable[result.position-1]:0;\n     d.points+=awarded;
      if(result.status==="finished"&&result.position===1)d.wins++;
      if(result.status==="finished"&&result.position!==null&&result.position<=3)d.podiums++;
      driverMap.set(result.driverId,d);
      const t=teamMap.get(result.teamId)||{id:result.teamId,name:result.teamName,points:0,wins:0};
-     t.points+=Number(result.points)||0;
+     t.points+=awarded;
      if(result.status==="finished"&&result.position===1)t.wins++;
      teamMap.set(result.teamId,t);
     }
