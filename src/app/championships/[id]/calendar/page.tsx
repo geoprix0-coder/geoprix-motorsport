@@ -30,13 +30,22 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
    else if(average>=3)recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Race Pace",direction:"decrease",reason:"Nas últimas etapas comparáveis, terminou em média pelo menos três posições atrás do companheiro de equipe."});
   }
   const lastThree=entries.slice(-3);
-  if(lastThree.length===3&&lastThree.every(x=>x.result?.status==="finished")){
-   recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Consistency",direction:"increase",reason:"Concluiu as três últimas corridas registradas."});
-  }else if(lastThree.length===3&&lastThree.filter(x=>x.result?.status!=="finished").length>=2){
-   recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Consistency",direction:"decrease",reason:"Não terminou pelo menos duas das três últimas corridas registradas."});
+  if(lastThree.length===3){
+   const nonFinishes=lastThree.filter(x=>x.result?.status!=="finished").length;
+   const finishPositions=lastThree.filter(x=>x.result?.status==="finished"&&x.result.position!==null).map(x=>x.result!.position as number);
+   if(nonFinishes>=2){
+    recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Consistency",direction:"decrease",reason:"Não concluiu pelo menos duas das três últimas corridas registradas (abandono, desclassificação ou não largada)."});
+   }else if(nonFinishes===0&&finishPositions.length===3){
+    const spread=Math.max(...finishPositions)-Math.min(...finishPositions);
+    if(spread<=3){
+     recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Consistency",direction:"increase",reason:"Manteve resultados próximos nas três últimas corridas, com diferença máxima de três posições entre a melhor e a pior chegada."});
+    }else if(spread>=8){
+     recommendations.push({subjectType:"driver",subjectId:driverId,subjectName:driver.driverName,attribute:"Consistency",direction:"decrease",reason:"Apresentou grande oscilação nas três últimas corridas, com diferença de oito ou mais posições entre a melhor e a pior chegada."});
+    }
+   }
   }
  }
- return {id:crypto.randomUUID(),roundId:current.id,round:current.round,circuitName:current.circuitName,createdAt:new Date().toISOString(),recommendations,notes:["Power e Downforce não são avaliados apenas pela posição final: faltam dados de telemetria e desempenho do carro.","Qualifying, Overtaking e Defending não são avaliados porque o registro atual não contém posições de classificação, ultrapassagens ou disputas defensivas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
+ return {id:crypto.randomUUID(),roundId:current.id,round:current.round,circuitName:current.circuitName,createdAt:new Date().toISOString(),recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","Race Pace é estimado pela comparação das posições finais do piloto com as de seu companheiro de equipe nas etapas em que ambos finalizaram; isso é um indicador limitado, não uma medição isolada de velocidade.","Consistency considera a estabilidade das posições nas três últimas chegadas e a frequência de não conclusão. Resultados insuficientes ou inconclusivos não geram recomendação.","Power e Downforce não são alterados com base apenas em resultados individuais, pois a posição final não permite identificar qual característica do carro causou o desempenho.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
 }
 export default function ChampionshipCalendarPage({params}:{params:Promise<{id:string}>}){
  const [championshipId,setChampionshipId]=useState(""),[rounds,setRounds]=useState<Round[]>([]),[circuits,setCircuits]=useState<Circuit[]>([]),[teams,setTeams]=useState<Team[]>([]),[showForm,setShowForm]=useState(false),[editing,setEditing]=useState<string|null>(null),[resultRound,setResultRound]=useState<string|null>(null),[draftResults,setDraftResults]=useState<DriverResult[]>([]),[positionPoints,setPositionPoints]=useState<number[]>(defaultPoints),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
