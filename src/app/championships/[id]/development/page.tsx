@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { TrendingUp, TrendingDown, ClipboardList, Info } from "lucide-react";
+import { TrendingUp, TrendingDown, ClipboardList } from "lucide-react";
 
 type Recommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
 type Report={id:string;roundId:string;round:number;circuitName:string;createdAt:string;recommendations:Recommendation[];notes:string[]};
@@ -27,7 +27,7 @@ export default function DevelopmentReportsPage(){
   </section>
   {!loaded?<p>Carregando relatórios...</p>:reports.length===0?<section className="team-list"><div className="empty-state"><ClipboardList size={28}/><b>Nenhum relatório disponível</b><span>Assim que você salvar os resultados de uma corrida na aba Calendário, o relatório desta etapa aparecerá aqui.</span></div></section>:reports.map(report=><section className="team-list" key={report.id}>
    <div className="list-heading"><div><span className="eyebrow">RELATÓRIO DE DESENVOLVIMENTO</span><h2>Etapa {report.round} — {report.circuitName}</h2></div><span>{new Date(report.createdAt).toLocaleDateString("pt-BR")}</span></div>
-   {report.recommendations.length===0?<div className="empty-state"><b>Nenhuma alteração recomendada</b><span>Os dados desta etapa e das corridas recentes não indicaram uma mudança suficientemente consistente.</span></div>:<div className="result-editor">{report.recommendations.map((item,i)=><article className="standing-row" key={item.subjectType+"-"+item.subjectId+"-"+item.attribute+"-"+i}>
+   {report.recommendations.length===0?<div className="empty-state"><b>Nenhuma alteração recomendada</b><span>Os dados desta etapa e das corridas recentes não indicaram uma mudança suficientemente consistente.</span></div>:<div className="result-editor">{report.recommendations.map((item,i)=><article className="development-recommendation" key={item.subjectType+"-"+item.subjectId+"-"+item.attribute+"-"+i}>
     <div className="standing-name"><b>{item.subjectName}</b><small>{item.subjectType==="driver"?"Piloto":"Equipe"} · {item.attribute}</small></div>
     <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}</strong>
     <p className="storage-note">{item.reason}</p>
