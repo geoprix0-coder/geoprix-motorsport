@@ -1,0 +1,2 @@
+import { History } from "lucide-react";
+export default function ChampionshipHistoryPage(){return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">MEMÓRIA ESPORTIVA</span><h1>Histórico</h1><p>Temporadas anteriores deste campeonato.</p></div></div><section className="team-list"><div className="empty-state"><History size={28}/><b>Nenhuma temporada anterior cadastrada</b><span>O histórico de temporadas ficará disponível aqui.</span></div></section></main>
