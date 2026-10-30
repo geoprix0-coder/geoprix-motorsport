@@ -6,6 +6,7 @@ export type Circuit = {
   country: string;
   lengthKm: number | null;
   width: "single" | "2 wide" | "3 wide" | "4 wide" | "5 wide" | "6 wide";
+  grade: 1 | 2 | 3 | 4 | 5 | 6;
   layouts: string[];
   status: "active" | "inactive" | "under-construction" | "planned";
 };
