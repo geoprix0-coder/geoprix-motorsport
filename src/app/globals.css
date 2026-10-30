@@ -60,3 +60,29 @@
 .calendar-heading-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .calendar-heading-actions button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:600px){.calendar-heading-actions{width:100%}.calendar-heading-actions button{flex:1}}
+
+
+.circuit-contract-link{display:inline-flex;align-items:center;gap:7px}
+.contract-season-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;margin:0 0 18px;border:1px solid var(--line);border-radius:8px;background:#0d141d}
+.contract-season-bar label{display:flex;align-items:center;gap:10px;color:#c1ccd8;font-size:11px}
+.contract-season-bar input,.contract-filter{background:#090e15;border:1px solid #2a3542;border-radius:5px;padding:8px 10px;color:#edf2f8;font:11px 'DM Sans'}
+.contract-season-bar input{width:92px}
+.contract-season-bar>span{font-size:10px;color:var(--muted)}
+.contract-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.contract-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:16px 0}
+.contract-icon{width:36px;height:36px;display:grid;place-items:center;background:#202c1b;color:var(--accent);border-radius:8px}
+.contract-main>b,.contract-main>small{display:block}
+.contract-main>b{font:600 13px 'Space Grotesk'}
+.contract-main>small{font-size:10px;color:#c4d0dc;margin-top:3px}
+.contract-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.contract-meta span{font:9px 'DM Mono';color:var(--muted);border:1px solid #2a3542;border-radius:4px;padding:4px 6px}
+.contract-status{font:10px 'DM Mono';white-space:nowrap;padding:6px 8px;border-radius:5px;border:1px solid var(--line);color:#aeb9c6}
+.contract-status.is-active{color:#d4ec83;border-color:#46552b;background:#182014}
+.contract-status.is-negotiation{color:#e9c77e;border-color:#594b2d;background:#1c1912}
+.contract-status.is-ended{color:#a0aab7}
+.contract-actions{grid-column:2/-1;display:flex;align-items:center;gap:7px;justify-content:flex-end}
+.contract-actions .quiet-button{display:flex;align-items:center;gap:5px}
+.contract-notes{grid-column:1/-1}
+.contract-notes textarea{width:100%;min-height:75px;background:#090e15;border:1px solid #2a3542;border-radius:5px;padding:10px;color:#edf2f8;font:12px 'DM Sans';resize:vertical}
+.contract-filter{max-width:190px}
+@media(max-width:760px){.contract-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.contract-row{grid-template-columns:36px minmax(0,1fr)}.contract-status{grid-column:2;justify-self:start}.contract-actions{grid-column:2;justify-content:flex-start;flex-wrap:wrap}.contract-season-bar{align-items:flex-start;flex-direction:column}}
