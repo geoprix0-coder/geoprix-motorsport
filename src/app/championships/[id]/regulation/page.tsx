@@ -30,7 +30,7 @@ export default function ChampionshipRegulationPage() {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Regulation>;
         setRegulation({
-          positionPoints: Array.from({ length: 20 }, (_, i) => Number(parsed.positionPoints?.[i] ?? defaultRegulation.positionPoints[i])),
+          positionPoints: Array.isArray(parsed.positionPoints) && parsed.positionPoints.length > 0 ? parsed.positionPoints.map(value => Math.max(0, Number(value) || 0)) : defaultRegulation.positionPoints,
           bonusRules: Array.isArray(parsed.bonusRules) ? parsed.bonusRules : defaultRegulation.bonusRules,
         });
       }
@@ -43,6 +43,17 @@ export default function ChampionshipRegulationPage() {
     const points = [...regulation.positionPoints];
     points[index] = Math.max(0, Number(value) || 0);
     setRegulation({ ...regulation, positionPoints: points });
+    setSaved(false);
+  }
+
+  function addPosition() {
+    setRegulation({ ...regulation, positionPoints: [...regulation.positionPoints, 0] });
+    setSaved(false);
+  }
+
+  function removePosition() {
+    if (regulation.positionPoints.length <= 1) return;
+    setRegulation({ ...regulation, positionPoints: regulation.positionPoints.slice(0, -1) });
     setSaved(false);
   }
 
@@ -77,6 +88,13 @@ export default function ChampionshipRegulationPage() {
           <p className="storage-note">Informe quantos pontos cada piloto recebe ao terminar em cada posição. Use zero para posições sem pontuação.</p>
           <div className="regulation-points-grid">
             {regulation.positionPoints.map((points, index) => <label className="regulation-point" key={index}><span>{index + 1}º lugar</span><input type="number" min="0" step="1" value={points} onChange={e => updatePosition(index, e.target.value)}/></label>)}
+          </div>
+          <div className="regulation-add-bonus">
+            <span className="storage-note">Total de posições configuradas: {regulation.positionPoints.length}</span>
+            <div>
+              <button className="quiet-button" onClick={addPosition}><Plus size={14}/>Adicionar posição</button>
+              {regulation.positionPoints.length > 1 && <button className="quiet-button" onClick={removePosition}><Trash2 size={14}/>Remover última posição</button>}
+            </div>
           </div>
         </section>
         <section className="editor-card">
