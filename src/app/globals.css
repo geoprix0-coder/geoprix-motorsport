@@ -86,3 +86,26 @@
 .contract-notes textarea{width:100%;min-height:75px;background:#090e15;border:1px solid #2a3542;border-radius:5px;padding:10px;color:#edf2f8;font:12px 'DM Sans';resize:vertical}
 .contract-filter{max-width:190px}
 @media(max-width:760px){.contract-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.contract-row{grid-template-columns:36px minmax(0,1fr)}.contract-status{grid-column:2;justify-self:start}.contract-actions{grid-column:2;justify-content:flex-start;flex-wrap:wrap}.contract-season-bar{align-items:flex-start;flex-direction:column}}
+
+
+.contract-alerts{margin:18px 0 22px;padding:17px 19px;border:1px solid #55472a;border-radius:9px;background:linear-gradient(145deg,#1b1912,#11161b)}
+.contract-alerts .list-heading{margin-bottom:8px}
+.contract-alerts .list-heading h2{margin:0}
+.contract-alert-empty{color:var(--muted);font-size:11px;margin:12px 0 2px}
+.contract-alert-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #3b3528}
+.contract-alert-row>div b,.contract-alert-row>div small{display:block}
+.contract-alert-row>div b{font-size:12px}
+.contract-alert-row>div small{font-size:10px;color:var(--muted);margin-top:4px}
+.contract-alert-row>span{font:10px 'DM Mono';color:#e9c77e}
+.contract-alert-row>span.alert-current{color:#f0a18c}
+.contract-timeline{margin-top:22px}
+.timeline-description{margin:-9px 0 4px;color:var(--muted);font-size:10px}
+.presence-group{padding:15px 0;border-top:1px solid var(--line)}
+.presence-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.presence-heading b{font:600 13px 'Space Grotesk'}
+.presence-heading span{font-size:10px;color:#c4d0dc}
+.presence-periods{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+.presence-period{display:grid;gap:5px;padding:10px 12px;border:1px solid #34402a;border-radius:6px;background:#111811;color:#aeb9c6;font-size:10px}
+.presence-period .presence-years{font:600 12px 'DM Mono';color:var(--accent)}
+.presence-period small{color:var(--muted);line-height:1.4}
+@media(max-width:650px){.contract-alert-row{grid-template-columns:1fr auto}.contract-alert-row>span{grid-column:1}.contract-alert-row>button{grid-column:2;grid-row:1/3}.presence-heading{align-items:flex-start;flex-direction:column}}
