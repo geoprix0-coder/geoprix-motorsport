@@ -2,13 +2,14 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {ArrowLeft,Plus,Save,Shield,Trash2,Users} from "lucide-react";
-import { initialTeams } from "@/lib/seed";
+import { initialTeams, initialChampionships } from "@/lib/seed";
 type Driver={id:string;name:string;number:number;nationality:string};
 type Team={id:string;name:string;country:string;base:string;drivers:Driver[]};
 const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:""});
 const newTeam=():Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:[newDriver(1),newDriver(2)]});
 export default function TeamsManager(){
-const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
+const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(initialChampionships[0]?.season||2026);
+useEffect(()=>{const championship=initialChampionships[0];if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championship.id);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[]);
 useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");if(raw){const saved=JSON.parse(raw);setTeams(Array.isArray(saved)&&saved.length>0?saved.map((t:any)=>({id:t.id,name:t.name,country:t.country,base:t.base,drivers:(t.drivers||[]).map((d:any)=>({id:d.id,name:d.name,number:d.number,nationality:d.nationality}))})):initialTeams)}else setTeams(initialTeams)}catch{setTeams(initialTeams)}setReady(true)},[]);
 useEffect(()=>{if(ready)localStorage.setItem("geoprix-teams-v1",JSON.stringify(teams))},[teams,ready]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
@@ -16,7 +17,7 @@ function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drive
 function addDriver(){if(edit)setEdit({...edit,drivers:[...edit.drivers,newDriver(edit.drivers.length?Math.max(...edit.drivers.map(d=>d.number))+1:1)]})}
 function removeDriver(id:string){if(edit)setEdit({...edit,drivers:edit.drivers.filter(d=>d.id!==id)})}
 function save(){if(!edit)return;if(!edit.name.trim()){setNotice("Informe o nome da equipe.");return}if(teams.some(t=>t.id!==edit.id&&t.name.toLowerCase()===edit.name.trim().toLowerCase())){setNotice("Já existe uma equipe com esse nome.");return}setTeams(old=>old.some(t=>t.id===edit.id)?old.map(t=>t.id===edit.id?edit: t):[...old,edit]);setEdit(null);setNotice("Equipe salva neste navegador.")}
-return <main className="manager-shell"><header className="manager-top"><Link href="/" className="back-link"><ArrowLeft size={16}/> Visão geral</Link><span className="eyebrow">FORMULA 1 / TEMPORADA 2026</span></header><div className="manager-content">
+return <main className="manager-shell"><header className="manager-top"><Link href="/" className="back-link"><ArrowLeft size={16}/> Visão geral</Link><span className="eyebrow">FORMULA 1 / TEMPORADA {season}</span></header><div className="manager-content">
 <div className="manager-heading"><div><span className="eyebrow">GESTÃO ESPORTIVA</span><h1>Equipes e pilotos</h1><p>Gerencie livremente as equipes e os pilotos deste campeonato.</p></div><button className="action-button" onClick={()=>{setNotice("");setEdit(newTeam())}}><Plus size={16}/> Adicionar equipe</button></div>
 <section className="manager-stats"><div><Shield/><b>{teams.length}</b><small>Equipes cadastradas</small></div><div><Users/><b>{count}</b><small>Pilotos identificados</small></div></section>{notice&&<p className="notice">{notice}</p>}
 {edit&&<section className="editor-card"><div className="editor-heading"><div><span className="eyebrow">CADASTRO DE EQUIPE</span><h2>{edit.name||"Nova equipe"}</h2></div><button className="quiet-button" onClick={()=>setEdit(null)}>Cancelar</button></div>
