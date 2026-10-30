@@ -17,7 +17,8 @@ export default function CircuitContractsPage(){
  const [form,setForm]=useState<ContractForm>(blankForm());
  const [editing,setEditing]=useState<string|null>(null);
  const [showForm,setShowForm]=useState(false);
- const [filter,setFilter]=useState("all");\n const [circuitFilter,setCircuitFilter]=useState("");
+ const [filter,setFilter]=useState("all");
+ const [circuitFilter,setCircuitFilter]=useState("");
  const [ready,setReady]=useState(false);
  const [notice,setNotice]=useState("");
  useEffect(()=>{const query=new URLSearchParams(window.location.search);setCircuitFilter(query.get("circuit")||"");try{const rawCircuits=localStorage.getItem("geoprix-circuits-v1");if(rawCircuits)setCircuits(JSON.parse(rawCircuits));const rawContracts=localStorage.getItem("geoprix-circuit-contracts-v1");if(rawContracts)setContracts(JSON.parse(rawContracts));}catch{}setReady(true)},[]);
