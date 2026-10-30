@@ -1,0 +1,2 @@
+import { Activity } from "lucide-react";
+export default function ChampionshipResultsPage(){return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">GESTÃO DO CAMPEONATO</span><h1>Resultados</h1><p>Classificação de pilotos e equipes.</p></div></div><section className="team-list"><div className="empty-state"><Activity size={28}/><b>Nenhum resultado registrado</b><span>A classificação do campeonato aparecerá aqui após o registro dos resultados.</span></div></section></div></main>}
