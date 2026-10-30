@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TrendingUp, TrendingDown, ClipboardList } from "lucide-react";
 
-type Recommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
+type Recommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";points?:number;reason:string};
 type Report={id:string;roundId:string;round:number;circuitName:string;createdAt:string;kind?:"race"|"season-end";season?:number;recommendations:Recommendation[];notes:string[]};
 
 export default function DevelopmentReportsPage(){
@@ -34,7 +34,7 @@ export default function DevelopmentReportsPage(){
       <div className="development-group-heading"><h3>{type==="driver"?"Desenvolvimento dos Pilotos":"Desenvolvimento das Equipes"}</h3><span>{items.length} {items.length===1?"recomendação":"recomendações"}</span></div>
       {items.length===0?<div className="empty-state"><b>Nenhuma recomendação para {type==="driver"?"os pilotos":"as equipes"}</b><span>{type==="driver"&&report.kind!=="season-end"?"As recomendações para os pilotos são geradas somente quando a temporada é finalizada.":"Os resultados disponíveis ainda não indicaram uma alteração suficientemente consistente."}</span></div>:items.map((item,i)=><article className="development-recommendation" key={item.subjectType+"-"+item.subjectId+"-"+item.attribute+"-"+i}>
        <div className="standing-name"><b>{item.subjectName}</b><small>{type==="driver"?"Piloto":"Equipe"} · {item.attribute}</small></div>
-       <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}</strong>
+       <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}{item.points?` ${item.direction==="increase"?"+":"-"}${item.points} pts`:""}</strong>
        <p className="storage-note">{item.reason}</p>
       </article>)}
      </section>;
