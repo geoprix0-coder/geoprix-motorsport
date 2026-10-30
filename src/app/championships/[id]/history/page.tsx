@@ -3,7 +3,7 @@ import {useEffect,useState} from "react";
 import {useParams} from "next/navigation";
 import {History,Trophy,CalendarDays} from "lucide-react";
 
-type ArchivedRecommendation={subjectType:"driver"|"team";subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
+type ArchivedRecommendation={subjectType:"driver"|"team";subjectName:string;attribute:string;direction:"increase"|"decrease";points?:number;reason:string};
 type ArchivedSeason={season:number;completedAt:string;rounds:{id:string;round:number;circuitName:string;status:string}[];reports:{kind?:string;recommendations:ArchivedRecommendation[]}[]};
 
 export default function ChampionshipHistoryPage(){
@@ -31,7 +31,7 @@ export default function ChampionshipHistoryPage(){
        <div className="development-group-heading"><h3>{type==="driver"?"Recomendações para pilotos":"Recomendações para equipes"}</h3><span>{items.length}</span></div>
        {items.length===0?<p className="storage-note">Nenhuma recomendação registrada.</p>:items.map((item,i)=><article className="development-recommendation" key={type+"-"+i}>
         <div className="standing-name"><b>{item.subjectName}</b><small>{item.attribute}</small></div>
-        <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}</strong>
+        <strong className={item.direction==="increase"?"recommendation-up":"recommendation-down"}>{item.direction==="increase"?"Aumentar":"Diminuir"}{item.points ? ` ${item.direction==="increase"?"+":"-"}${item.points} pts` : ""}</strong>
         <p className="storage-note">{item.reason}</p>
        </article>)}
       </section>;
