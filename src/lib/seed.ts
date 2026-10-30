@@ -18,7 +18,6 @@ export const initialChampionships: Championship[] = [
     name: "FORMULA 1",
     category: "FIA Formula One World Championship",
     season: 2026,
-    teamLimit: 11,
     status: "active",
   },
 ];
