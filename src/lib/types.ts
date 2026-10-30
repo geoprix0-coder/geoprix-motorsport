@@ -1,15 +1,13 @@
 export type Team = { id: string; name: string; country: string; base: string; drivers: Driver[] };
 export type Driver = { id: string; name: string; number: number; nationality: string };
 export type Circuit = {
-  id: string; name: string; code: string; origin: "real" | "fictional";
-  country: string; city: string;
-  type: "permanent" | "street" | "semi-permanent" | "temporary" | "mixed";
+  id: string;
+  name: string;
+  country: string;
   lengthKm: number | null;
   width: "single" | "2 wide" | "3 wide" | "4 wide" | "5 wide" | "6 wide";
-  direction: "clockwise" | "counterclockwise"; layouts: string[];
-  openingYear: number | null;
+  layouts: string[];
   status: "active" | "inactive" | "under-construction" | "planned";
-  categories: string[];
 };
 export type Championship = { id: string; name: string; category: string; season: number; status: "planning" | "active" | "completed" };
 export type RaceSession = "qualifying" | "race" | "post-race";
