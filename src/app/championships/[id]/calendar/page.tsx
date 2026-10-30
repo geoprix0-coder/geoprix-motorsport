@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Plus, Save, Trash2, Pencil, Flag, Trophy, ClipboardList } from "lucide-react";
 import type { Circuit, Team } from "@/lib/types";
+import { initialChampionships } from "@/lib/seed";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;position:number|null;points:number};
 type Round={id:string;round:number;circuitId:string;circuitName:string;layout:string;status:"scheduled"|"completed";results:DriverResult[]};
@@ -10,12 +11,13 @@ const defaultPoints=[25,18,15,12,10,8,6,4,2,1,...Array(10).fill(0)];
 const statusLabels:Record<ResultStatus,string>={finished:"Finalizou",retired:"Abandonou (DNF)",disqualified:"Desclassificado (DSQ)",dns:"Não largou (DNS)"};
 
 type DevelopmentRecommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
-type DevelopmentReport={id:string;roundId:string;round:number;circuitName:string;createdAt:string;recommendations:DevelopmentRecommendation[];notes:string[]};
-function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:Round):DevelopmentReport{
+type DevelopmentReport={id:string;roundId:string;round:number;circuitName:string;createdAt:string;kind?:"race"|"season-end";season?:number;recommendations:DevelopmentRecommendation[];notes:string[]};
+function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:Round,seasonEnd=false,seasonNumber=2026):DevelopmentReport{
  const completed=allRounds.map(r=>r.id===current.id?current:r).filter(r=>r.status==="completed").sort((a,b)=>a.round-b.round);
- const recent=completed.slice(-3);
+ const recent=seasonEnd?completed:completed.slice(-3);
  const driverIds=[...new Set(recent.flatMap(r=>r.results.map(x=>x.driverId)))];
  const recommendations:DevelopmentRecommendation[]=[];
+ if(seasonEnd){
  for(const driverId of driverIds){
   const entries=recent.map(r=>({round:r.round,result:r.results.find(x=>x.driverId===driverId)})).filter(x=>x.result);
   const driver=entries[entries.length-1]?.result;
@@ -45,6 +47,7 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
    }
   }
  }
+ }
  // Avaliação coletiva das equipes: compara a média de posições dos pilotos de cada equipe
  // com a média dos pilotos das demais equipes em cada etapa concluída.
  const teamIds=[...new Set(recent.flatMap(r=>r.results.map(x=>x.teamId)))];
@@ -68,13 +71,13 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
    recommendations.push({subjectType:"team",subjectId:teamId,subjectName:teamResult.teamName,attribute,direction,reason:`Nas últimas etapas comparáveis, os pilotos da equipe ${tendency}. É um sinal geral de competitividade para revisar este atributo, não uma medição direta de ${attribute}.`});
   }
  }
- return {id:crypto.randomUUID(),roundId:current.id,round:current.round,circuitName:current.circuitName,createdAt:new Date().toISOString(),recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","Race Pace é estimado pela comparação das posições finais do piloto com as de seu companheiro de equipe nas etapas em que ambos finalizaram; isso é um indicador limitado, não uma medição isolada de velocidade.","Consistency considera a estabilidade das posições nas três últimas chegadas e a frequência de não conclusão. Resultados insuficientes ou inconclusivos não geram recomendação.","Power e Downforce agora recebem recomendações com base na competitividade coletiva da equipe frente às demais nas últimas etapas. Como não há telemetria nem dados específicos do carro, essa comparação não identifica diretamente qual característica técnica causou o resultado; trate-a como um sinal para revisão.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
+ return {id:crypto.randomUUID(),roundId:seasonEnd?"season-end-"+seasonNumber:current.id,round:current.round,circuitName:seasonEnd?"Encerramento da temporada "+seasonNumber:current.circuitName,createdAt:new Date().toISOString(),kind:seasonEnd?"season-end":"race",season:seasonNumber,recommendations,notes:["A análise utiliza exclusivamente os resultados finais registrados: posição de chegada e situação do piloto (finalizou, abandonou, foi desclassificado ou não largou).","As recomendações para pilotos são geradas somente no encerramento da temporada. Race Pace compara as posições finais com as dos companheiros ao longo da temporada; Consistency considera as últimas três corridas e a frequência de não conclusão.","Power e Downforce das equipes recebem recomendações após cada corrida e também no encerramento, com base na competitividade coletiva frente às demais equipes. Sem telemetria, a comparação não identifica diretamente qual característica técnica causou o resultado.","Qualifying, Overtaking e Defending não são avaliados porque os resultados finais não informam classificação, ultrapassagens ou defesas.","As recomendações são sugestões; nenhuma alteração é aplicada automaticamente no Geoprix."]};
 }
 export default function ChampionshipCalendarPage({params}:{params:Promise<{id:string}>}){
  const [championshipId,setChampionshipId]=useState(""),[rounds,setRounds]=useState<Round[]>([]),[circuits,setCircuits]=useState<Circuit[]>([]),[teams,setTeams]=useState<Team[]>([]),[showForm,setShowForm]=useState(false),[editing,setEditing]=useState<string|null>(null),[resultRound,setResultRound]=useState<string|null>(null),[draftResults,setDraftResults]=useState<DriverResult[]>([]),[positionPoints,setPositionPoints]=useState<number[]>(defaultPoints),[ready,setReady]=useState(false),[notice,setNotice]=useState("");
- const [round,setRound]=useState(1),[circuitId,setCircuitId]=useState(""),[layout,setLayout]=useState(""),[gradeFilter,setGradeFilter]=useState(1);
+ const [round,setRound]=useState(1),[circuitId,setCircuitId]=useState(""),[layout,setLayout]=useState(""),[gradeFilter,setGradeFilter]=useState(1),[seasonNumber,setSeasonNumber]=useState(2026);
  useEffect(()=>{params.then(({id})=>setChampionshipId(id))},[params]);
- useEffect(()=>{if(!championshipId)return;try{const saved=localStorage.getItem("geoprix-calendar-"+championshipId);if(saved){const parsed=JSON.parse(saved);if(Array.isArray(parsed))setRounds(parsed.map((r:any)=>({...r,results:Array.isArray(r.results)?r.results:[]})))}const rawCircuits=localStorage.getItem("geoprix-circuits-v1");if(rawCircuits){const parsed=JSON.parse(rawCircuits);if(Array.isArray(parsed))setCircuits(parsed.filter((c:Circuit)=>c.status==="active"))}const rawRegulation=localStorage.getItem("geoprix-regulations-"+championshipId);if(rawRegulation){const parsedRegulation=JSON.parse(rawRegulation) as Partial<Regulation>;setPositionPoints(Array.isArray(parsedRegulation.positionPoints)&&parsedRegulation.positionPoints.length>0?parsedRegulation.positionPoints.map(value=>Math.max(0,Number(value)||0)):defaultPoints)}else{setPositionPoints(defaultPoints)}const rawTeams=localStorage.getItem("geoprix-teams-v1");if(rawTeams){const parsed=JSON.parse(rawTeams);if(Array.isArray(parsed))setTeams(parsed)}}catch{}setReady(true)},[championshipId]);
+ useEffect(()=>{if(!championshipId)return;try{const baseSeason=initialChampionships.find(c=>c.id===championshipId)?.season||2026;const storedSeason=localStorage.getItem("geoprix-season-"+championshipId);setSeasonNumber(storedSeason?Math.max(baseSeason,Number(storedSeason)||baseSeason):baseSeason);const saved=localStorage.getItem("geoprix-calendar-"+championshipId);if(saved){const parsed=JSON.parse(saved);if(Array.isArray(parsed))setRounds(parsed.map((r:any)=>({...r,results:Array.isArray(r.results)?r.results:[]})))}const rawCircuits=localStorage.getItem("geoprix-circuits-v1");if(rawCircuits){const parsed=JSON.parse(rawCircuits);if(Array.isArray(parsed))setCircuits(parsed.filter((c:Circuit)=>c.status==="active"))}const rawRegulation=localStorage.getItem("geoprix-regulations-"+championshipId);if(rawRegulation){const parsedRegulation=JSON.parse(rawRegulation) as Partial<Regulation>;setPositionPoints(Array.isArray(parsedRegulation.positionPoints)&&parsedRegulation.positionPoints.length>0?parsedRegulation.positionPoints.map(value=>Math.max(0,Number(value)||0)):defaultPoints)}else{setPositionPoints(defaultPoints)}const rawTeams=localStorage.getItem("geoprix-teams-v1");if(rawTeams){const parsed=JSON.parse(rawTeams);if(Array.isArray(parsed))setTeams(parsed)}}catch{}setReady(true)},[championshipId]);
  useEffect(()=>{if(ready&&championshipId)localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify(rounds))},[rounds,ready,championshipId]);
  function reset(){setShowForm(false);setEditing(null);setRound(rounds.length+1);setCircuitId("");setLayout("");setNotice("")}
  function openNew(){setEditing(null);setRound(rounds.length+1);setGradeFilter(1);const available=circuits.filter(c=>(c.grade||1)===1);setCircuitId(available[0]?.id||"");setLayout(available[0]?.layouts?.[0]||"");setShowForm(true);setNotice("")}
@@ -84,8 +87,33 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
  function openResults(item:Round){setResultRound(item.id);setDraftResults(item.results.length?item.results:teams.flatMap(t=>t.drivers.map(d=>({id:crypto.randomUUID(),driverId:d.id,driverName:d.name,teamId:t.id,teamName:t.name,status:"finished" as ResultStatus,position:null,points:0}))));setNotice("")}
  function updateResult(id:string,patch:Partial<DriverResult>){setDraftResults(old=>old.map(r=>r.id===id?{...r,...patch}:r))}
  function pointsForResult(result:DriverResult){return result.status==="finished"&&result.position&&result.position>=1&&result.position<=positionPoints.length?positionPoints[result.position-1]:0}
- function saveResults(){const current=rounds.find(r=>r.id===resultRound);if(!current)return;if(draftResults.some(r=>r.status==="finished"&&(!r.position||r.position<1||r.position>positionPoints.length))){setNotice(`Informe uma posição válida entre 1º e ${positionPoints.length}º para todos os pilotos que finalizaram.`);return}const positions=draftResults.filter(r=>r.status==="finished").map(r=>r.position);if(new Set(positions).size!==positions.length){setNotice("Não pode haver posições de chegada repetidas.");return}const calculatedResults=draftResults.map(r=>({...r,points:pointsForResult(r)}));const completedRound:Round={...current,results:calculatedResults,status:"completed"};const nextRounds=rounds.map(r=>r.id===resultRound?completedRound:r);setRounds(nextRounds);try{const report=buildDevelopmentReport(championshipId,nextRounds,completedRound);const key="geoprix-development-reports-"+championshipId;const saved=localStorage.getItem(key);const reports=saved?JSON.parse(saved) as DevelopmentReport[]:[];localStorage.setItem(key,JSON.stringify([...reports.filter(x=>x.roundId!==completedRound.id),report].sort((a,b)=>a.round-b.round)));}catch{setNotice("Resultados salvos, mas não foi possível gerar o relatório de desenvolvimento.");setResultRound(null);return}setResultRound(null);setNotice("Resultados salvos e relatório de desenvolvimento gerado.");}
- return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">GESTÃO DO CAMPEONATO</span><h1>Calendário</h1><p>Organize as etapas e registre os resultados de cada corrida.</p></div><button className="action-button" onClick={openNew}><Plus size={16}/> Adicionar etapa</button></div>
+ function saveResults(){const current=rounds.find(r=>r.id===resultRound);if(!current)return;if(draftResults.some(r=>r.status==="finished"&&(!r.position||r.position<1||r.position>positionPoints.length))){setNotice(`Informe uma posição válida entre 1º e ${positionPoints.length}º para todos os pilotos que finalizaram.`);return}const positions=draftResults.filter(r=>r.status==="finished").map(r=>r.position);if(new Set(positions).size!==positions.length){setNotice("Não pode haver posições de chegada repetidas.");return}const calculatedResults=draftResults.map(r=>({...r,points:pointsForResult(r)}));const completedRound:Round={...current,results:calculatedResults,status:"completed"};const nextRounds=rounds.map(r=>r.id===resultRound?completedRound:r);setRounds(nextRounds);try{const report=buildDevelopmentReport(championshipId,nextRounds,completedRound,false,seasonNumber);const key="geoprix-development-reports-"+championshipId;const saved=localStorage.getItem(key);const reports=saved?JSON.parse(saved) as DevelopmentReport[]:[];localStorage.setItem(key,JSON.stringify([...reports.filter(x=>x.roundId!==completedRound.id),report].sort((a,b)=>a.round-b.round)));}catch{setNotice("Resultados salvos, mas não foi possível gerar o relatório de desenvolvimento.");setResultRound(null);return}setResultRound(null);setNotice("Resultados salvos e relatório de desenvolvimento gerado.");}
+ function finishSeason(){
+  if(rounds.length===0){setNotice("Adicione pelo menos uma etapa antes de finalizar a temporada.");return}
+  if(rounds.some(r=>r.status!=="completed")){setNotice("Para finalizar a temporada, registre os resultados de todas as etapas do calendário.");return}
+  if(!confirm("Finalizar a temporada "+seasonNumber+"? O calendário será arquivado, será gerado o relatório de encerramento e uma nova temporada será iniciada."))return;
+  try{
+   const finalRound=[...rounds].sort((a,b)=>a.round-b.round)[rounds.length-1];
+   const reportKey="geoprix-development-reports-"+championshipId;
+   const savedReports=localStorage.getItem(reportKey);
+   const seasonReports=savedReports?JSON.parse(savedReports) as DevelopmentReport[]:[];
+   const finalReport=buildDevelopmentReport(championshipId,rounds,finalRound,true,seasonNumber);
+   const archivedReports=[...seasonReports.filter(r=>r.kind!=="season-end"),finalReport];
+   const historyKey="geoprix-season-history-"+championshipId;
+   const savedHistory=localStorage.getItem(historyKey);
+   const history=savedHistory?JSON.parse(savedHistory) as any[]:[];
+   history.push({season:seasonNumber,completedAt:new Date().toISOString(),rounds,reports:archivedReports});
+   localStorage.setItem(historyKey,JSON.stringify(history));
+   const nextSeason=seasonNumber+1;
+   localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
+   localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify([]));
+   localStorage.setItem(reportKey,JSON.stringify([]));
+   setRounds([]);setSeasonNumber(nextSeason);
+   window.dispatchEvent(new Event("geoprix-season-updated"));
+   setNotice("Temporada "+(nextSeason-1)+" finalizada e arquivada. Temporada "+nextSeason+" iniciada; monte o novo calendário.");
+  }catch{setNotice("Não foi possível finalizar a temporada. Os dados atuais foram mantidos; tente novamente.")}
+ }
+ return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">TEMPORADA {seasonNumber}</span><h1>Calendário</h1><p>Organize as etapas e registre os resultados de cada corrida.</p></div><div className="calendar-heading-actions"><button className="quiet-button" onClick={finishSeason} disabled={rounds.length===0||rounds.some(r=>r.status!=="completed")}>Finalizar temporada</button><button className="action-button" onClick={openNew}><Plus size={16}/> Adicionar etapa</button></div></div>
  <section className="manager-stats"><div><CalendarDays/><b>{rounds.length}</b><small>Etapas no calendário</small></div><div><Flag/><b>{new Set(rounds.map(r=>r.circuitId)).size}</b><small>Circuitos utilizados</small></div><div><Trophy/><b>{rounds.filter(r=>r.status==="completed").length}</b><small>Resultados lançados</small></div></section>
  {notice&&<p className="notice">{notice}</p>}
  {showForm&&<section className="editor-card"><div className="editor-heading"><div><span className="eyebrow">ETAPA DO CAMPEONATO</span><h2>{editing?"Editar etapa":"Adicionar etapa ao calendário"}</h2></div><button className="quiet-button" onClick={reset}>Cancelar</button></div>
