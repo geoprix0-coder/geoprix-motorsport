@@ -22,7 +22,7 @@ function buildDevelopmentReport(championshipId:string,allRounds:Round[],current:
   if(!driver)continue;
   const comparisons=entries.map(entry=>{
    const teammate=entry.result&&recent.find(r=>r.round===entry.round)?.results.filter(x=>x.teamId===entry.result!.teamId&&x.driverId!==driverId&&x.status==="finished"&&x.position!==null).sort((a,b)=>a.position!-b.position!)[0];
-   return entry.result?.status==="finished"&&entry.result.position!==null&&teammate?entry.result.position-teammate.position:null;
+   return entry.result?.status==="finished"&&entry.result.position!==null&&teammate&&teammate.position!==null?entry.result.position-teammate.position:null;
   }).filter((x):x is number=>x!==null);
   if(comparisons.length>=2){
    const average=comparisons.reduce((a,b)=>a+b,0)/comparisons.length;
