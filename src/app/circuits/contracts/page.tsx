@@ -4,11 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, FileText, Plus, Save, Pencil, Trash2, RefreshCw, CalendarDays } from "lucide-react";
 import type { Circuit } from "@/lib/types";
 
-type ContractStatus = "negotiation" | "terminated";
+type ContractStatus = "active" | "negotiation" | "terminated";
 type CircuitContract = { id:string; circuitId:string; category:string; startSeason:number; endSeason:number; status:ContractStatus; notes:string; createdAt:string };
 type ContractForm = Omit<CircuitContract,"id"|"createdAt">;
 const basePath=process.env.NODE_ENV==="production"?"/geoprix-motorsport":"";
-const blankForm=():ContractForm=>({circuitId:"",category:"",startSeason:2026,endSeason:2030,status:"negotiation",notes:""});
+const blankForm=():ContractForm=>({circuitId:"",category:"",startSeason:2026,endSeason:2030,status:"active",notes:""});
 const statusLabel=(contract:CircuitContract,season:number)=>contract.status==="terminated"?"Encerrado antecipadamente":contract.status==="negotiation"?"Em negociação":season<contract.startSeason?"Futuro":season<=contract.endSeason?"Vigente":"Expirado";
 export default function CircuitContractsPage(){
  const [circuits,setCircuits]=useState<Circuit[]>([]);
@@ -31,7 +31,7 @@ export default function CircuitContractsPage(){
  function save(){if(!form.circuitId||!form.category.trim()||!Number.isInteger(form.startSeason)||!Number.isInteger(form.endSeason)||form.endSeason<form.startSeason){setNotice("Confira o circuito, a categoria e as temporadas do contrato.");return}
  const item:CircuitContract={...form,id:editing||crypto.randomUUID(),createdAt:contracts.find(c=>c.id===editing)?.createdAt||new Date().toISOString()};
  setContracts(old=>editing?old.map(c=>c.id===editing?item:c):[item,...old]);setShowForm(false);setEditing(null);setNotice("Contrato salvo neste navegador.");}
- function renew(c:CircuitContract){setForm({circuitId:c.circuitId,category:c.category,startSeason:c.endSeason+1,endSeason:c.endSeason+5,status:"negotiation",notes:"Renovação do contrato anterior."});setEditing(null);setShowForm(true);setNotice("Defina a nova duração e salve a renovação como um novo contrato.")}
+ function renew(c:CircuitContract){setForm({circuitId:c.circuitId,category:c.category,startSeason:c.endSeason+1,endSeason:c.endSeason+5,status:"active",notes:"Renovação do contrato anterior."});setEditing(null);setShowForm(true);setNotice("Defina a nova duração e salve a renovação como um novo contrato.")}
  function circuitName(id:string){return circuits.find(c=>c.id===id)?.name||"Circuito não encontrado"}
  return <main className="manager-shell"><header className="manager-top"><a className="back-link" href={basePath+"/circuits"}><ArrowLeft size={16}/> Circuitos</a><span className="eyebrow">GESTÃO DE CONTRATOS</span></header><div className="manager-content">
  <div className="manager-heading"><div><span className="eyebrow">UNIVERSO MOTORSPORT</span><h1>Contratos de circuitos</h1><p>Controle entradas, permanências, renovações e saídas das categorias.</p></div><button className="action-button" onClick={()=>openNew()}><Plus size={16}/> Novo contrato</button></div>
@@ -44,7 +44,7 @@ export default function CircuitContractsPage(){
  <label>Categoria<select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}><option value="">Selecione ou digite abaixo</option><option>FORMULA 1</option><option>Fórmula 2</option><option>Fórmula 3</option><option>Fórmula E</option><option>WEC</option><option>IMSA</option><option>IndyCar</option><option>Outra categoria</option></select><input aria-label="Nome da categoria" placeholder="Ou informe o nome da categoria" value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/></label>
  <label>Início do contrato<input type="number" min="1900" max="2200" value={form.startSeason} onChange={e=>setForm({...form,startSeason:Number(e.target.value)})}/></label>
  <label>Término do contrato<input type="number" min="1900" max="2200" value={form.endSeason} onChange={e=>setForm({...form,endSeason:Number(e.target.value)})}/></label>
- <label>Situação<select value={form.status} onChange={e=>setForm({...form,status:e.target.value as ContractStatus})}><option value="negotiation">Em negociação</option><option value="terminated">Encerrado antecipadamente</option></select></label>
+ <label>Situação<select value={form.status} onChange={e=>setForm({...form,status:e.target.value as ContractStatus})}><option value="active">Contrato confirmado</option><option value="negotiation">Em negociação</option><option value="terminated">Encerrado antecipadamente</option></select></label>
  <label className="contract-notes">Observações<textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} placeholder="Cláusulas, detalhes da renovação ou motivo do encerramento"/></label>
  </div><div className="editor-actions"><small>Para renovar, crie um novo contrato com o período seguinte. O anterior permanece no histórico.</small><button className="action-button" onClick={save}><Save size={16}/> Salvar contrato</button></div></section>}
  <section className="team-list"><div className="list-heading"><h2>{circuitFilter?"Histórico do circuito":"Registro de contratos"}</h2><select className="contract-filter" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">Todas as situações</option><option value="Vigente">Vigentes</option><option value="Futuro">Futuros</option><option value="Em negociação">Em negociação</option><option value="Expirado">Expirados</option><option value="Encerrado antecipadamente">Encerrados antecipadamente</option></select></div>
