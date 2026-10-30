@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { TrendingUp, TrendingDown, ClipboardList } from "lucide-react";
 
 type Recommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";reason:string};
-type Report={id:string;roundId:string;round:number;circuitName:string;createdAt:string;recommendations:Recommendation[];notes:string[]};
+type Report={id:string;roundId:string;round:number;circuitName:string;createdAt:string;kind?:"race"|"season-end";season?:number;recommendations:Recommendation[];notes:string[]};
 
 export default function DevelopmentReportsPage(){
  const {id}=useParams<{id:string}>();
@@ -26,7 +26,7 @@ export default function DevelopmentReportsPage(){
    <div><TrendingDown/><b>{reports.reduce((n,r)=>n+r.recommendations.filter(x=>x.direction==="decrease").length,0)}</b><small>Sugestões de redução</small></div>
   </section>
   {!loaded?<p>Carregando relatórios...</p>:reports.length===0?<section className="team-list"><div className="empty-state"><ClipboardList size={28}/><b>Nenhum relatório disponível</b><span>Assim que você salvar os resultados de uma corrida na aba Calendário, o relatório desta etapa aparecerá aqui.</span></div></section>:reports.map(report=><section className="team-list" key={report.id}>
-   <div className="list-heading"><div><span className="eyebrow">RELATÓRIO DE DESENVOLVIMENTO</span><h2>Etapa {report.round} — {report.circuitName}</h2></div><span>{new Date(report.createdAt).toLocaleDateString("pt-BR")}</span></div>
+   <div className="list-heading"><div><span className="eyebrow">RELATÓRIO DE DESENVOLVIMENTO</span><h2>{report.kind==="season-end"?"Encerramento da temporada "+(report.season||""):"Etapa "+report.round+" — "+report.circuitName}</h2></div><span>{new Date(report.createdAt).toLocaleDateString("pt-BR")}</span></div>
    <div className="development-groups">
     {(["driver","team"] as const).map(type=>{
      const items=report.recommendations.filter(item=>item.subjectType===type);
