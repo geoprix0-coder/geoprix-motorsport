@@ -19,24 +19,49 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
   try{const raw=localStorage.getItem("geoprix-teams-v1");const saved=raw?JSON.parse(raw) as Team[]:[team];const found=saved.find(t=>t.drivers.some(d=>d.id===driver.id));if(found)setCurrentTeam(found);const contracts=initializeDriverContracts(saved);setContract(contracts.find(item=>item.driverId===driver.id)||null)}catch{}
   const totals:Stats={...emptyStats};
   try{
-   for(let i=0;i<localStorage.length;i++){
-    const key=localStorage.key(i);
-    if(!key||!key.startsWith("geoprix-calendar-"))continue;
-    const raw=localStorage.getItem(key);
-    if(!raw)continue;
-    const rounds=JSON.parse(raw) as SavedRound[];
-    if(!Array.isArray(rounds))continue;
+   const keys=Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter((key):key is string=>!!key);
+   const archivedSeasons=new Set<string>();
+   for(const key of keys.filter(key=>key.startsWith("geoprix-calendar-history-"))){
+    const raw=localStorage.getItem(key);if(!raw)continue;
+    const archives=JSON.parse(raw) as {season:number;rounds:SavedRound[]}[];
+    if(!Array.isArray(archives))continue;
+    for(const archive of archives){
+     archivedSeasons.add(key.replace("geoprix-calendar-history-","")+":"+archive.season);
+     for(const round of archive.rounds||[]){
+      if(round.status!=="completed"||!Array.isArray(round.results))continue;
+      const result=round.results.find(item=>item.driverId===driver.id);
+      if(!result||result.status!=="finished"||result.position===null)continue;
+      totals.races++;totals.points+=Number(result.points||0);
+      totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
+      if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
+     }
+    }
+   }
+   for(const key of keys.filter(key=>key.startsWith("geoprix-calendar-")&&!key.startsWith("geoprix-calendar-history-"))){
+    const raw=localStorage.getItem(key);if(!raw)continue;
+    const rounds=JSON.parse(raw) as SavedRound[];if(!Array.isArray(rounds))continue;
     for(const round of rounds){
      if(round.status!=="completed"||!Array.isArray(round.results))continue;
      const result=round.results.find(item=>item.driverId===driver.id);
-     if(!result)continue;
-     if(result.status==="finished"&&result.position!==null){
-      totals.races++;
-      totals.points+=Number(result.points||0);
-      totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
-      if(result.position===1)totals.wins++;
-      if(result.position<=3)totals.podiums++;
-     }
+     if(!result||result.status!=="finished"||result.position===null)continue;
+     totals.races++;totals.points+=Number(result.points||0);
+     totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
+     if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
+    }
+   }
+   // Temporadas finalizadas antes do arquivamento: recupera pontos, vitórias e pódios
+   // da classificação histórica, sem inventar o número de largadas ou o melhor resultado.
+   for(const key of keys.filter(key=>key.startsWith("geoprix-season-history-"))){
+    const championshipId=key.replace("geoprix-season-history-","");
+    const raw=localStorage.getItem(key);if(!raw)continue;
+    const history=JSON.parse(raw) as {season:number;driverStandings:{id:string;points:number;wins:number;podiums:number}[]}[];
+    if(!Array.isArray(history))continue;
+    for(const season of history){
+     if(archivedSeasons.has(championshipId+":"+season.season))continue;
+     const standing=season.driverStandings?.find(item=>item.id===driver.id);if(!standing)continue;
+     totals.points+=Number(standing.points)||0;
+     totals.wins+=Number(standing.wins)||0;
+     totals.podiums+=Number(standing.podiums)||0;
     }
    }
   }catch{/* Mantém as estatísticas parciais caso algum registro local esteja inválido. */}
