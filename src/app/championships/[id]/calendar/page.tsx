@@ -143,12 +143,13 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    const savedReports=localStorage.getItem(reportKey);
    const seasonReports=savedReports?JSON.parse(savedReports) as DevelopmentReport[]:[];
    const finalReport=buildDevelopmentReport(championshipId,rounds,finalRound,true,seasonNumber);
-   const driverMap=new Map<string,{id:string;name:string;teamName:string;points:number;wins:number;podiums:number}>();
+   const driverMap=new Map<string,{id:string;name:string;teamName:string;points:number;wins:number;podiums:number;races:number;bestPosition:number|null}>();
    const teamMap=new Map<string,{id:string;name:string;points:number;wins:number}>();
    for(const race of rounds){
     for(const result of race.results){
-     const driver=driverMap.get(result.driverId)||{id:result.driverId,name:result.driverName,teamName:result.teamName,points:0,wins:0,podiums:0};
+     const driver=driverMap.get(result.driverId)||{id:result.driverId,name:result.driverName,teamName:result.teamName,points:0,wins:0,podiums:0,races:0,bestPosition:null};
      driver.points+=Number(result.points)||0;
+     if(result.status==="finished"&&result.position!==null){driver.races++;driver.bestPosition=driver.bestPosition===null?result.position:Math.min(driver.bestPosition,result.position);}
      if(result.status==="finished"&&result.position===1)driver.wins++;
      if(result.status==="finished"&&result.position!==null&&result.position<=3)driver.podiums++;
      driverMap.set(result.driverId,driver);
