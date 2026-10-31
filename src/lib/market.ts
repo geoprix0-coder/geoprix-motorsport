@@ -14,8 +14,8 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  const allDrivers=teams.flatMap(t=>t.drivers.map(d=>({driver:d,team:t})));
  for(const item of allDrivers){
   if(!contracts.some(c=>c.driverId===item.driver.id)){
-   const duration=1+(hash(item.driver.id)%3);
-   contracts.push({driverId:item.driver.id,teamId:item.team.id,startSeason:season,endSeason:season+duration-1,status:"active"});
+   const duration=hash(item.driver.id)%3;
+   contracts.push({driverId:item.driver.id,teamId:item.team.id,startSeason:season-1,endSeason:season+duration,status:"active"});
   }
  }
  const expiring=allDrivers.map(x=>({ ...x,contract:contracts.find(c=>c.driverId===x.driver.id)! }))
