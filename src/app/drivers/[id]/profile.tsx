@@ -68,7 +68,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
      if(round.status!=="completed"||!Array.isArray(round.results))continue;
      const result=round.results.find(item=>item.driverId===driver.id);
      if(!result||result.status!=="finished"||result.position===null)continue;
-     totals.races++;totals.points+=Number(result.points||0);
+     raceCount++;totals.points+=Number(result.points||0);
      totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
      if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
     }
