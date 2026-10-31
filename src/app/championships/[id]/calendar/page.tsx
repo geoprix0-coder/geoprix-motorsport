@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, Plus, Save, Trash2, Pencil, Flag, Trophy, ClipboardList } from "lucide-react";
 import type { Circuit, Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
+import { runAutomaticMarket } from "@/lib/market";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;qualifyingPosition:number|null;position:number|null;points:number};
 type Round={id:string;round:number;circuitId:string;circuitName:string;layout:string;status:"scheduled"|"completed";results:DriverResult[]};
@@ -160,13 +161,17 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    const history=savedHistory?JSON.parse(savedHistory) as any[]:[];
    history.push({season:seasonNumber,completedAt:new Date().toISOString(),driverStandings,teamStandings});
    localStorage.setItem(historyKey,JSON.stringify(history));
+   const storedTeams=localStorage.getItem("geoprix-teams-v1");
+   const marketTeams=storedTeams?JSON.parse(storedTeams) as Team[]:teams;
+   const marketResult=runAutomaticMarket(marketTeams,seasonNumber,driverStandings,teamStandings);
+   localStorage.setItem("geoprix-market-last-window",JSON.stringify({season:seasonNumber,events:marketResult.events,processedAt:new Date().toISOString()}));
    const nextSeason=seasonNumber+1;
    localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
    localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify([]));
    localStorage.setItem(reportKey,JSON.stringify([finalReport]));
    setRounds([]);setSeasonNumber(nextSeason);
    window.dispatchEvent(new Event("geoprix-season-updated"));
-   setNotice("Temporada "+(nextSeason-1)+" finalizada e arquivada. Temporada "+nextSeason+" iniciada; monte o novo calendário.");
+   setNotice("Temporada "+(nextSeason-1)+" finalizada. Mercado automático concluído: "+marketResult.events.length+" movimentação(ões). Temporada "+nextSeason+" iniciada; monte o novo calendário.");
   }catch{setNotice("Não foi possível finalizar a temporada. Os dados atuais foram mantidos; tente novamente.")}
  }
  return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">TEMPORADA {seasonNumber}</span><h1>Calendário</h1><p>Organize as etapas e registre os resultados de cada corrida.</p></div><div className="calendar-heading-actions"><button className="quiet-button" onClick={finishSeason} title="É necessário registrar todas as etapas antes de encerrar." disabled={rounds.length===0||rounds.some(r=>r.status!=="completed")}>Finalizar temporada</button><button className="action-button" onClick={openNew}><Plus size={16}/> Adicionar etapa</button></div></div>
