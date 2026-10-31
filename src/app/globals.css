@@ -139,3 +139,20 @@
 .driver-history-empty p{font-size:11px;line-height:1.6;color:var(--muted);margin:6px 0}
 @media(max-width:760px){.driver-profile-grid{grid-template-columns:1fr}.driver-hero{padding:18px;gap:15px}.driver-number{width:68px;height:68px;font-size:25px}.driver-identity h1{font-size:25px}}
 @media(max-width:520px){.driver-details{grid-template-columns:1fr 1fr}.driver-open{grid-column:1/-1}}
+
+
+.market-event-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:13px;align-items:center;padding:15px 0;border-top:1px solid var(--line)}
+.market-event-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:8px;background:#26321a;color:var(--accent)}
+.market-event-main>b,.market-event-main>small{display:block}
+.market-event-main>b{font:600 13px 'Space Grotesk'}
+.market-event-main>small{font-size:10px;color:var(--muted);margin-top:4px}
+.market-event-main>p{display:flex;align-items:center;gap:7px;font-size:11px;color:#dce4ed;margin:7px 0}
+.market-event-main>p svg{color:var(--accent)}
+.market-event-contract{display:grid;gap:4px;text-align:right}
+.market-event-contract>b{font:600 13px 'DM Mono';color:var(--accent)}
+.market-event-contract>small,.market-contract-row>span{font-size:10px;color:var(--muted)}
+.market-contract-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
+.market-contract-row>div>b,.market-contract-row>div>small{display:block}
+.market-contract-row>div>b{font-size:12px}
+.market-contract-row>div>small{font-size:10px;color:var(--muted);margin-top:4px}
+@media(max-width:600px){.market-event-row{grid-template-columns:34px minmax(0,1fr)}.market-event-contract{grid-column:2;text-align:left;display:flex;gap:7px;align-items:center}.market-contract-row{align-items:flex-start;flex-direction:column}}
