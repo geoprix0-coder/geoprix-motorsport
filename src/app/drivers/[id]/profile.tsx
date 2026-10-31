@@ -24,7 +24,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
   try {
    const career=getDriverCareerRecord(driver);
    setStats({races:career.races,wins:career.wins,podiums:career.podiums,points:career.points,best:career.bestPosition});
-   setSeasonHistory(career.seasons.map(item=>({
+   setSeasonHistory(career.seasons.filter(item=>item.position!==null).map(item=>({
     championshipId:item.championshipId,
     championshipName:initialChampionships.find(championship=>championship.id===item.championshipId)?.name||"Campeonato",
     season:item.season,position:item.position??0,teamName:item.teamName,
