@@ -31,7 +31,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
     if(!Array.isArray(seasons))continue;
     const championship=initialChampionships.find(item=>item.id===championshipId);
     for(const season of seasons){
-     const standing=season.driverStandings?.find(item=>item.id===driver.id);
+     const standing=season.driverStandings?.find(item=>item.id===driver.id||String(item.name||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim()===driver.name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim());
      if(!standing)continue;
      savedHistory.push({championshipId,championshipName:championship?.name||"Campeonato",season:season.season,position:standing.position,teamName:standing.teamName,points:standing.points,wins:standing.wins,podiums:standing.podiums});
     }
@@ -53,7 +53,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
      archivedSeasons.add(key.replace("geoprix-calendar-history-","")+":"+archive.season);
      for(const round of archive.rounds||[]){
       if(round.status!=="completed"||!Array.isArray(round.results))continue;
-      const result=round.results.find(item=>item.driverId===driver.id);
+      const result=round.results.find(item=>item.driverId===driver.id||String(item.driverName||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim()===driver.name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim());
       if(!result||result.status!=="finished"||result.position===null)continue;
       raceCount++;totals.points+=Number(result.points||0);
       totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
@@ -82,7 +82,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
     if(!Array.isArray(history))continue;
     for(const season of history){
      if(archivedSeasons.has(championshipId+":"+season.season))continue;
-     const standing=season.driverStandings?.find(item=>item.id===driver.id);if(!standing)continue;
+     const standing=season.driverStandings?.find(item=>item.id===driver.id||String(item.name||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim()===driver.name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim());if(!standing)continue;
      totals.points+=Number(standing.points)||0;
      totals.wins+=Number(standing.wins)||0;
      totals.podiums+=Number(standing.podiums)||0;
