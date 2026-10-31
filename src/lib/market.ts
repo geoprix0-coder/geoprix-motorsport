@@ -3,13 +3,13 @@ import type { Team } from "./types";
 export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"};
 const initialContractYears:Record<string,{year:number;label:string}>={
  "lando norris":{year:2030,label:"2030"},"oscar piastri":{year:2028,label:"2028"},
- "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026*"},
+ "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026"},
  "max verstappen":{year:2030,label:"2030"},"isack hadjar":{year:2027,label:"2027"},
  "charles leclerc":{year:2030,label:"2030+"},"lewis hamilton":{year:2027,label:"2027"},
  "alexander albon":{year:2027,label:"2027"},"carlos sainz":{year:2028,label:"2028"},
  "liam lawson":{year:2026,label:"2026"},"arvid lindblad":{year:2026,label:"2026"},
  "fernando alonso":{year:2027,label:"2027"},"lance stroll":{year:2027,label:"2027"},
- "esteban ocon":{year:2026,label:"2026"},"oliver bearman":{year:2026,label:"2026*"},
+ "esteban ocon":{year:2026,label:"2026"},"oliver bearman":{year:2026,label:"2026"},
  "nico hülkenberg":{year:2027,label:"2027"},"gabriel bortoleto":{year:2027,label:"2027"},
  "pierre gasly":{year:2028,label:"2028"},"franco colapinto":{year:2027,label:"2027"},
  "valtteri bottas":{year:2027,label:"2027"},"sergio pérez":{year:2029,label:"2029"}
