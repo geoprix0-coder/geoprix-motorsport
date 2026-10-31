@@ -11,6 +11,8 @@ type SavedRound={status:string;results:SavedResult[]};
 type Stats={races:number|null;wins:number;podiums:number;points:number;best:number|null};
 type SeasonHistoryItem={championshipId:string;championshipName:string;season:number;position:number;teamName:string;points:number;wins:number;podiums:number};
 const emptyStats:Stats={races:0,wins:0,podiums:0,points:0,best:null};
+const normalizeDriverName=(value:string)=>String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase().replace(/[^a-z0-9]/g,"");
+const matchesDriver=(result:{driverId?:string;driverName?:string},driver:Driver)=>String(result.driverId||"")===String(driver.id)||normalizeDriverName(result.driverName||"")===normalizeDriverName(driver.name);
 
 export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  const [stats,setStats]=useState<Stats>(emptyStats);
@@ -53,8 +55,8 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
      archivedSeasons.add(key.replace("geoprix-calendar-history-","")+":"+archive.season);
      for(const round of archive.rounds||[]){
       if(round.status!=="completed"||!Array.isArray(round.results))continue;
-      const result=round.results.find(item=>item.driverId===driver.id||String(item.driverName||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim()===driver.name.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim());
-      if(!result||result.status!=="finished"||result.position===null)continue;
+      const result=round.results.find(item=>matchesDriver(item,driver));
+      if(!result||!["finished","Finalizou","finalizou"].includes(String(result.status))||typeof result.position!=="number"||!Number.isFinite(result.position)||result.position<1)continue;
       raceCount++;totals.points+=Number(result.points||0);
       totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
       if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
@@ -66,8 +68,8 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
     const rounds=JSON.parse(raw) as SavedRound[];if(!Array.isArray(rounds))continue;
     for(const round of rounds){
      if(round.status!=="completed"||!Array.isArray(round.results))continue;
-     const result=round.results.find(item=>item.driverId===driver.id);
-     if(!result||result.status!=="finished"||result.position===null)continue;
+     const result=round.results.find(item=>matchesDriver(item,driver));
+     if(!result||!["finished","Finalizou","finalizou"].includes(String(result.status))||typeof result.position!=="number"||!Number.isFinite(result.position)||result.position<1)continue;
      raceCount++;totals.points+=Number(result.points||0);
      totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
      if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
