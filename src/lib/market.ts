@@ -1,13 +1,43 @@
 import type { Team } from "./types";
 
-export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;status:"active"|"expired"};
+export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"};
+const initialContractYears:Record<string,{year:number;label:string}>={
+ "lando norris":{year:2030,label:"2030"},"oscar piastri":{year:2028,label:"2028"},
+ "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026*"},
+ "max verstappen":{year:2030,label:"2030"},"isack hadjar":{year:2027,label:"2027"},
+ "charles leclerc":{year:2030,label:"2030+"},"lewis hamilton":{year:2027,label:"2027"},
+ "alexander albon":{year:2027,label:"2027"},"carlos sainz":{year:2028,label:"2028"},
+ "liam lawson":{year:2026,label:"2026"},"arvid lindblad":{year:2026,label:"2026"},
+ "fernando alonso":{year:2027,label:"2027"},"lance stroll":{year:2027,label:"2027"},
+ "esteban ocon":{year:2026,label:"2026"},"oliver bearman":{year:2026,label:"2026*"},
+ "nico hülkenberg":{year:2027,label:"2027"},"gabriel bortoleto":{year:2027,label:"2027"},
+ "pierre gasly":{year:2028,label:"2028"},"franco colapinto":{year:2027,label:"2027"},
+ "valtteri bottas":{year:2027,label:"2027"},"sergio pérez":{year:2029,label:"2029"}
+};
+export function initializeDriverContracts(teams:Team[],season=2026){
+ const key="geoprix-driver-contracts-v1";
+ const stored:MarketContract[]=JSON.parse(localStorage.getItem(key)||"[]");
+ const byId=new Map(stored.map(c=>[c.driverId,c]));
+ for(const team of teams)for(const driver of team.drivers){
+  if(byId.has(driver.id))continue;
+  const initial=initialContractYears[driver.name.trim().toLocaleLowerCase("pt-BR")];
+  const contract:MarketContract=initial
+   ?{driverId:driver.id,teamId:team.id,startSeason:season,endSeason:initial.year,endLabel:initial.label,status:"active"}
+   :{driverId:driver.id,teamId:team.id,startSeason:season,endSeason:season+1,status:"active"};
+  stored.push(contract);byId.set(driver.id,contract);
+ }
+ localStorage.setItem(key,JSON.stringify(stored));
+ return stored;
+}
+export function getContractEndLabel(contract:MarketContract){return contract.endLabel||String(contract.endSeason);}
+
 export type MarketEvent={id:string;season:number;type:"transfer"|"renewal";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string};
 type Standing={id:string;name:string;position:number;points:number};
 function hash(value:string){let h=0;for(let i=0;i<value.length;i++)h=(h*31+value.charCodeAt(i))>>>0;return h;}
 export function runAutomaticMarket(teams:Team[],season:number,driverStandings:Standing[],teamStandings:Standing[]){
  const contractKey="geoprix-driver-contracts-v1",eventKey="geoprix-market-history-v1",processedKey="geoprix-market-processed-"+season;
  if(localStorage.getItem(processedKey))return {teams,events:[] as MarketEvent[],alreadyProcessed:true};
- const contracts:MarketContract[]=JSON.parse(localStorage.getItem(contractKey)||"[]");
+ const contracts:MarketContract[]=initializeDriverContracts(teams,season);
  const events:MarketEvent[]=JSON.parse(localStorage.getItem(eventKey)||"[]");
  const driverRank=new Map(driverStandings.map(x=>[x.id,x.position]));
  const teamRank=new Map(teamStandings.map(x=>[x.id,x.position]));
@@ -46,14 +76,14 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
   for(const x of [pair.a,pair.b]){
    const target=x===pair.a?bTeam:aTeam;
    const contract=contracts.find(c=>c.driverId===x.driver.id)!;
-   contract.teamId=target.id;contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.status="active";
+   contract.teamId=target.id;contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
    events.push({id:crypto.randomUUID(),season,type:"transfer",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:target.id,toTeamName:target.name,contractEnd:contract.endSeason,reason:"Transferência automática: desempenho individual e posição competitiva das equipes favoreceram a mudança.",createdAt:new Date().toISOString()});
   }
  }
  // Drivers whose contracts expire without a transfer receive an automatic renewal.
  for(const x of candidates.filter(x=>!used.has(x.driver.id))){
   const contract=contracts.find(c=>c.driverId===x.driver.id)!;
-  contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.status="active";
+  contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
   events.push({id:crypto.randomUUID(),season,type:"renewal",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:x.team.id,toTeamName:x.team.name,contractEnd:contract.endSeason,reason:"Renovação automática: não surgiu uma oportunidade esportiva claramente superior nesta janela.",createdAt:new Date().toISOString()});
  }
  localStorage.setItem(contractKey,JSON.stringify(contracts));
