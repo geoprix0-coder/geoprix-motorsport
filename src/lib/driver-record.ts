@@ -38,7 +38,7 @@ function belongsToDriver(item: { id?: string; name?: string }, driver: Driver) {
   return Boolean(item.name && normalize(item.name) === normalize(driver.name));
 }
 
-function isFinisher(result: RaceResult) {
+function isFinisher(result: RaceResult): result is RaceResult & { position: number } {
   return String(result.status ?? "").toLowerCase() === "finished"
     && typeof result.position === "number"
     && Number.isFinite(result.position)
