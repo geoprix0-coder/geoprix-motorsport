@@ -160,6 +160,13 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    }
    const driverStandings=[...driverMap.values()].sort((a,b)=>b.points-a.points||b.wins-a.wins||b.podiums-a.podiums).map((item,index)=>({...item,position:index+1}));
    const teamStandings=[...teamMap.values()].sort((a,b)=>b.points-a.points||b.wins-a.wins).map((item,index)=>({...item,position:index+1}));
+   const archiveKey="geoprix-calendar-history-"+championshipId;
+   const savedArchives=localStorage.getItem(archiveKey);
+   const archives=savedArchives?JSON.parse(savedArchives) as {season:number;rounds:Round[]}[]:[];
+   if(!archives.some(item=>item.season===seasonNumber)){
+    archives.push({season:seasonNumber,rounds});
+    localStorage.setItem(archiveKey,JSON.stringify(archives));
+   }
    const historyKey="geoprix-season-history-"+championshipId;
    const savedHistory=localStorage.getItem(historyKey);
    const history=savedHistory?JSON.parse(savedHistory) as any[]:[];
