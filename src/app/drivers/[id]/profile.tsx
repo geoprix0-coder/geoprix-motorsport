@@ -8,7 +8,6 @@ type SavedResult={driverId:string;driverName:string;teamId:string;teamName:strin
 type SavedRound={status:string;results:SavedResult[]};
 type Stats={races:number;wins:number;podiums:number;points:number;best:number|null};
 const emptyStats:Stats={races:0,wins:0,podiums:0,points:0,best:null};
-const basePath=process.env.NODE_ENV==="production"?"/geoprix-motorsport":"";
 
 export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  const [stats,setStats]=useState<Stats>(emptyStats);
@@ -39,7 +38,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
   }catch{/* Mantém as estatísticas parciais caso algum registro local esteja inválido. */}
   setStats(totals);setLoaded(true);
  },[driver.id]);
- return <main className="manager-shell"><header className="manager-top"><Link className="back-link" href={basePath+"/drivers/"}><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">PERFIL DO ATLETA</span></header><div className="manager-content">
+ return <main className="manager-shell"><header className="manager-top"><Link className="back-link" href="/drivers/"><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">PERFIL DO ATLETA</span></header><div className="manager-content">
   <section className="driver-hero"><div className="driver-number">#{driver.number}</div><div className="driver-identity"><span className="eyebrow">FICHA DO PILOTO · TEMPORADA 2026</span><h1>{driver.name}</h1><p><Flag size={14}/>{driver.nationality}<span className="driver-dot">·</span><Shield size={14}/>{team.name}</p></div></section>
   <div className="driver-profile-grid">
    <section className="team-list driver-info-card"><div className="list-heading"><h2><UserRound size={17}/> Informações pessoais</h2></div><dl className="driver-details"><div><dt>Nome completo</dt><dd>{driver.name}</dd></div><div><dt>Número</dt><dd>#{driver.number}</dd></div><div><dt>Nacionalidade</dt><dd>{driver.nationality}</dd></div><div><dt>Equipe atual</dt><dd>{team.name}</dd></div><div><dt>Base da equipe</dt><dd>{team.base}</dd></div><div><dt>Categoria</dt><dd>FORMULA 1</dd></div></dl></section>
