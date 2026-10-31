@@ -40,6 +40,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
   }catch{/* Mantém o histórico disponível caso algum campeonato tenha dados inválidos. */}
   setSeasonHistory(savedHistory);
   const totals:Stats={...emptyStats};
+  let raceCount=0;
   let racesRecoverable=true;
   try{
    const keys=Array.from({length:localStorage.length},(_,i)=>localStorage.key(i)).filter((key):key is string=>!!key);
@@ -54,7 +55,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
       if(round.status!=="completed"||!Array.isArray(round.results))continue;
       const result=round.results.find(item=>item.driverId===driver.id);
       if(!result||result.status!=="finished"||result.position===null)continue;
-      totals.races++;totals.points+=Number(result.points||0);
+      raceCount++;totals.points+=Number(result.points||0);
       totals.best=totals.best===null?result.position:Math.min(totals.best,result.position);
       if(result.position===1)totals.wins++;if(result.position<=3)totals.podiums++;
      }
@@ -85,13 +86,13 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
      totals.points+=Number(standing.points)||0;
      totals.wins+=Number(standing.wins)||0;
      totals.podiums+=Number(standing.podiums)||0;
-     if(typeof standing.races==="number")totals.races+=standing.races;else racesRecoverable=false;
+     if(typeof standing.races==="number")raceCount+=standing.races;else racesRecoverable=false;
      if(typeof standing.bestPosition==="number")totals.best=totals.best===null?standing.bestPosition:Math.min(totals.best,standing.bestPosition);
      else if(Number(standing.wins)>0)totals.best=totals.best===null?1:Math.min(totals.best,1);
     }
    }
   }catch{/* Mantém as estatísticas parciais caso algum registro local esteja inválido. */}
-  if(!racesRecoverable)totals.races=null;
+  totals.races=racesRecoverable?raceCount:null;
   setStats(totals);setLoaded(true);
  },[driver.id]);
  return <main className="manager-shell"><header className="manager-top"><Link className="back-link" href="/drivers/"><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">PERFIL DO ATLETA</span></header><div className="manager-content">
