@@ -5,7 +5,7 @@ import {ArrowLeft,ArrowRightLeft,CalendarClock,Handshake,Users} from "lucide-rea
 import {initialTeams,initialChampionships} from "@/lib/seed";
 import type {Team} from "@/lib/types";
 import {initializeDriverContracts,getContractEndLabel} from "@/lib/market";
-type Contract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:string};
+type Contract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"};
 type Event={id:string;season:number;type:"transfer"|"renewal";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string};
 export default function MarketPage(){
  const [teams,setTeams]=useState<Team[]>(initialTeams),[contracts,setContracts]=useState<Contract[]>([]),[events,setEvents]=useState<Event[]>([]),[season,setSeason]=useState(2026),[ready,setReady]=useState(false);
