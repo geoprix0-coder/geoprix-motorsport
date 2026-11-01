@@ -31,8 +31,8 @@ export type DriverCareerRecord = {
 };
 
 type StoredResult = {
-  driverId?: string; driverName?: string; status?: string;
-  position?: number | null; points?: number; teamName?: string;
+  driverId?: string; id?: string; driverName?: string; name?: string; pilotName?: string;
+  status?: string; position?: number | null; points?: number; teamName?: string;
 };
 type StoredRound = {
   round?: number; circuitName?: string; status?: string; results?: StoredResult[]; raceResults?: StoredResult[];
@@ -49,12 +49,18 @@ const normalize = (value: unknown) => String(value ?? "")
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .toLowerCase().replace(/[^a-z0-9]/g, "");
 
-function isSameDriver(result: { driverId?: string; driverName?: string }, driver: Driver) {
-  if (result.driverId && String(result.driverId) === String(driver.id)) return true;
-  return Boolean(result.driverName && normalize(result.driverName) === normalize(driver.name));
+function isSameDriver(result: { driverId?: string; id?: string; driverName?: string; name?: string; pilotName?: string }, driver: Driver) {
+  const ids = [result.driverId, result.id].filter(Boolean).map(String);
+  if (ids.includes(String(driver.id))) return true;
+  const names = [result.driverName, result.name, result.pilotName].filter(Boolean);
+  return names.some(name => normalize(name) === normalize(driver.name));
 }
-function isFinished(status: unknown) {
-  return ["finished", "finalizou"].includes(String(status ?? "").toLowerCase());
+function isFinished(result: StoredResult) {
+  const status = normalize(result.status);
+  if (["retired", "dnf", "abandoned", "abandonou", "disqualified", "dsq", "dns", "didnotstart", "naolargou"].includes(status)) return false;
+  // A numeric finishing position is the strongest available evidence of a classified finish.
+  if (typeof result.position === "number" && Number.isFinite(result.position) && result.position > 0) return true;
+  return ["finished", "finalizou", "finalizado", "concluiu", "classified"].includes(status);
 }
 function readArray<T>(key: string): T[] {
   try {
@@ -75,7 +81,7 @@ function calculate(rounds: StoredRound[], driver: Driver) {
       round: Number(round.round) || raceResults.length + 1,
       circuitName: round.circuitName || "Circuito não identificado",
       status: String(result.status || "unknown"),
-      position: isFinished(result.status) && typeof result.position === "number" ? result.position : null,
+      position: isFinished(result) && typeof result.position === "number" ? result.position : null,
       points: Number(result.points) || 0,
       teamName: result.teamName || ""
     });
