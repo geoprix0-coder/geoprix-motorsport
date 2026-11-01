@@ -35,7 +35,7 @@ type StoredResult = {
   position?: number | null; points?: number; teamName?: string;
 };
 type StoredRound = {
-  round?: number; circuitName?: string; status?: string; results?: StoredResult[];
+  round?: number; circuitName?: string; status?: string; results?: StoredResult[]; raceResults?: StoredResult[];
 };
 type StoredArchive = { season: number; rounds?: StoredRound[] };
 type StoredStanding = {
@@ -65,8 +65,11 @@ function readArray<T>(key: string): T[] {
 function calculate(rounds: StoredRound[], driver: Driver) {
   const raceResults: DriverRaceRecord[] = [];
   for (const round of rounds) {
-    if (String(round.status ?? "").toLowerCase() !== "completed") continue;
-    const result = (round.results ?? []).find(item => isSameDriver(item, driver));
+    // Arquivos de temporadas antigas podem não ter o status da etapa padronizado.
+    // O arquivo de histórico só recebe etapas encerradas; aceitamos os formatos existentes.
+    const storedResults = Array.isArray(round.results) ? round.results :
+      Array.isArray(round.raceResults) ? round.raceResults : [];
+    const result = storedResults.find(item => isSameDriver(item, driver));
     if (!result) continue;
     raceResults.push({
       round: Number(round.round) || raceResults.length + 1,
@@ -124,9 +127,11 @@ export function getDriverCareerRecord(driver: Driver): DriverCareerRecord {
         points: calculated.raceResults.length ? calculated.points : Number(standing?.points) || 0,
         wins: calculated.raceResults.length ? calculated.wins : Number(standing?.wins) || 0,
         podiums: calculated.raceResults.length ? calculated.podiums : Number(standing?.podiums) || 0,
-        races: calculated.raceResults.length ? calculated.races : Number(standing?.races) || 0,
+        races: calculated.raceResults.length ? calculated.races :
+          Math.max(Number(standing?.races) || 0, Number(standing?.wins) || 0, Number(standing?.podiums) || 0),
         bestPosition: calculated.raceResults.length ? calculated.bestPosition :
-          (typeof standing?.bestPosition === "number" ? standing.bestPosition : (Number(standing?.wins) > 0 ? 1 : null)),
+          (typeof standing?.bestPosition === "number" ? standing.bestPosition :
+            Number(standing?.wins) > 0 ? 1 : Number(standing?.podiums) > 0 ? 3 : null),
         raceResults: calculated.raceResults
       });
       completedYears.add(year);
@@ -145,8 +150,10 @@ export function getDriverCareerRecord(driver: Driver): DriverCareerRecord {
         position: typeof standing.position === "number" ? standing.position : null,
         teamName: standing.teamName || "",
         points: Number(standing.points) || 0, wins: Number(standing.wins) || 0,
-        podiums: Number(standing.podiums) || 0, races: Number(standing.races) || 0,
-        bestPosition: typeof standing.bestPosition === "number" ? standing.bestPosition : (Number(standing.wins) > 0 ? 1 : null),
+        podiums: Number(standing.podiums) || 0,
+        races: Math.max(Number(standing.races) || 0, Number(standing.wins) || 0, Number(standing.podiums) || 0),
+        bestPosition: typeof standing.bestPosition === "number" ? standing.bestPosition :
+          Number(standing.wins) > 0 ? 1 : Number(standing.podiums) > 0 ? 3 : null,
         raceResults: []
       });
       completedYears.add(year);
