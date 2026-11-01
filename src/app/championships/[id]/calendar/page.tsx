@@ -5,7 +5,6 @@ import type { Circuit, Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
 import { runAutomaticMarket } from "@/lib/market";
 import { advanceSeasonDevelopment, ensureDevelopmentData } from "@/lib/season-development";
-import { advanceSeasonDevelopment, ensureDevelopmentData } from "@/lib/season-development";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;qualifyingPosition:number|null;position:number|null;points:number};
 type Round={id:string;round:number;circuitId:string;circuitName:string;layout:string;status:"scheduled"|"completed";results:DriverResult[]};
