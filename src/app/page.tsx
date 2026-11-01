@@ -1,6 +1,7 @@
 import { Activity, Flag, Gauge, LayoutDashboard, Settings2, Shield, Trophy, Users, Zap, ArrowUpRight, CircleDot } from "lucide-react";
 import { initialChampionships, initialTeams } from "@/lib/seed";
 import ResetUniverseButton from "./reset-universe-button";
+import GlobalSeasonFinalizer from "./global-season-finalizer";
 const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" : "";
 const nav = [{label:"Visão geral",icon:LayoutDashboard,href:"/"},{label:"Campeonatos",icon:Trophy,href:"/championships/"},{label:"Pilotos",icon:Users,href:"/drivers/"},{label:"Circuitos",icon:Flag,href:"/circuits/"}];
 function Metric({label,value,detail,icon:Icon}:{label:string;value:string;detail:string;icon:typeof Users}) { return <article className="metric"><div className="metric-top">{label}<Icon size={17}/></div><strong>{value}</strong><small>{detail}</small></article>; }
