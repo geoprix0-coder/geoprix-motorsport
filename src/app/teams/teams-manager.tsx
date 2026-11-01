@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import {ArrowLeft,Plus,Save,Shield,Trash2,Users} from "lucide-react";
 import { initialChampionships } from "@/lib/seed";
-import { initialTeamsForChampionship, teamStorageKey } from "@/lib/championship-data";
+import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "@/lib/championship-data";
 import { applyInitialAttributeBaseline, ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
 import type { TeamDevelopment } from "@/lib/season-development";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
@@ -19,7 +19,7 @@ const initialTeams=initialTeamsForChampionship(championshipId);
 const storageKey=teamStorageKey(championshipId);
 const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(championship?.season||2026);
 useEffect(()=>{if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championshipId);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[championshipId]);
-useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;let loaded=ensureDevelopmentData(Array.isArray(saved)&&saved.length>0?saved:initialTeams,season);if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}setTeams(loaded)}catch{setTeams(initialTeams)}setReady(true)},[championshipId]);
+useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;const reconciled=mergeInitialTeams(championshipId,Array.isArray(saved)?saved:[]);let loaded=ensureDevelopmentData(reconciled,season);if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}setTeams(loaded)}catch{setTeams(initialTeamsForChampionship(championshipId))}setReady(true)},[championshipId]);
 useEffect(()=>{if(ready)localStorage.setItem(storageKey,JSON.stringify(teams))},[teams,ready,storageKey]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
