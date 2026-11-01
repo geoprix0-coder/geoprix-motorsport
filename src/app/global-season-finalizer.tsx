@@ -5,6 +5,7 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {finalizeChampionshipSeason,readChampionshipCalendar} from "@/lib/season-finalization";
 import {processAutomaticRetirements} from "@/lib/retirement";
+import {ensureFreeAgentPool} from "@/lib/free-agents";
 import {runAutomaticMarket,type MarketEvent} from "@/lib/market";
 import type {Championship,Team} from "@/lib/types";
 
@@ -66,6 +67,7 @@ export default function GlobalSeasonFinalizer(){
     allEvents.push(...marketResult.events);
     localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
    }
+   ensureFreeAgentPool(10);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({seasons:results.map(result=>({championshipId:result.championshipId,season:result.season})),events:allEvents,processedAt:new Date().toISOString()}));
    window.dispatchEvent(new Event("geoprix-season-updated"));
    window.dispatchEvent(new Event("geoprix-rosters-updated"));
