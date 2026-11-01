@@ -123,7 +123,17 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
 }
 
 export function getRetiredDrivers(): RetiredDriver[] {
-  return readArray<RetiredDriver>(RETIRED_DRIVERS_KEY);
+  // Merge the permanent archive with legacy notifications so retirements saved by
+  // earlier versions remain visible after the archive section was introduced.
+  const archived = readArray<RetiredDriver>(RETIRED_DRIVERS_KEY);
+  const notices = readArray<RetiredDriver>(RETIREMENT_NOTICES_KEY);
+  const byDriverAndSeason = new Map<string, RetiredDriver>();
+  for (const item of [...notices, ...archived]) {
+    if (item && typeof item.driverId === "string") {
+      byDriverAndSeason.set(`${item.driverId}-${item.retirementSeason}`, item);
+    }
+  }
+  return [...byDriverAndSeason.values()].sort((a, b) => a.retirementSeason - b.retirementSeason);
 }
 
 export function getRetirementNotices(): RetiredDriver[] {
