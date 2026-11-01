@@ -5,7 +5,7 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {finalizeChampionshipSeason,readChampionshipCalendar} from "@/lib/season-finalization";
 import {processAutomaticRetirements} from "@/lib/retirement";
-import {ensureFreeAgentPool} from "@/lib/free-agents";
+import {automaticallyFillF2Vacancies,ensureFreeAgentPool} from "@/lib/free-agents";
 import {runAutomaticMarket,type MarketEvent} from "@/lib/market";
 import type {Championship,Team} from "@/lib/types";
 
@@ -65,6 +65,10 @@ export default function GlobalSeasonFinalizer(){
     const marketResult=runAutomaticMarket(currentTeams,result.season,result.driverStandings,result.teamStandings,result.championshipId);
     localStorage.setItem(teamStorageKey(result.championshipId),JSON.stringify(marketResult.teams));
     allEvents.push(...marketResult.events);
+    if(result.championshipId==="formula-2-2026"){
+     const recruitment=automaticallyFillF2Vacancies(result.season,result.teamStandings);
+     allEvents.push(...recruitment.signings);
+    }
     localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
    }
    ensureFreeAgentPool(10);
