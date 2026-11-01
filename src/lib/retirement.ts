@@ -31,15 +31,11 @@ function hash(value: string) {
   return result;
 }
 
-function contractKey(championshipId: string) {
-  return championshipId === "formula-1-2026"
-    ? "geoprix-driver-contracts-v1"
-    : `geoprix-driver-contracts-${championshipId}-v1`;
-}
-
-// Called once at the end of a championship season. Age is advanced from the
-// championship's registered starting season; results and season archives remain untouched.
+// A temporada de 2026 é a Temporada 1; aposentadorias só são avaliadas a partir de 2028.
 export function processAutomaticRetirements(season: number): RetiredDriver[] {
+  const seasonNumber = season - 2025;
+  if (seasonNumber < 3) return [];
+
   const processedKey = `geoprix-retirement-processed-${season}`;
   if (localStorage.getItem(processedKey)) return [];
 
@@ -111,7 +107,6 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
       }
     }
 
-    // The archive is global and permanent; race and championship histories are not deleted.
     localStorage.setItem(RETIRED_DRIVERS_KEY, JSON.stringify([...retired, ...newlyRetired]));
     const notices = readArray<RetiredDriver>(RETIREMENT_NOTICES_KEY);
     localStorage.setItem(RETIREMENT_NOTICES_KEY, JSON.stringify([...notices, ...newlyRetired]));
@@ -122,9 +117,13 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
   return newlyRetired;
 }
 
+function contractKey(championshipId: string) {
+  return championshipId === "formula-1-2026"
+    ? "geoprix-driver-contracts-v1"
+    : `geoprix-driver-contracts-${championshipId}-v1`;
+}
+
 export function getRetiredDrivers(): RetiredDriver[] {
-  // Merge the permanent archive with legacy notifications so retirements saved by
-  // earlier versions remain visible after the archive section was introduced.
   const archived = readArray<RetiredDriver>(RETIRED_DRIVERS_KEY);
   const notices = readArray<RetiredDriver>(RETIREMENT_NOTICES_KEY);
   const byDriverAndSeason = new Map<string, RetiredDriver>();
