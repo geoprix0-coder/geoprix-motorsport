@@ -1,8 +1,10 @@
 "use client";
 import {useEffect,useState} from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {ArrowLeft,Plus,Save,Shield,Trash2,Users} from "lucide-react";
-import { initialTeams, initialChampionships } from "@/lib/seed";
+import { initialChampionships } from "@/lib/seed";
+import { initialTeamsForChampionship, teamStorageKey } from "@/lib/championship-data";
 import { applyInitialAttributeBaseline, ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
 import type { TeamDevelopment } from "@/lib/season-development";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
@@ -10,16 +12,21 @@ type Team={id:string;name:string;country:string;base:string;drivers:Driver[];dev
 const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:"",age:25,attributes:{racePace:80,qualifying:80,overtaking:80,defending:80,consistency:80}});
 const newTeam=():Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:[newDriver(1),newDriver(2)],development:{developmentCapacity:80,investment:80,technicalEfficiency:80,technicalStability:80},carAttributes:{power:80,downforce:80}});
 export default function TeamsManager(){
-const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(initialChampionships[0]?.season||2026);
-useEffect(()=>{const championship=initialChampionships[0];if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championship.id);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[]);
-useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");const saved=raw?JSON.parse(raw):initialTeams;let loaded=ensureDevelopmentData(Array.isArray(saved)&&saved.length>0?saved:initialTeams,season);if(!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}setTeams(loaded)}catch{setTeams(applyInitialAttributeBaseline(initialTeams))}setReady(true)},[]);
-useEffect(()=>{if(ready)localStorage.setItem("geoprix-teams-v1",JSON.stringify(teams))},[teams,ready]);
+const params=useParams<{id:string}>();
+const championshipId=String(params?.id||"formula-1-2026");
+const championship=initialChampionships.find(item=>item.id===championshipId);
+const initialTeams=initialTeamsForChampionship(championshipId);
+const storageKey=teamStorageKey(championshipId);
+const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(championship?.season||2026);
+useEffect(()=>{if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championshipId);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[championshipId]);
+useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;let loaded=ensureDevelopmentData(Array.isArray(saved)&&saved.length>0?saved:initialTeams,season);if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}setTeams(loaded)}catch{setTeams(initialTeams)}setReady(true)},[championshipId]);
+useEffect(()=>{if(ready)localStorage.setItem(storageKey,JSON.stringify(teams))},[teams,ready,storageKey]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
 function addDriver(){if(edit)setEdit({...edit,drivers:[...edit.drivers,newDriver(edit.drivers.length?Math.max(...edit.drivers.map(d=>d.number))+1:1)]})}
 function removeDriver(id:string){if(edit)setEdit({...edit,drivers:edit.drivers.filter(d=>d.id!==id)})}
 function save(){if(!edit)return;if(!edit.name.trim()){setNotice("Informe o nome da equipe.");return}if(teams.some(t=>t.id!==edit.id&&t.name.toLowerCase()===edit.name.trim().toLowerCase())){setNotice("Já existe uma equipe com esse nome.");return}setTeams(old=>old.some(t=>t.id===edit.id)?old.map(t=>t.id===edit.id?edit: t):[...old,edit]);setEdit(null);setNotice("Equipe salva neste navegador.")}
-return <main className="manager-shell"><header className="manager-top"><Link href="/" className="back-link"><ArrowLeft size={16}/> Visão geral</Link><span className="eyebrow">FORMULA 1 / TEMPORADA {season}</span></header><div className="manager-content">
+return <main className="manager-shell"><header className="manager-top"><Link href="/" className="back-link"><ArrowLeft size={16}/> Visão geral</Link><span className="eyebrow">{championship?.name||"CAMPEONATO"} / TEMPORADA {season}</span></header><div className="manager-content">
 <div className="manager-heading"><div><span className="eyebrow">GESTÃO ESPORTIVA</span><h1>Equipes e pilotos</h1><p>Gerencie livremente as equipes e os pilotos deste campeonato.</p></div><button className="action-button" onClick={()=>{setNotice("");setEdit(newTeam())}}><Plus size={16}/> Adicionar equipe</button></div>
 <section className="manager-stats"><div><Shield/><b>{teams.length}</b><small>Equipes cadastradas</small></div><div><Users/><b>{count}</b><small>Pilotos identificados</small></div></section>{notice&&<p className="notice">{notice}</p>}
 {edit&&<section className="editor-card"><div className="editor-heading"><div><span className="eyebrow">CADASTRO DE EQUIPE</span><h2>{edit.name||"Nova equipe"}</h2></div><button className="quiet-button" onClick={()=>setEdit(null)}>Cancelar</button></div>
