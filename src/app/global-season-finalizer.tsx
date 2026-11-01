@@ -5,6 +5,7 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {finalizeChampionshipSeason,readChampionshipCalendar} from "@/lib/season-finalization";
 import {processAutomaticRetirements} from "@/lib/retirement";
+import {runAutomaticMarket,type MarketEvent} from "@/lib/market";
 import type {Championship,Team} from "@/lib/types";
 
 type Status={id:string;name:string;season:number;rounds:number;completed:number;ready:boolean};
@@ -56,8 +57,15 @@ export default function GlobalSeasonFinalizer(){
    const results=current.map(item=>finalizeChampionshipSeason(item.championship.id,item.season,item.rounds,readTeams(item.championship.id)));
    const retirementSeasons=[...new Set(current.map(item=>item.season))];
    const retirements=retirementSeasons.flatMap(season=>processAutomaticRetirements(season));
-   for(const result of results)localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
-   const allEvents=results.flatMap(result=>result.events);
+   const allEvents:MarketEvent[]=[];
+   for(const result of results){
+    let currentTeams:Team[]=[];
+    try{const parsed=JSON.parse(localStorage.getItem(teamStorageKey(result.championshipId))||"[]");currentTeams=Array.isArray(parsed)?parsed:[];}catch{}
+    const marketResult=runAutomaticMarket(currentTeams,result.season,result.driverStandings,result.teamStandings,result.championshipId);
+    localStorage.setItem(teamStorageKey(result.championshipId),JSON.stringify(marketResult.teams));
+    allEvents.push(...marketResult.events);
+    localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
+   }
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({seasons:results.map(result=>({championshipId:result.championshipId,season:result.season})),events:allEvents,processedAt:new Date().toISOString()}));
    window.dispatchEvent(new Event("geoprix-season-updated"));
    window.dispatchEvent(new Event("geoprix-rosters-updated"));
