@@ -58,7 +58,7 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
   if(used.has(candidate.driver.id))continue;
   const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!used.has(other.driver.id)&&
     Math.abs(other.teamPosition-candidate.teamPosition)>=3&&
-    ((candidate.teamPosition<other.teamPosition&&candidate.rank<other.rank)||(candidate.teamPosition>other.teamPosition&&candidate.rank>other.rank)))
+    ((candidate.teamPosition<other.teamPosition&&candidate.marketRank<other.marketRank)||(candidate.teamPosition>other.teamPosition&&candidate.marketRank>other.marketRank)))
    .sort((a,b)=>Math.abs(b.teamPosition-candidate.teamPosition)-Math.abs(a.teamPosition-candidate.teamPosition))[0];
   if(!partner)continue;
   const stronger=candidate.teamPosition<partner.teamPosition?candidate:partner;
