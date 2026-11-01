@@ -1,5 +1,6 @@
 import type { Team, Driver } from "./types";
 import { teamStorageKey } from "./championship-data";
+import { getRetiredDrivers } from "./retirement";
 
 export type DriverCareerStatus={driverId:string;driverName:string;firstF1Season:number;promotedAt:string};
 const CAREER_KEY="geoprix-driver-career-status-v1";
@@ -12,10 +13,12 @@ export function registerF1Debuts(drivers:Driver[],season=2026){
 }
 export function removeF1DriversFromF2(f2Teams:Team[],f1Teams:Team[]):Team[]{
  const f1Ids=new Set(f1Teams.flatMap(t=>t.drivers.map(d=>d.id)));
- const retiredIds=new Set(getCareerStatus().map(x=>x.driverId));
+ const retiredIds=new Set([...getCareerStatus().map(x=>x.driverId),...getRetiredDrivers().map(x=>x.driverId)]);
  return f2Teams.map(team=>({...team,drivers:team.drivers.filter(d=>!f1Ids.has(d.id)&&!retiredIds.has(d.id))}));
 }
 export function validateChampionshipRoster(championshipId:string,teams:Team[],season=2026):{ok:boolean;teams:Team[];message:string}{
+ const retiredIds=new Set(getRetiredDrivers().map(x=>x.driverId));
+ if(teams.some(team=>team.drivers.some(driver=>retiredIds.has(driver.id))))return {ok:false,teams,message:"Este piloto já se aposentou e não pode voltar a competir."};
  const f1Teams=read(teamStorageKey("formula-1-2026"));
  const f2Teams=read(teamStorageKey("formula-2-2026"));
  if(championshipId==="formula-2-2026"){
