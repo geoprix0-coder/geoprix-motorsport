@@ -13,7 +13,7 @@ const driver = (
   number,
   nationality,
   age: driverAges[name] ?? 25,
-  attributes: { racePace:50, qualifying:50, overtaking:50, defending:50, consistency:50 },
+  attributes: { racePace:80, qualifying:80, overtaking:80, defending:80, consistency:80 },
 });
 
 export const initialChampionships: Championship[] = [
