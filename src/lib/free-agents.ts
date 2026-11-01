@@ -1,0 +1,135 @@
+import type { Driver, Team } from "./types";
+import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "./championship-data";
+import { initializeDriverContracts } from "./market";
+import { getRetiredDrivers } from "./retirement";
+
+export const FREE_AGENTS_KEY = "geoprix-free-agents-v1";
+export const FREE_AGENTS_MINIMUM = 10;
+
+type NameSet = { first: string[]; last: string[]; weight: number };
+const nameSets: Record<string, NameSet> = {
+  "Brasil": { weight: 9, first: ["João","Pedro","Gabriel","Lucas","Felipe","Matheus","Enzo","Rafael","Bruno","Caio","Arthur","Davi"], last: ["Silva","Oliveira","Costa","Souza","Pereira","Almeida","Ribeiro","Carvalho","Ferreira","Santos","Barbosa","Nascimento"] },
+  "Reino Unido": { weight: 8, first: ["Oliver","Jack","Harry","George","Arthur","Thomas","William","James","Theo","Edward","Freddie","Charlie"], last: ["Smith","Jones","Taylor","Brown","Wilson","Davies","Evans","Wright","Clarke","Bennett","Walker","Hughes"] },
+  "Itália": { weight: 7, first: ["Luca","Matteo","Lorenzo","Andrea","Marco","Alessandro","Francesco","Riccardo","Tommaso","Giovanni","Federico","Niccolò"], last: ["Rossi","Bianchi","Ferrari","Romano","Ricci","Marino","Greco","Conti","Esposito","Gallo","Costa","Moretti"] },
+  "França": { weight: 7, first: ["Théo","Jules","Lucas","Hugo","Enzo","Arthur","Louis","Gabriel","Nathan","Mathis","Raphaël","Noah"], last: ["Martin","Bernard","Dubois","Thomas","Robert","Richard","Petit","Durand","Leroy","Moreau","Simon","Laurent"] },
+  "Alemanha": { weight: 6, first: ["Leon","Paul","Felix","Jonas","Finn","Elias","Max","Moritz","Tim","Luca","Ben","Anton"], last: ["Müller","Schmidt","Schneider","Fischer","Weber","Meyer","Wagner","Becker","Hoffmann","Schäfer","Koch","Richter"] },
+  "Espanha": { weight: 6, first: ["Alejandro","Carlos","Javier","Daniel","Hugo","Pablo","Álvaro","Marcos","Sergio","Diego","Adrián","Mario"], last: ["García","Rodríguez","González","Fernández","López","Martínez","Sánchez","Pérez","Gómez","Ruiz","Díaz","Moreno"] },
+  "Japão": { weight: 5, first: ["Haruto","Yuto","Sota","Ren","Kaito","Takumi","Riku","Yuki","Daiki","Shun","Minato","Itsuki"], last: ["Sato","Suzuki","Takahashi","Tanaka","Watanabe","Ito","Yamamoto","Nakamura","Kobayashi","Kato","Yoshida","Yamada"] },
+  "Países Baixos": { weight: 4, first: ["Daan","Sem","Lucas","Finn","Bram","Milan","Thijs","Lars","Mees","Jens","Stijn","Niels"], last: ["de Vries","Jansen","van den Berg","Bakker","Visser","Smit","de Jong","Bos","Vos","van Dijk","Mulder","de Boer"] },
+  "Austrália": { weight: 4, first: ["Jack","Cooper","Thomas","Lachlan","Noah","William","James","Oliver","Charlie","Henry","Mason","Ethan"], last: ["Smith","Brown","Wilson","Taylor","Anderson","Walker","Thompson","White","Harris","Martin","Ryan","Campbell"] },
+  "Argentina": { weight: 4, first: ["Mateo","Bautista","Santiago","Thiago","Joaquín","Benjamín","Tomás","Lautaro","Felipe","Franco","Valentino","Dante"], last: ["González","Rodríguez","Gómez","Fernández","López","Martínez","Pérez","Sánchez","Romero","Díaz","Álvarez","Torres"] },
+  "Estados Unidos": { weight: 4, first: ["Ethan","Mason","Logan","Caleb","Owen","Carter","Wyatt","Grayson","Jackson","Luke","Hudson","Levi"], last: ["Johnson","Miller","Davis","Wilson","Anderson","Thomas","Moore","Martin","Thompson","White","Clark","Lewis"] },
+  "México": { weight: 3, first: ["Santiago","Emiliano","Mateo","Diego","Sebastián","Leonardo","Gael","Nicolás","Daniel","Andrés","Iker","Pablo"], last: ["Hernández","García","Martínez","López","González","Pérez","Rodríguez","Sánchez","Ramírez","Cruz","Flores","Reyes"] },
+  "Nova Zelândia": { weight: 3, first: ["Liam","Finn","Jack","Oliver","Mason","Noah","Leo","Theo","Arlo","Max","Ethan","Blake"], last: ["Wilson","Taylor","Brown","Anderson","Thompson","Clark","Walker","Robinson","Harris","Mitchell","Campbell","Young"] },
+  "Finlândia": { weight: 3, first: ["Eetu","Elias","Onni","Leo","Väinö","Aaro","Emil","Toivo","Oliver","Niilo","Jooa","Lauri"], last: ["Korhonen","Virtanen","Mäkinen","Nieminen","Mäkelä","Hämäläinen","Laine","Heikkinen","Koskinen","Järvinen","Lehtonen","Aalto"] },
+  "Portugal": { weight: 2, first: ["João","Francisco","Afonso","Duarte","Martim","Miguel","Tomás","Tiago","Rodrigo","Guilherme","Diogo","Rafael"], last: ["Silva","Santos","Ferreira","Pereira","Costa","Oliveira","Rodrigues","Martins","Sousa","Fernandes","Gomes","Lopes"] },
+  "Dinamarca": { weight: 2, first: ["William","Noah","Oscar","Lucas","Carl","Emil","Victor","Magnus","Frederik","Alfred","Elias","Malthe"], last: ["Nielsen","Jensen","Hansen","Pedersen","Andersen","Christensen","Larsen","Sørensen","Rasmussen","Jørgensen","Petersen","Madsen"] },
+  "Suécia": { weight: 2, first: ["William","Hugo","Oscar","Elias","Leo","Alexander","Theo","Axel","Ludvig","Oliver","Viggo","Albin"], last: ["Andersson","Johansson","Karlsson","Nilsson","Eriksson","Larsson","Olsson","Persson","Svensson","Gustafsson","Pettersson","Jonsson"] },
+  "Bélgica": { weight: 2, first: ["Louis","Arthur","Jules","Lucas","Noah","Mathis","Milan","Victor","Thomas","Leon","Nathan","Mats"], last: ["Peeters","Janssens","Maes","Jacobs","Mertens","Willems","Claes","Goossens","Wouters","De Smet","Dubois","Lambert"] },
+  "Canadá": { weight: 2, first: ["Liam","Noah","Ethan","Lucas","Benjamin","Jack","Owen","Logan","William","Thomas","Nathan","Jacob"], last: ["Smith","Brown","Tremblay","Martin","Roy","Wilson","MacDonald","Gagnon","Johnson","Taylor","Côté","Bouchard"] },
+  "China": { weight: 2, first: ["Wei","Jun","Hao","Ming","Chen","Lei","Yifan","Zhen","Kai","Tao","Bo","Jian"], last: ["Wang","Li","Zhang","Liu","Chen","Yang","Huang","Zhao","Wu","Zhou","Xu","Sun"] },
+  "África do Sul": { weight: 1, first: ["Liam","Ethan","Noah","Joshua","Daniel","Luke","Caleb","Matthew","James","Benjamin","Aiden","Ruan"], last: ["van der Merwe","Botha","van Wyk","Nel","Coetzee","du Plessis","Smit","Venter","Pretorius","Jacobs","Meyer","Fourie"] },
+  "Coreia do Sul": { weight: 1, first: ["Min-jun","Seo-jun","Do-yun","Ji-ho","Ha-jun","Jun-seo","Si-woo","Yu-jun","Ji-hu","Eun-woo"], last: ["Kim","Lee","Park","Choi","Jung","Kang","Cho","Yoon","Jang","Lim"] },
+  "Índia": { weight: 1, first: ["Aarav","Arjun","Vihaan","Aditya","Reyansh","Ishaan","Kabir","Rohan","Dev","Shaurya"], last: ["Sharma","Patel","Singh","Kumar","Mehta","Shah","Gupta","Reddy","Nair","Iyer"] },
+  "Suíça": { weight: 1, first: ["Luca","Noah","Leon","Elias","Matteo","Julian","Finn","Nico","Tim","David"], last: ["Müller","Meier","Schmid","Keller","Weber","Schneider","Fischer","Baumann","Gerber","Frei"] },
+  "Polônia": { weight: 1, first: ["Jakub","Kacper","Antoni","Szymon","Jan","Filip","Aleksander","Mateusz","Wojciech","Piotr"], last: ["Nowak","Kowalski","Wiśniewski","Wójcik","Kamiński","Lewandowski","Zieliński","Szymański","Woźniak","Dąbrowski"] }
+};
+
+const choose = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
+function chooseNationality(): string {
+  const entries = Object.entries(nameSets);
+  const total = entries.reduce((sum, [, value]) => sum + value.weight, 0);
+  let pick = Math.random() * total;
+  for (const [country, value] of entries) {
+    pick -= value.weight;
+    if (pick < 0) return country;
+  }
+  return entries[0][0];
+}
+const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
+
+function readTeams(championshipId: string): Team[] {
+  try {
+    const raw = localStorage.getItem(teamStorageKey(championshipId));
+    const parsed = raw ? JSON.parse(raw) : initialTeamsForChampionship(championshipId);
+    return mergeInitialTeams(championshipId, Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return initialTeamsForChampionship(championshipId);
+  }
+}
+
+export function readFreeAgents(): Driver[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(FREE_AGENTS_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
+  const agents = readFreeAgents();
+  const f2Teams = readTeams("formula-2-2026");
+  const f1Teams = readTeams("formula-1-2026");
+  const existingDrivers = [...f1Teams, ...f2Teams].flatMap(team => team.drivers || []);
+  const usedNames = new Set([...existingDrivers.map(driver => normalize(driver.name)), ...agents.map(driver => normalize(driver.name)), ...getRetiredDrivers().map(driver => normalize(driver.driverName))]);
+  const usedNumbers = new Set([...f2Teams.flatMap(team => team.drivers || []).map(driver => driver.number), ...agents.map(driver => driver.number)]);
+  const next = [...agents];
+
+  while (next.length < minimum) {
+    const nationality = chooseNationality();
+    const names = nameSets[nationality];
+    let name = "";
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const candidate = choose(names.first) + " " + choose(names.last);
+      if (!usedNames.has(normalize(candidate))) {
+        name = candidate;
+        break;
+      }
+    }
+    if (!name) {
+      const candidate = choose(names.first) + " " + choose(names.last) + " " + choose(names.last);
+      if (usedNames.has(normalize(candidate))) continue;
+      name = candidate;
+    }
+    const availableNumbers = Array.from({ length: 98 }, (_, index) => index + 2).filter(number => !usedNumbers.has(number));
+    if (!availableNumbers.length) break;
+    const number = choose(availableNumbers);
+    const agePool = [16,16,17,17,18,18,19,19,20,20,21,21,22,23,24,25];
+    const baseline = 60;
+    const driver: Driver = {
+      id: "free-" + crypto.randomUUID(),
+      name,
+      number,
+      nationality,
+      age: choose(agePool),
+      attributes: { racePace: baseline, qualifying: baseline, overtaking: baseline, defending: baseline, consistency: baseline }
+    };
+    next.push(driver);
+    usedNames.add(normalize(name));
+    usedNumbers.add(number);
+  }
+
+  localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function hireFreeAgent(driverId: string, teamId: string, season: number): { ok: boolean; message: string } {
+  const agents = readFreeAgents();
+  const driver = agents.find(item => item.id === driverId);
+  if (!driver) return { ok: false, message: "Este agente livre não está mais disponível." };
+  const f2Teams = readTeams("formula-2-2026");
+  const target = f2Teams.find(team => team.id === teamId);
+  if (!target) return { ok: false, message: "Selecione uma equipe válida da Formula 2." };
+  if (f2Teams.some(team => team.drivers.some(item => item.id === driver.id))) return { ok: false, message: "Este piloto já está vinculado à Formula 2." };
+  if (f2Teams.some(team => team.drivers.some(item => item.number === driver.number))) return { ok: false, message: "O número deste piloto já está em uso na Formula 2." };
+
+  const updated = f2Teams.map(team => team.id === teamId ? { ...team, drivers: [...team.drivers, driver] } : team);
+  localStorage.setItem(teamStorageKey("formula-2-2026"), JSON.stringify(updated));
+  initializeDriverContracts(updated, season, "formula-2-2026");
+  localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(agents.filter(item => item.id !== driverId)));
+  ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
+  window.dispatchEvent(new Event("geoprix-rosters-updated"));
+  window.dispatchEvent(new Event("geoprix-free-agents-updated"));
+  return { ok: true, message: driver.name + " foi contratado por " + target.name + " na Formula 2." };
+}
