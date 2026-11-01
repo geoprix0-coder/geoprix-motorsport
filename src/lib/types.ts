@@ -1,5 +1,5 @@
-export type Team = { id: string; name: string; country: string; base: string; drivers: Driver[] };
-export type Driver = { id: string; name: string; number: number; nationality: string };
+export type Team = { id: string; name: string; country: string; base: string; drivers: Driver[]; development?: { developmentCapacity:number; investment:number; technicalEfficiency:number; technicalStability:number }; carAttributes?: { power:number; downforce:number } };
+export type Driver = { id: string; name: string; number: number; nationality: string; age?:number; attributes?: { racePace:number; qualifying:number; overtaking:number; defending:number; consistency:number } };
 export type Circuit = {
   id: string;
   name: string;
