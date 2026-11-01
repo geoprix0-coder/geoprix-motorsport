@@ -22,6 +22,7 @@ export function validateChampionshipRoster(championshipId:string,teams:Team[],se
  const f1Teams=read(teamStorageKey("formula-1-2026"));
  const f2Teams=read(teamStorageKey("formula-2-2026"));
  if(championshipId==="formula-2-2026"){
+  if(teams.some(team=>team.drivers.length>2))return {ok:false,teams,message:"Cada equipe da Formula 2 pode ter no máximo 2 pilotos contratados."};
   const forbidden=new Set([...f1Teams.flatMap(t=>t.drivers.map(d=>d.id)),...getCareerStatus().map(x=>x.driverId)]);
   if(teams.some(t=>t.drivers.some(d=>forbidden.has(d.id))))return {ok:false,teams,message:"Este piloto já estreou na Formula 1 e não pode competir na Formula 2."};
   return {ok:true,teams:removeF1DriversFromF2(teams,f1Teams),message:""};
