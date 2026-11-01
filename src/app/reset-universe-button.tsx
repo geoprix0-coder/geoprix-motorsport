@@ -6,6 +6,7 @@ import { initialChampionships, initialTeams, initialFormula2Teams } from "@/lib/
 import { UNIVERSE_CHAMPIONSHIPS_KEY } from "@/lib/universe";
 import { teamStorageKey } from "@/lib/championship-data";
 import { applyInitialAttributeBaseline, applyFormula2InitialBaseline, ensureDevelopmentData } from "@/lib/season-development";
+import { ensureFreeAgentPool } from "@/lib/free-agents";
 
 export default function ResetUniverseButton() {
   const [resetting, setResetting] = useState(false);
@@ -30,6 +31,7 @@ export default function ResetUniverseButton() {
       window.localStorage.setItem(teamStorageKey("formula-2-2026"), JSON.stringify(f2Teams));
       window.localStorage.setItem("geoprix-initial-attributes-v2", "true");
       window.localStorage.setItem("geoprix-f2-initial-attributes-v2", "true");
+      ensureFreeAgentPool(10);
 
       window.location.assign("/geoprix-motorsport/");
     } catch (error) {
