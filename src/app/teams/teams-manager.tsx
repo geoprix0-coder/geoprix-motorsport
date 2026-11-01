@@ -3,16 +3,16 @@ import {useEffect,useState} from "react";
 import Link from "next/link";
 import {ArrowLeft,Plus,Save,Shield,Trash2,Users} from "lucide-react";
 import { initialTeams, initialChampionships } from "@/lib/seed";
-import { ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
+import { applyInitialAttributeBaseline, ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
 import type { TeamDevelopment } from "@/lib/season-development";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
 type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number}};
-const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:"",age:25,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}});
-const newTeam=():Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:[newDriver(1),newDriver(2)],development:{developmentCapacity:50,investment:50,technicalEfficiency:50,technicalStability:50},carAttributes:{power:50,downforce:50}});
+const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:"",age:25,attributes:{racePace:80,qualifying:80,overtaking:80,defending:80,consistency:80}});
+const newTeam=():Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:[newDriver(1),newDriver(2)],development:{developmentCapacity:80,investment:80,technicalEfficiency:80,technicalStability:80},carAttributes:{power:80,downforce:80}});
 export default function TeamsManager(){
 const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(initialChampionships[0]?.season||2026);
 useEffect(()=>{const championship=initialChampionships[0];if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championship.id);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[]);
-useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");if(raw){const saved=JSON.parse(raw);setTeams(ensureDevelopmentData(Array.isArray(saved)&&saved.length>0?saved:initialTeams,season))}else setTeams(ensureDevelopmentData(initialTeams,season))}catch{setTeams(initialTeams)}setReady(true)},[]);
+useEffect(()=>{try{const raw=localStorage.getItem("geoprix-teams-v1");const saved=raw?JSON.parse(raw):initialTeams;let loaded=ensureDevelopmentData(Array.isArray(saved)&&saved.length>0?saved:initialTeams,season);if(!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}setTeams(loaded)}catch{setTeams(applyInitialAttributeBaseline(initialTeams))}setReady(true)},[]);
 useEffect(()=>{if(ready)localStorage.setItem("geoprix-teams-v1",JSON.stringify(teams))},[teams,ready]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
