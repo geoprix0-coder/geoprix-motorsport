@@ -66,7 +66,8 @@ export function advanceSeasonDevelopment(input:Team[],season:number,standings:{i
     const age=Number(driver.age)||25;
     const band=ageBand(age);
     const attributes={...(driver.attributes||{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50})};
-    const driverRank=driverStandings.find(x=>x.id===driver.id)?.position;\n    const performance=driverRank&&driverStandings.length?Math.max(-1,Math.min(1,.5-driverRank/driverStandings.length)):0;
+    const driverRank=driverStandings.find(x=>x.id===driver.id)?.position;
+    const performance=driverRank&&driverStandings.length?Math.max(-1,Math.min(1,.5-driverRank/driverStandings.length)):0;
     (Object.keys(attributes) as (keyof DriverAttributes)[]).forEach(attribute=>{
      const span=band==="young"?3:band==="developing"?2:band==="prime"?1:band==="veteran"?2:3;
      const ageBias=band==="young"?0.45:band==="developing"?0.2:band==="prime"?0:band==="veteran"?-0.25:-0.45;
