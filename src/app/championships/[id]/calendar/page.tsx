@@ -5,6 +5,7 @@ import type { Circuit, Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "@/lib/championship-data";
 import { runAutomaticMarket } from "@/lib/market";
+import { processAutomaticRetirements } from "@/lib/retirement";
 import { advanceSeasonDevelopment, ensureDevelopmentData } from "@/lib/season-development";
 import { removeF1DriversFromF2 } from "@/lib/career-hierarchy";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
@@ -180,7 +181,10 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    const marketTeams=ensureDevelopmentData(storedTeams?JSON.parse(storedTeams) as Team[]:teams,seasonNumber);
    const developedTeams=advanceSeasonDevelopment(marketTeams,seasonNumber,teamStandings,driverStandings,championshipId);
    localStorage.setItem(teamKey,JSON.stringify(developedTeams));
-   const marketResult=runAutomaticMarket(developedTeams,seasonNumber,driverStandings,teamStandings,championshipId);
+   const retiredDrivers=processAutomaticRetirements(seasonNumber);
+   const currentTeamsRaw=localStorage.getItem(teamKey);
+   const currentTeams=currentTeamsRaw?JSON.parse(currentTeamsRaw) as Team[]:developedTeams;
+   const marketResult=runAutomaticMarket(currentTeams,seasonNumber,driverStandings,teamStandings,championshipId);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({season:seasonNumber,events:marketResult.events,processedAt:new Date().toISOString()}));
    const nextSeason=seasonNumber+1;
    localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
@@ -188,7 +192,7 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    localStorage.setItem(reportKey,JSON.stringify([finalReport]));
    setRounds([]);setSeasonNumber(nextSeason);
    window.dispatchEvent(new Event("geoprix-season-updated"));
-   setNotice("Temporada "+(nextSeason-1)+" finalizada. Mercado automático concluído: "+marketResult.events.length+" movimentação(ões). Temporada "+nextSeason+" iniciada; monte o novo calendário.");
+   setNotice("Temporada "+(nextSeason-1)+" finalizada. Mercado automático concluído: "+marketResult.events.length+" movimentação(ões). "+(retiredDrivers.length?"Aposentadoria(s) automática(s): "+retiredDrivers.map(driver=>driver.driverName+" ("+driver.age+" anos)").join(", ")+". ":"Nenhuma aposentadoria nesta temporada. " )+"Temporada "+nextSeason+" iniciada; monte o novo calendário.");
   }catch{setNotice("Não foi possível finalizar a temporada. Os dados atuais foram mantidos; tente novamente.")}
  }
  return <main className="manager-shell"><div className="manager-content"><div className="manager-heading"><div><span className="eyebrow">TEMPORADA {seasonNumber}</span><h1>Calendário</h1><p>Organize as etapas e registre os resultados de cada corrida.</p></div><div className="calendar-heading-actions"><button className="quiet-button" onClick={finishSeason} title="É necessário registrar todas as etapas antes de encerrar." disabled={rounds.length===0||rounds.some(r=>r.status!=="completed")}>Finalizar temporada</button><button className="action-button" onClick={openNew}><Plus size={16}/> Adicionar etapa</button></div></div>
