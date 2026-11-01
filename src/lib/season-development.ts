@@ -29,14 +29,14 @@ const seeded=(key:string,min:number,max:number)=>min+(hash(key)%(max-min+1));
 export function ensureDevelopmentData(teams:Team[],season:number):Team[]{
  return teams.map(team=>({...team,
   development:team.development||{
-   developmentCapacity:seeded(team.id+"-capacity",48,78),
-   investment:seeded(team.id+"-investment",42,82),
-   technicalEfficiency:seeded(team.id+"-efficiency",45,80),
-   technicalStability:seeded(team.id+"-stability",48,82)
+   developmentCapacity:80,
+   investment:80,
+   technicalEfficiency:80,
+   technicalStability:80
   },
   drivers:team.drivers.map(driver=>({...driver,
    age:typeof driver.age==="number"?driver.age:(INITIAL_AGES[driver.name]??seeded(driver.id+"-age-"+season,20,35)),
-   attributes:driver.attributes||{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}
+   attributes:driver.attributes||{racePace:80,qualifying:80,overtaking:80,defending:80,consistency:80}
   }))
  }));
 }
@@ -79,7 +79,7 @@ export function advanceSeasonDevelopment(input:Team[],season:number,standings:{i
    })
   };
   // Power and Downforce are independent technical outcomes; results are a secondary influence only.
-  const car=team.carAttributes||{power:50,downforce:50};
+  const car=team.carAttributes||{power:80,downforce:80};
   const technicalMomentum=(technicalScore-.5)*5;
   const performanceInfluence=relative*.7;
   return {...nextTeam,carAttributes:{
@@ -88,4 +88,13 @@ export function advanceSeasonDevelopment(input:Team[],season:number,standings:{i
   }};
  });
  return next;
+}
+
+// One-time migration so the existing 2026 grid also starts from the requested baseline.
+export function applyInitialAttributeBaseline(teams:Team[]):Team[]{
+ return teams.map(team=>({...team,
+  development:{developmentCapacity:80,investment:80,technicalEfficiency:80,technicalStability:80},
+  carAttributes:{power:80,downforce:80},
+  drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:80,qualifying:80,overtaking:80,defending:80,consistency:80}}))
+ }));
 }
