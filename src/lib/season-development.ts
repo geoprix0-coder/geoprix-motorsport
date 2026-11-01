@@ -23,6 +23,7 @@ export const DRIVER_ATTRIBUTE_LABELS:Record<keyof DriverAttributes,string>={
   racePace:"Race Pace",qualifying:"Qualifying",overtaking:"Overtaking",defending:"Defending",consistency:"Consistency"
 };
 const clamp=(n:number)=>Math.max(0,Math.min(100,Math.round(n)));
+const INITIAL_AGES:Record<string,number>={"Lando Norris":26,"Oscar Piastri":25,"George Russell":28,"Kimi Antonelli":20,"Charles Leclerc":29,"Lewis Hamilton":41,"Max Verstappen":29,"Isack Hadjar":22,"Liam Lawson":24,"Arvid Lindblad":19,"Pierre Gasly":30,"Franco Colapinto":23,"Esteban Ocon":30,"Oliver Bearman":21,"Nico Hülkenberg":39,"Gabriel Bortoleto":22,"Carlos Sainz":32,"Alexander Albon":30,"Fernando Alonso":45,"Lance Stroll":28,"Sergio Pérez":36,"Valtteri Bottas":37};
 const hash=(s:string)=>{let h=2166136261;for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return h>>>0;};
 const seeded=(key:string,min:number,max:number)=>min+(hash(key)%(max-min+1));
 export function ensureDevelopmentData(teams:Team[],season:number):Team[]{
@@ -34,7 +35,7 @@ export function ensureDevelopmentData(teams:Team[],season:number):Team[]{
    technicalStability:seeded(team.id+"-stability",48,82)
   },
   drivers:team.drivers.map(driver=>({...driver,
-   age:typeof driver.age==="number"?driver.age:seeded(driver.id+"-age-"+season,20,35),
+   age:typeof driver.age==="number"?driver.age:(INITIAL_AGES[driver.name]??seeded(driver.id+"-age-"+season,20,35)),
    attributes:driver.attributes||{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}
   }))
  }));
