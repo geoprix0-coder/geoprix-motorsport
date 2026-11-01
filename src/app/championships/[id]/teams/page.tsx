@@ -1,4 +1,3 @@
-"use client";
 import TeamsManager from "@/app/teams/teams-manager";
 import { initialChampionships } from "@/lib/seed";
 
