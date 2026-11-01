@@ -31,8 +31,6 @@ export function finalizeChampionshipSeason(championshipId:string,seasonNumber:nu
   }
   const finalRound=[...rounds].sort((a,b)=>a.round-b.round)[rounds.length-1];
   const reportKey="geoprix-development-reports-"+championshipId;
-  const savedReports=localStorage.getItem(reportKey);
-  const seasonReports=savedReports?JSON.parse(savedReports):[];
   const finalReport=buildDevelopmentReport(championshipId,rounds,finalRound,true,seasonNumber);
   const driverMap=new Map<string,{id:string;name:string;teamName:string;points:number;wins:number;podiums:number;races:number;bestPosition:number|null}>();
   const teamMap=new Map<string,{id:string;name:string;points:number;wins:number}>();
