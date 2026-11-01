@@ -72,7 +72,7 @@ export function advanceSeasonDevelopment(input:Team[],season:number,standings:{i
     (Object.keys(attributes) as (keyof DriverAttributes)[]).forEach(attribute=>{
      const span=band==="young"?3:band==="developing"?2:band==="prime"?1:band==="veteran"?2:3;
      const ageBias=band==="young"?0.45:band==="developing"?0.2:band==="prime"?0:band==="veteran"?-0.25:-0.45;
-     const delta=randomDelta(driver.id+season+attribute,span)+(performance*.7)+(technicalScore-.5)*.4+ageBias;
+     const delta=randomDelta(driver.id+season+attribute,span)+(performance*.7)+ageBias;
      attributes[attribute]=clamp(attributes[attribute]+Math.round(delta));
     });
     return {...driver,age:age+1,attributes};
