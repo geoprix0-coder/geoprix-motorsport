@@ -147,8 +147,9 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
 
   for (const team of orderedTeams) {
     while (team.drivers.length < 2 && agents.length > 0) {
-      const driver = agents.shift()!;
-      if (teams.some(other => other.drivers.some(existing => existing.number === driver.number))) continue;
+      const availableIndex = agents.findIndex(candidate => !teams.some(other => other.drivers.some(existing => existing.number === candidate.number)));
+      if (availableIndex < 0) break;
+      const driver = agents.splice(availableIndex, 1)[0];
       team.drivers.push(driver);
       signings.push({
         id: crypto.randomUUID(),
