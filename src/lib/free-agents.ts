@@ -1,6 +1,6 @@
 import type { Driver, Team } from "./types";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "./championship-data";
-import { initializeDriverContracts } from "./market";
+import { initializeDriverContracts, type MarketEvent, type MarketContract } from "./market";
 import { getRetiredDrivers } from "./retirement";
 
 export const FREE_AGENTS_KEY = "geoprix-free-agents-v1";
@@ -132,4 +132,61 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
   window.dispatchEvent(new Event("geoprix-rosters-updated"));
   window.dispatchEvent(new Event("geoprix-free-agents-updated"));
   return { ok: true, message: driver.name + " foi contratado por " + target.name + " na Formula 2." };
+}
+
+
+export function automaticallyFillF2Vacancies(season: number, standings: {id:string;name:string;position:number;points:number}[] = []): { teams: Team[]; signings: MarketEvent[] } {
+  const championshipId = "formula-2-2026";
+  const teams = readTeams(championshipId).map(team => ({ ...team, drivers: [...(team.drivers || [])] }));
+  let agents = readFreeAgents();
+  const signings: MarketEvent[] = [];
+  const rank = new Map(standings.map(row => [row.id, row.position]));
+  const orderedTeams = [...teams].sort((a, b) =>
+    (rank.get(b.id) ?? teams.length + 1) - (rank.get(a.id) ?? teams.length + 1) || a.name.localeCompare(b.name)
+  );
+
+  for (const team of orderedTeams) {
+    while (team.drivers.length < 2 && agents.length > 0) {
+      const driver = agents.shift()!;
+      if (teams.some(other => other.drivers.some(existing => existing.number === driver.number))) continue;
+      team.drivers.push(driver);
+      signings.push({
+        id: crypto.randomUUID(),
+        season,
+        type: "signing",
+        driverId: driver.id,
+        driverName: driver.name,
+        fromTeamId: "free-agents",
+        fromTeamName: "Agente livre",
+        toTeamId: team.id,
+        toTeamName: team.name,
+        contractEnd: season + 1,
+        reason: "Contratação automática para preencher uma vaga no grid. O piloto foi selecionado do banco de talentos e inicia sua carreira na Formula 2.",
+        createdAt: new Date().toISOString()
+      });
+    }
+  }
+
+  if (signings.length) {
+    localStorage.setItem(teamStorageKey(championshipId), JSON.stringify(teams));
+    const contracts: MarketContract[] = initializeDriverContracts(teams, season, championshipId);
+    const signedIds = new Set(signings.map(event => event.driverId));
+    for (const contract of contracts) {
+      if (signedIds.has(contract.driverId)) {
+        contract.startSeason = season;
+        contract.endSeason = season + 1;
+        contract.status = "active";
+      }
+    }
+    localStorage.setItem("geoprix-driver-contracts-" + championshipId + "-v1", JSON.stringify(contracts));
+    const eventKey = "geoprix-market-history-" + championshipId + "-v1";
+    let history: MarketEvent[] = [];
+    try { const parsed = JSON.parse(localStorage.getItem(eventKey) || "[]"); history = Array.isArray(parsed) ? parsed : []; } catch {}
+    localStorage.setItem(eventKey, JSON.stringify([...history, ...signings]));
+    localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(agents));
+    ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
+    window.dispatchEvent(new Event("geoprix-rosters-updated"));
+    window.dispatchEvent(new Event("geoprix-free-agents-updated"));
+  }
+  return { teams, signings };
 }
