@@ -74,7 +74,6 @@ export function finalizeChampionshipSeason(championshipId:string,seasonNumber:nu
   const marketResult=runAutomaticMarket(developedTeams,seasonNumber,driverStandings,teamStandings,championshipId);
   localStorage.setItem(teamKey,JSON.stringify(marketResult.teams));
   const nextSeason=seasonNumber+1;
-  localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
   localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify([]));
   localStorage.setItem(reportKey,JSON.stringify([finalReport]));
   return {championshipId,season:seasonNumber,nextSeason,events:marketResult.events};
