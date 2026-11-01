@@ -2,7 +2,7 @@
 import {useEffect,useState} from "react";
 import Link from "next/link";
 import {ArrowLeft,ArrowRightLeft} from "lucide-react";
-import {initialChampionships} from "@/lib/seed";
+import {initialChampionships,initialTeams} from "@/lib/seed";
 import {initialTeamsForChampionship,teamStorageKey} from "@/lib/championship-data";
 import type {Team} from "@/lib/types";
 export default function DriversPage(){
