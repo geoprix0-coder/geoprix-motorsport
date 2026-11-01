@@ -1,6 +1,6 @@
 import type { Team } from "./types";
 
-export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"};
+export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"|"retired"};
 const initialContractYears:Record<string,{year:number;label:string}>={
  "lando norris":{year:2030,label:"2030"},"oscar piastri":{year:2028,label:"2028"},
  "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026"},
@@ -21,8 +21,15 @@ function marketStorageKey(kind:"contracts"|"events",championshipId:string){
 export function initializeDriverContracts(teams:Team[],season=2026,championshipId="formula-1-2026"){
  const key=marketStorageKey("contracts",championshipId);
  const stored:MarketContract[]=JSON.parse(localStorage.getItem(key)||"[]");
+ const retiredIds=new Set<string>((JSON.parse(localStorage.getItem("geoprix-retired-drivers-v1")||"[]") as {driverId:string}[]).map(item=>item.driverId));
  const byId=new Map(stored.map(c=>[c.driverId,c]));
  for(const team of teams)for(const driver of team.drivers){
+  if(retiredIds.has(driver.id)){
+   const existing=byId.get(driver.id);
+   if(existing)existing.status="retired";
+   else{const contract:MarketContract={driverId:driver.id,teamId:team.id,startSeason:season,endSeason:season,status:"retired"};stored.push(contract);byId.set(driver.id,contract)}
+   continue;
+  }
   if(byId.has(driver.id))continue;
   const initial=initialContractYears[driver.name.trim().toLocaleLowerCase("pt-BR")];
   const contract:MarketContract=initial
@@ -85,47 +92,35 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  };
  const transfers:{a:typeof candidates[number];b:typeof candidates[number]}[]=[];
  const usedDrivers=new Set<string>(),usedTeams=new Set<string>();
- // Teams compare available expiring drivers, but require a meaningful gain to justify disrupting a stable pairing.
  for(const candidate of [...candidates].sort((a,b)=>b.score-a.score)){
   if(usedDrivers.has(candidate.driver.id)||usedTeams.has(candidate.team.id))continue;
-  const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!usedDrivers.has(other.driver.id)&&!usedTeams.has(other.team.id)&&
-   Math.abs(other.teamPosition-candidate.teamPosition)>=2&&
-   ((candidate.teamPosition<other.teamPosition&&candidate.score>other.score)||(candidate.teamPosition>other.teamPosition&&candidate.score<other.score)))
-   .sort((a,b)=>Math.abs(b.teamPosition-candidate.teamPosition)-Math.abs(a.teamPosition-candidate.teamPosition))[0];
+  const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!usedDrivers.has(other.driver.id)&&!usedTeams.has(other.team.id)&&Math.abs(other.teamPosition-candidate.teamPosition)>=2&&((candidate.teamPosition<other.teamPosition&&candidate.score>other.score)||(candidate.teamPosition>other.teamPosition&&candidate.score<other.score))).sort((a,b)=>Math.abs(b.teamPosition-candidate.teamPosition)-Math.abs(a.teamPosition-candidate.teamPosition))[0];
   if(!partner)continue;
   const stronger=candidate.teamPosition<partner.teamPosition?candidate:partner;
   const weaker=candidate.teamPosition<partner.teamPosition?partner:candidate;
   const stabilityGap=Math.max(pairGap(stronger.team),pairGap(weaker.team));
   const requiredGain=stabilityGap>=18?7:stabilityGap>=12?10:15;
   if(stronger.score-weaker.score>=requiredGain){
-   transfers.push({a:stronger,b:weaker});
-   usedDrivers.add(stronger.driver.id);usedDrivers.add(weaker.driver.id);
-   usedTeams.add(stronger.team.id);usedTeams.add(weaker.team.id);
+   transfers.push({a:stronger,b:weaker});usedDrivers.add(stronger.driver.id);usedDrivers.add(weaker.driver.id);usedTeams.add(stronger.team.id);usedTeams.add(weaker.team.id);
   }
  }
  const nextTeams=teams.map(t=>({...t,drivers:[...t.drivers]}));
  for(const pair of transfers){
-  const aTeam=nextTeams.find(t=>t.id===pair.a.team.id)!;
-  const bTeam=nextTeams.find(t=>t.id===pair.b.team.id)!;
+  const aTeam=nextTeams.find(t=>t.id===pair.a.team.id)!;const bTeam=nextTeams.find(t=>t.id===pair.b.team.id)!;
   const ai=aTeam.drivers.findIndex(d=>d.id===pair.a.driver.id),bi=bTeam.drivers.findIndex(d=>d.id===pair.b.driver.id);
   if(ai<0||bi<0)continue;
   aTeam.drivers[ai]=pair.b.driver;bTeam.drivers[bi]=pair.a.driver;
   for(const x of [pair.a,pair.b]){
-   const target=x===pair.a?bTeam:aTeam;
-   const contract=contracts.find(c=>c.driverId===x.driver.id)!;
+   const target=x===pair.a?bTeam:aTeam;const contract=contracts.find(c=>c.driverId===x.driver.id)!;
    contract.teamId=target.id;contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
    events.push({id:crypto.randomUUID(),season,type:"transfer",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:target.id,toTeamName:target.name,contractEnd:contract.endSeason,reason:"Transferência automática: avaliação ponderada das últimas três temporadas (50%/30%/20%), comparação com o companheiro (25%), idade e ganho esportivo relevante justificaram a mudança.",createdAt:new Date().toISOString()});
   }
  }
- // Contract renewals preserve stable pairings; a team makes at most one driver change in this window.
  for(const x of candidates.filter(x=>!usedDrivers.has(x.driver.id))){
   const contract=contracts.find(c=>c.driverId===x.driver.id)!;
   contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
   events.push({id:crypto.randomUUID(),season,type:"renewal",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:x.team.id,toTeamName:x.team.name,contractEnd:contract.endSeason,reason:"Renovação automática: a estabilidade da dupla foi priorizada porque não surgiu uma alternativa com ganho esportivo suficiente.",createdAt:new Date().toISOString()});
  }
- localStorage.setItem(contractKey,JSON.stringify(contracts));
- localStorage.setItem(eventKey,JSON.stringify(events));
- localStorage.setItem(processedKey,"true");
-
+ localStorage.setItem(contractKey,JSON.stringify(contracts));localStorage.setItem(eventKey,JSON.stringify(events));localStorage.setItem(processedKey,"true");
  return {teams:nextTeams,events:events.filter(e=>e.season===season),alreadyProcessed:false};
 }
