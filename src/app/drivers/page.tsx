@@ -29,8 +29,10 @@ export default function DriversPage(){
     nextTeams[championship.id]=teams;
     const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season||2026;
     const contractKey=championship.id==="formula-1-2026"?"geoprix-driver-contracts-v1":`geoprix-driver-contracts-${championship.id}-v1`;
-    let contracts:MarketContract[]=JSON.parse(localStorage.getItem(contractKey)||"[]");
-    if(!contracts.length)contracts=initializeDriverContracts(teams,season,championship.id);
+    // Always reconcile saved contracts with the current roster. This preserves existing
+    // contracts and adds only missing drivers, instead of hiding everyone when storage
+    // contains a partial contract list.
+    const contracts:MarketContract[]=initializeDriverContracts(teams,season,championship.id);
     nextContracts[championship.id]=contracts;
    }catch{nextTeams[championship.id]=initialTeamsForChampionship(championship.id);nextContracts[championship.id]=[]}
   }
