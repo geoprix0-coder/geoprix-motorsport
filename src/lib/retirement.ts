@@ -1,6 +1,6 @@
 import type { Team, Championship } from "./types";
 import { readUniverseChampionships } from "./universe";
-import { teamStorageKey } from "./championship-data";
+import { teamStorageKey, initialTeamsForChampionship } from "./championship-data";
 
 export type RetiredDriver = {
   driverId: string;
@@ -50,13 +50,16 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
 
   for (const championship of championships) {
     const raw = localStorage.getItem(teamStorageKey(championship.id));
-    if (!raw) continue;
     let teams: Team[];
     try {
-      const parsed = JSON.parse(raw);
-      teams = Array.isArray(parsed) ? parsed : [];
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        teams = Array.isArray(parsed) ? parsed : initialTeamsForChampionship(championship.id);
+      } else {
+        teams = initialTeamsForChampionship(championship.id);
+      }
     } catch {
-      continue;
+      teams = initialTeamsForChampionship(championship.id);
     }
     const currentSeason = Number(localStorage.getItem(`geoprix-season-${championship.id}`)) || season;
     for (const team of teams) {
@@ -91,15 +94,13 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
     for (const championship of championships) {
       const key = teamStorageKey(championship.id);
       const raw = localStorage.getItem(key);
-      if (raw) {
-        try {
-          const teams = JSON.parse(raw) as Team[];
-          if (Array.isArray(teams)) {
-            const updated = teams.map(team => ({ ...team, drivers: (team.drivers || []).filter(driver => !newIds.has(driver.id)) }));
-            localStorage.setItem(key, JSON.stringify(updated));
-          }
-        } catch {}
-      }
+      try {
+        const teams = raw ? JSON.parse(raw) as Team[] : initialTeamsForChampionship(championship.id);
+        if (Array.isArray(teams)) {
+          const updated = teams.map(team => ({ ...team, drivers: (team.drivers || []).filter(driver => !newIds.has(driver.id)) }));
+          localStorage.setItem(key, JSON.stringify(updated));
+        }
+      } catch {}
 
       const keyContracts = contractKey(championship.id);
       const contracts = readArray<{ driverId: string; status: string }>(keyContracts);
