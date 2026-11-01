@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation";
-import { initialTeams } from "@/lib/seed";
+import { initialTeams, initialFormula2Teams } from "@/lib/seed";
+const allInitialTeams=[...initialTeams,...initialFormula2Teams];
 import DriverProfile from "./profile";
 
 export function generateStaticParams(){
- return initialTeams.flatMap(team=>team.drivers.map(driver=>({id:driver.id})));
+ return allInitialTeams.flatMap(team=>team.drivers.map(driver=>({id:driver.id})));
 }
 export default async function DriverPage({params}:{params:Promise<{id:string}>}){
  const {id}=await params;
- const team=initialTeams.find(item=>item.drivers.some(driver=>driver.id===id));
+ const team=allInitialTeams.find(item=>item.drivers.some(driver=>driver.id===id));
  const driver=team?.drivers.find(item=>item.id===id);
  if(!driver||!team)notFound();
- return <DriverProfile driver={driver} team={team}/>;
+ const championshipId=id.startsWith("f2-")?"formula-2-2026":"formula-1-2026";
+ return <DriverProfile driver={driver} team={team} championshipId={championshipId}/>;
 }
