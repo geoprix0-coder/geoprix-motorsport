@@ -178,7 +178,7 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
    const marketTeams=ensureDevelopmentData(storedTeams?JSON.parse(storedTeams) as Team[]:teams,seasonNumber);
    const developedTeams=advanceSeasonDevelopment(marketTeams,seasonNumber,teamStandings,driverStandings);
    localStorage.setItem("geoprix-teams-v1",JSON.stringify(developedTeams));
-   const marketResult=runAutomaticMarket(developedTeams,seasonNumber,driverStandings,teamStandings);
+   const marketResult=runAutomaticMarket(developedTeams,seasonNumber,driverStandings,teamStandings,championshipId);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({season:seasonNumber,events:marketResult.events,processedAt:new Date().toISOString()}));
    const nextSeason=seasonNumber+1;
    localStorage.setItem("geoprix-season-"+championshipId,String(nextSeason));
