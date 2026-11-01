@@ -1,4 +1,5 @@
 import type { Championship, Team } from "./types";
+import { initialFormula2Teams } from "./formula2-2026";
 
 const driverAges:Record<string,number> = {"Lando Norris":26,"Oscar Piastri":25,"George Russell":28,"Kimi Antonelli":20,"Charles Leclerc":29,"Lewis Hamilton":41,"Max Verstappen":29,"Isack Hadjar":22,"Liam Lawson":24,"Arvid Lindblad":19,"Pierre Gasly":30,"Franco Colapinto":23,"Esteban Ocon":30,"Oliver Bearman":21,"Nico Hülkenberg":39,"Gabriel Bortoleto":22,"Carlos Sainz":32,"Alexander Albon":30,"Fernando Alonso":45,"Lance Stroll":28,"Sergio Pérez":36,"Valtteri Bottas":37};
 
@@ -21,6 +22,13 @@ export const initialChampionships: Championship[] = [
     id: "formula-1-2026",
     name: "FORMULA 1",
     category: "FIA Formula One World Championship",
+    season: 2026,
+    status: "active",
+  },
+  {
+    id: "formula-2-2026",
+    name: "FORMULA 2",
+    category: "FIA Formula 2 Championship",
     season: 2026,
     status: "active",
   },
@@ -138,3 +146,5 @@ export const initialTeams: Team[] = [
     ],
   },
 ];
+
+export { initialFormula2Teams };
