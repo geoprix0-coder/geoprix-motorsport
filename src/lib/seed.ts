@@ -1,6 +1,6 @@
 import type { Championship, Team } from "./types";
 
-const driver = (
+const driverAges:Record<string,number> = {"Lando Norris":26,"Oscar Piastri":25,"George Russell":28,"Kimi Antonelli":20,"Charles Leclerc":29,"Lewis Hamilton":41,"Max Verstappen":29,"Isack Hadjar":22,"Liam Lawson":24,"Arvid Lindblad":19,"Pierre Gasly":30,"Franco Colapinto":23,"Esteban Ocon":30,"Oliver Bearman":21,"Nico Hülkenberg":39,"Gabriel Bortoleto":22,"Carlos Sainz":32,"Alexander Albon":30,"Fernando Alonso":45,"Lance Stroll":28,"Sergio Pérez":36,"Valtteri Bottas":37};\n\nconst driver = (
   id: string,
   name: string,
   number: number,
