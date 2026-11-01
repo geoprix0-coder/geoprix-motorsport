@@ -2,15 +2,15 @@ import type { Team } from "./types";
 import type { Round } from "./season-finalization-types";
 import { buildDevelopmentReport } from "./season-development-report";
 import { advanceSeasonDevelopment, ensureDevelopmentData } from "./season-development";
-import { runAutomaticMarket, type MarketEvent } from "./market";
+
 import { teamStorageKey } from "./championship-data";
 
 export type ChampionshipFinalizationResult = {
   championshipId:string;
   season:number;
   nextSeason:number;
-  events:MarketEvent[];
-  alreadyFinalized?:boolean;
+  driverStandings:{id:string;position:number;points:number}[];
+  teamStandings:{id:string;position:number;points:number}[];
 };
 
 export function readChampionshipCalendar(championshipId:string):Round[]{
@@ -71,10 +71,8 @@ export function finalizeChampionshipSeason(championshipId:string,seasonNumber:nu
   const marketTeams=ensureDevelopmentData(storedTeams?JSON.parse(storedTeams) as Team[]:inputTeams,seasonNumber);
   const developedTeams=advanceSeasonDevelopment(marketTeams,seasonNumber,teamStandings,driverStandings,championshipId);
   localStorage.setItem(teamKey,JSON.stringify(developedTeams));
-  const marketResult=runAutomaticMarket(developedTeams,seasonNumber,driverStandings,teamStandings,championshipId);
-  localStorage.setItem(teamKey,JSON.stringify(marketResult.teams));
   const nextSeason=seasonNumber+1;
   localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify([]));
   localStorage.setItem(reportKey,JSON.stringify([finalReport]));
-  return {championshipId,season:seasonNumber,nextSeason,events:marketResult.events};
+  return {championshipId,season:seasonNumber,nextSeason,driverStandings,teamStandings};
 }
