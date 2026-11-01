@@ -50,11 +50,11 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  }
  const expiring=allDrivers.map(x=>({ ...x,contract:contracts.find(c=>c.driverId===x.driver.id)! }))
   .filter(x=>x.contract.endSeason<=season&&x.contract.status==="active");
- const candidates=expiring.map(x=>({...x,rank:driverRank.get(x.driver.id)??9999,teamPosition:teamRank.get(x.team.id)??9999}));
+ const candidates=expiring.map(x=>{const age=Number(x.driver.age)||25;const ageAdjustment=age<=23?-1.5:age<=27?-1:age<=32?0:age<=36?1:2;return {...x,rank:driverRank.get(x.driver.id)??9999,marketRank:(driverRank.get(x.driver.id)??9999)+ageAdjustment,teamPosition:teamRank.get(x.team.id)??9999};});
  const transfers:{a:typeof candidates[number];b:typeof candidates[number]}[]=[];
  const used=new Set<string>();
  // Match expiring drivers across teams when a stronger driver is moving to a clearly stronger team.
- for(const candidate of [...candidates].sort((a,b)=>a.rank-b.rank)){
+ for(const candidate of [...candidates].sort((a,b)=>a.marketRank-b.marketRank)){
   if(used.has(candidate.driver.id))continue;
   const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!used.has(other.driver.id)&&
     Math.abs(other.teamPosition-candidate.teamPosition)>=3&&
@@ -64,7 +64,7 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
   const stronger=candidate.teamPosition<partner.teamPosition?candidate:partner;
   const weaker=candidate.teamPosition<partner.teamPosition?partner:candidate;
   // A swap only occurs if the stronger team receives the better-ranked driver.
-  if(stronger.rank<weaker.rank){transfers.push({a:stronger,b:weaker});used.add(stronger.driver.id);used.add(weaker.driver.id);}
+  if(stronger.marketRank<weaker.marketRank){transfers.push({a:stronger,b:weaker});used.add(stronger.driver.id);used.add(weaker.driver.id);}
  }
  const nextTeams=teams.map(t=>({...t,drivers:[...t.drivers]}));
  for(const pair of transfers){
@@ -77,7 +77,7 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
    const target=x===pair.a?bTeam:aTeam;
    const contract=contracts.find(c=>c.driverId===x.driver.id)!;
    contract.teamId=target.id;contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
-   events.push({id:crypto.randomUUID(),season,type:"transfer",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:target.id,toTeamName:target.name,contractEnd:contract.endSeason,reason:"Transferência automática: desempenho individual e posição competitiva das equipes favoreceram a mudança.",createdAt:new Date().toISOString()});
+   events.push({id:crypto.randomUUID(),season,type:"transfer",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:target.id,toTeamName:target.name,contractEnd:contract.endSeason,reason:"Transferência automática: desempenho recente, adequação etária e posição competitiva das equipes favoreceram a mudança.",createdAt:new Date().toISOString()});
   }
  }
  // Drivers whose contracts expire without a transfer receive an automatic renewal.
