@@ -9,8 +9,8 @@ export type ChampionshipFinalizationResult = {
   championshipId:string;
   season:number;
   nextSeason:number;
-  driverStandings:{id:string;position:number;points:number}[];
-  teamStandings:{id:string;position:number;points:number}[];
+  driverStandings:{id:string;name:string;position:number;points:number}[];
+  teamStandings:{id:string;name:string;position:number;points:number}[];
 };
 
 export function readChampionshipCalendar(championshipId:string):Round[]{
