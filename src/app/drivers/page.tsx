@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ArrowRightLeft,Flag,UserPlus} from "lucide-react";
+import {ArrowRightLeft,Flag} from "lucide-react";
 import {initialChampionships} from "@/lib/seed";
 import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
@@ -9,7 +9,7 @@ import {initializeDriverContracts,type MarketContract} from "@/lib/market";
 import type {Team,Championship,Driver} from "@/lib/types";
 import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
 import {getRetiredDrivers,type RetiredDriver} from "@/lib/retirement";
-import {ensureFreeAgentPool,readFreeAgents,hireFreeAgent} from "@/lib/free-agents";
+import {ensureFreeAgentPool} from "@/lib/free-agents";
 
 type DriverRow=Driver&{team:string;championshipId:string};
 export default function DriversPage(){
@@ -19,8 +19,6 @@ export default function DriversPage(){
  const [selectedCategory,setSelectedCategory]=useState("all");
  const [retiredDrivers,setRetiredDrivers]=useState<RetiredDriver[]>([]);
  const [freeAgents,setFreeAgents]=useState<Driver[]>([]);
- const [selectedF2Team,setSelectedF2Team]=useState("");
- const [notice,setNotice]=useState("");
 
  useEffect(()=>{
   const load=()=>{
@@ -74,18 +72,6 @@ export default function DriversPage(){
   });
  },[championships,teamsByCategory,contractsByCategory,selectedCategory]);
 
- const f2Teams=teamsByCategory["formula-2-2026"]||[];
- useEffect(()=>{
-  if(!selectedF2Team&&f2Teams.length)setSelectedF2Team(f2Teams[0].id);
-  else if(selectedF2Team&&!f2Teams.some(team=>team.id===selectedF2Team))setSelectedF2Team(f2Teams[0]?.id||"");
- },[f2Teams,selectedF2Team]);
-
- function hire(driverId:string){
-  const season=Number(localStorage.getItem("geoprix-season-formula-2-2026"))||2026;
-  const result=hireFreeAgent(driverId,selectedF2Team,season);
-  setNotice(result.message);
-  if(result.ok)setFreeAgents(readFreeAgents());
- }
 
  return <main className="manager-shell">
   <header className="manager-top"><Link className="back-link" href="/">← Visão geral</Link><span className="eyebrow">UNIVERSO MOTORSPORT</span></header>
@@ -100,13 +86,8 @@ export default function DriversPage(){
 
     <div style={{padding:"18px",borderBottom:"1px solid var(--border)"}}>
      <div className="list-heading"><h2><Flag size={17}/> Agentes livres</h2><span>{freeAgents.length} disponíveis · mínimo 10</span></div>
-     <p className="storage-note" style={{margin:"4px 0 14px"}}>Novos talentos fictícios são gerados automaticamente para manter pelo menos 10 pilotos disponíveis. Todos começam sem contrato, com atributos em 60, e só podem estrear profissionalmente na Formula 2.</p>
-     <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap",marginBottom:14}}>
-      <label htmlFor="free-agent-team" style={{fontWeight:700,fontSize:11}}>EQUIPE DA F2 PARA CONTRATAÇÃO</label>
-      <select id="free-agent-team" value={selectedF2Team} onChange={event=>setSelectedF2Team(event.target.value)} style={{minWidth:220,maxWidth:"100%",padding:"10px 12px",borderRadius:7,border:"1px solid var(--border)",background:"var(--surface)",color:"inherit"}}>
-       {f2Teams.map(team=><option key={team.id} value={team.id}>{team.name}</option>)}
-      </select>
-     </div>
+     <p className="storage-note" style={{margin:"4px 0 14px"}}>Novos talentos fictícios são gerados automaticamente para manter um banco de pelo menos 10 pilotos. As contratações acontecem sem intervenção do usuário, somente para preencher vagas na Formula 2 e respeitando o limite de 2 pilotos por equipe.</p>
+     
      {freeAgents.length===0?<div className="empty-state">Não foi possível gerar agentes livres. Verifique o armazenamento do navegador.</div>:<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(245px,1fr))",gap:10}}>
       {freeAgents.map(driver=><article key={driver.id} style={{border:"1px solid var(--border)",borderRadius:9,padding:13,background:"var(--surface)"}}>
        <div style={{display:"flex",justifyContent:"space-between",gap:8,alignItems:"flex-start"}}>
@@ -116,11 +97,10 @@ export default function DriversPage(){
        <div style={{display:"flex",flexWrap:"wrap",gap:6,margin:"12px 0",fontSize:9,color:"var(--muted)"}}>
         <span>Race Pace 60</span><span>Qualifying 60</span><span>Overtaking 60</span><span>Defending 60</span><span>Consistency 60</span>
        </div>
-       <button className="quiet-button" disabled={!selectedF2Team} onClick={()=>hire(driver.id)} style={{display:"inline-flex",alignItems:"center",gap:6}}><UserPlus size={14}/> Contratar pela F2</button>
+       <small style={{display:"block",color:"var(--muted)"}}>Disponível para contratação automática quando surgir uma vaga na F2</small>
       </article>)}
      </div>}
     </div>
-    {notice&&<p className="notice" style={{margin:"12px 18px"}}>{notice}</p>}
 
     <div className="list-heading"><h2>Pilotos contratados</h2><span>{drivers.length} pilotos</span></div>
     <div className="driver-category-filter" style={{padding:"0 18px 18px",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
