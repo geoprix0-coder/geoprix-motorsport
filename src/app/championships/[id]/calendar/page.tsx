@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, Plus, Save, Trash2, Pencil, Flag, Trophy, ClipboardList } from "lucide-react";
 import type { Circuit, Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
-import { runAutomaticMarket } from "@/lib/market";
+import { runAutomaticMarket } from "@/lib/market";\nimport { advanceSeasonDevelopment, ensureDevelopmentData } from "@/lib/season-development";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;qualifyingPosition:number|null;position:number|null;points:number};
 type Round={id:string;round:number;circuitId:string;circuitName:string;layout:string;status:"scheduled"|"completed";results:DriverResult[]};
