@@ -5,6 +5,7 @@ import type { Circuit, Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "@/lib/championship-data";
 import { removeF1DriversFromF2 } from "@/lib/career-hierarchy";
+import { buildDevelopmentReport } from "@/lib/season-development-report";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;qualifyingPosition:number|null;position:number|null;points:number};
 type Round={id:string;round:number;circuitId:string;circuitName:string;layout:string;status:"scheduled"|"completed";results:DriverResult[]};
