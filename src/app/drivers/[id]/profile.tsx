@@ -6,6 +6,7 @@ import type { Driver,Team } from "@/lib/types";
 import { initialChampionships } from "@/lib/seed";
 import { getDriverCareerRecord,type DriverSeasonRecord } from "@/lib/driver-record";
 import {initializeDriverContracts,getContractEndLabel,type MarketContract} from "@/lib/market";
+import {teamStorageKey} from "@/lib/championship-data";
 
 type Stats={wins:number;podiums:number;points:number;};
 const emptyStats:Stats={wins:0,podiums:0,points:0};
@@ -38,7 +39,7 @@ function SeasonCard({item,expanded,onToggle,current=false}:{item:DriverSeasonRec
  </article>;
 }
 
-export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
+export default function DriverProfile({driver,team,championshipId}:{driver:Driver;team:Team;championshipId:string}){
  const [stats,setStats]=useState<Stats>(emptyStats);
  const [currentTeam,setCurrentTeam]=useState<Team>(team);
  const [contract,setContract]=useState<MarketContract|null>(null);
@@ -50,7 +51,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  const [loaded,setLoaded]=useState(false);
  useEffect(()=>{
   try{
-   const raw=localStorage.getItem("geoprix-teams-v1");
+   const raw=localStorage.getItem(teamStorageKey(championshipId));
    const saved=raw?JSON.parse(raw) as Team[]:[team];
    const found=saved.find(t=>t.drivers.some(d=>d.id===driver.id));
    if(found){setCurrentTeam(found);const savedDriver=found.drivers.find(d=>d.id===driver.id);if(typeof savedDriver?.age==="number")setAge(savedDriver.age);if(savedDriver?.attributes)setAttributes(savedDriver.attributes);}
@@ -76,7 +77,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  return <main className="manager-shell"><header className="manager-top"><Link className="back-link" href="/drivers/"><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">PERFIL DO ATLETA</span></header><div className="manager-content">
   <section className="driver-hero"><div className="driver-number">#{driver.number}</div><div className="driver-identity"><span className="eyebrow">FICHA DO PILOTO · UNIVERSO GEOPRIX</span><h1>{driver.name}</h1><p><Flag size={14}/>{driver.nationality}<span className="driver-dot">·</span><Shield size={14}/>{currentTeam.name}</p></div></section>
   <div className="driver-profile-grid">
-   <section className="team-list driver-info-card"><div className="list-heading"><h2><UserRound size={17}/> Informações pessoais</h2></div><dl className="driver-details"><div><dt>Nome completo</dt><dd>{driver.name}</dd></div><div><dt>Número</dt><dd>#{driver.number}</dd></div><div><dt>Idade</dt><dd>{age} anos</dd></div><div><dt>Nacionalidade</dt><dd>{driver.nationality}</dd></div><div><dt>Equipe atual</dt><dd>{currentTeam.name}</dd></div><div><dt>Término do contrato</dt><dd>{contract?getContractEndLabel(contract):"Não registrado"}</dd></div><div><dt>Base da equipe</dt><dd>{currentTeam.base}</dd></div><div><dt>Categoria</dt><dd>FORMULA 1</dd></div></dl></section>
+   <section className="team-list driver-info-card"><div className="list-heading"><h2><UserRound size={17}/> Informações pessoais</h2></div><dl className="driver-details"><div><dt>Nome completo</dt><dd>{driver.name}</dd></div><div><dt>Número</dt><dd>#{driver.number}</dd></div><div><dt>Idade</dt><dd>{age} anos</dd></div><div><dt>Nacionalidade</dt><dd>{driver.nationality}</dd></div><div><dt>Equipe atual</dt><dd>{currentTeam.name}</dd></div><div><dt>Término do contrato</dt><dd>{contract?getContractEndLabel(contract):"Não registrado"}</dd></div><div><dt>Base da equipe</dt><dd>{currentTeam.base}</dd></div><div><dt>Categoria</dt><dd>{championshipName(championshipId)}</dd></div></dl></section>
    <section className="team-list driver-info-card"><div className="list-heading"><h2><Activity size={17}/> Estatísticas de carreira</h2><span>{loaded?"Dados registrados":"Carregando..."}</span></div>{!loaded?<p className="storage-note">Carregando estatísticas...</p>:<div className="driver-stat-grid"><div><b>{stats.wins}</b><small>Vitórias</small></div><div><b>{stats.podiums}</b><small>Pódios</small></div><div><b>{stats.points}</b><small>Pontos</small></div></div>}</section>
   </div>
   <section className="team-list driver-history-card"><div className="list-heading"><h2><Activity size={17}/> Atributos atuais</h2><span>0–100</span></div><div className="driver-stat-grid">{([{key:"racePace",label:"Race Pace"},{key:"qualifying",label:"Qualifying"},{key:"overtaking",label:"Overtaking"},{key:"defending",label:"Defending"},{key:"consistency",label:"Consistency"}] as const).map(item=><div key={item.key}><b>{attributes[item.key]}</b><small>{item.label}</small></div>)}</div><p className="storage-note">Os atributos podem evoluir ou regredir ao final de cada temporada, considerando idade e desempenho esportivo.</p></section>
