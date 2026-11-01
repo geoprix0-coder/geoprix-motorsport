@@ -14,8 +14,12 @@ const initialContractYears:Record<string,{year:number;label:string}>={
  "pierre gasly":{year:2028,label:"2028"},"franco colapinto":{year:2027,label:"2027"},
  "valtteri bottas":{year:2027,label:"2027"},"sergio pérez":{year:2029,label:"2029"}
 };
-export function initializeDriverContracts(teams:Team[],season=2026){
- const key="geoprix-driver-contracts-v1";
+function marketStorageKey(kind:"contracts"|"events",championshipId:string){
+ if(championshipId==="formula-1-2026")return kind==="contracts"?"geoprix-driver-contracts-v1":"geoprix-market-history-v1";
+ return kind==="contracts"?"geoprix-driver-contracts-"+championshipId+"-v1":"geoprix-market-history-"+championshipId+"-v1";
+}
+export function initializeDriverContracts(teams:Team[],season=2026,championshipId="formula-1-2026"){
+ const key=marketStorageKey("contracts",championshipId);
  const stored:MarketContract[]=JSON.parse(localStorage.getItem(key)||"[]");
  const byId=new Map(stored.map(c=>[c.driverId,c]));
  for(const team of teams)for(const driver of team.drivers){
@@ -35,9 +39,9 @@ export type MarketEvent={id:string;season:number;type:"transfer"|"renewal";drive
 type Standing={id:string;name:string;position:number;points:number};
 function hash(value:string){let h=0;for(let i=0;i<value.length;i++)h=(h*31+value.charCodeAt(i))>>>0;return h;}
 export function runAutomaticMarket(teams:Team[],season:number,driverStandings:Standing[],teamStandings:Standing[],championshipId="formula-1-2026"){
- const contractKey="geoprix-driver-contracts-v1",eventKey="geoprix-market-history-v1",processedKey="geoprix-market-processed-"+season;
+ const contractKey=marketStorageKey("contracts",championshipId),eventKey=marketStorageKey("events",championshipId),processedKey="geoprix-market-processed-"+championshipId+"-"+season;
  if(localStorage.getItem(processedKey))return {teams,events:[] as MarketEvent[],alreadyProcessed:true};
- const contracts:MarketContract[]=initializeDriverContracts(teams,season);
+ const contracts:MarketContract[]=initializeDriverContracts(teams,season,championshipId);
  const events:MarketEvent[]=JSON.parse(localStorage.getItem(eventKey)||"[]");
  const history=JSON.parse(localStorage.getItem("geoprix-season-history-"+championshipId)||"[]") as {season:number;driverStandings:Standing[]}[];
  const seasonTables=[driverStandings,...[season-1,season-2].map(year=>history.find(x=>x.season===year)?.driverStandings||[])];
@@ -122,6 +126,6 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  localStorage.setItem(contractKey,JSON.stringify(contracts));
  localStorage.setItem(eventKey,JSON.stringify(events));
  localStorage.setItem(processedKey,"true");
- localStorage.setItem("geoprix-teams-v1",JSON.stringify(nextTeams));
+
  return {teams:nextTeams,events:events.filter(e=>e.season===season),alreadyProcessed:false};
 }
