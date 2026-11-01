@@ -9,7 +9,9 @@ export function teamStorageKey(championshipId: string): string {
 }
 
 export function initialTeamsForChampionship(championshipId: string): Team[] {
-  return championshipId === "formula-2-2026" ? initialFormula2Teams : initialTeams;
+  if (championshipId === "formula-1-2026") return initialTeams;
+  if (championshipId === "formula-2-2026") return initialFormula2Teams;
+  return [];
 }
 
 /** Add any missing seeded teams to an existing local roster without overwriting user edits. */
