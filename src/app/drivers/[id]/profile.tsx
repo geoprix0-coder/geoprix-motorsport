@@ -42,6 +42,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  const [stats,setStats]=useState<Stats>(emptyStats);
  const [currentTeam,setCurrentTeam]=useState<Team>(team);
  const [contract,setContract]=useState<MarketContract|null>(null);
+ const [age,setAge]=useState<number>(driver.age??25);
  const [seasonHistory,setSeasonHistory]=useState<DriverSeasonRecord[]>([]);
  const [currentSeasons,setCurrentSeasons]=useState<DriverSeasonRecord[]>([]);
  const [expandedSeason,setExpandedSeason]=useState<string|null>(null);
@@ -51,7 +52,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
    const raw=localStorage.getItem("geoprix-teams-v1");
    const saved=raw?JSON.parse(raw) as Team[]:[team];
    const found=saved.find(t=>t.drivers.some(d=>d.id===driver.id));
-   if(found)setCurrentTeam(found);
+   if(found){setCurrentTeam(found);const savedDriver=found.drivers.find(d=>d.id===driver.id);if(typeof savedDriver?.age==="number")setAge(savedDriver.age);}
    const contracts=initializeDriverContracts(saved);
    setContract(contracts.find(item=>item.driverId===driver.id)||null);
   }catch{}
@@ -74,7 +75,7 @@ export default function DriverProfile({driver,team}:{driver:Driver;team:Team}){
  return <main className="manager-shell"><header className="manager-top"><Link className="back-link" href="/drivers/"><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">PERFIL DO ATLETA</span></header><div className="manager-content">
   <section className="driver-hero"><div className="driver-number">#{driver.number}</div><div className="driver-identity"><span className="eyebrow">FICHA DO PILOTO · UNIVERSO GEOPRIX</span><h1>{driver.name}</h1><p><Flag size={14}/>{driver.nationality}<span className="driver-dot">·</span><Shield size={14}/>{currentTeam.name}</p></div></section>
   <div className="driver-profile-grid">
-   <section className="team-list driver-info-card"><div className="list-heading"><h2><UserRound size={17}/> Informações pessoais</h2></div><dl className="driver-details"><div><dt>Nome completo</dt><dd>{driver.name}</dd></div><div><dt>Número</dt><dd>#{driver.number}</dd></div><div><dt>Nacionalidade</dt><dd>{driver.nationality}</dd></div><div><dt>Equipe atual</dt><dd>{currentTeam.name}</dd></div><div><dt>Término do contrato</dt><dd>{contract?getContractEndLabel(contract):"Não registrado"}</dd></div><div><dt>Base da equipe</dt><dd>{currentTeam.base}</dd></div><div><dt>Categoria</dt><dd>FORMULA 1</dd></div></dl></section>
+   <section className="team-list driver-info-card"><div className="list-heading"><h2><UserRound size={17}/> Informações pessoais</h2></div><dl className="driver-details"><div><dt>Nome completo</dt><dd>{driver.name}</dd></div><div><dt>Número</dt><dd>#{driver.number}</dd></div><div><dt>Idade</dt><dd>{age} anos</dd></div><div><dt>Nacionalidade</dt><dd>{driver.nationality}</dd></div><div><dt>Equipe atual</dt><dd>{currentTeam.name}</dd></div><div><dt>Término do contrato</dt><dd>{contract?getContractEndLabel(contract):"Não registrado"}</dd></div><div><dt>Base da equipe</dt><dd>{currentTeam.base}</dd></div><div><dt>Categoria</dt><dd>FORMULA 1</dd></div></dl></section>
    <section className="team-list driver-info-card"><div className="list-heading"><h2><Activity size={17}/> Estatísticas de carreira</h2><span>{loaded?"Dados registrados":"Carregando..."}</span></div>{!loaded?<p className="storage-note">Carregando estatísticas...</p>:<div className="driver-stat-grid"><div><b>{stats.wins}</b><small>Vitórias</small></div><div><b>{stats.podiums}</b><small>Pódios</small></div><div><b>{stats.points}</b><small>Pontos</small></div></div>}</section>
   </div>
   <section className="team-list driver-history-card"><div className="list-heading"><h2><Trophy size={17}/> Histórico esportivo</h2><span>{seasonHistory.length} temporadas encerradas</span></div>
