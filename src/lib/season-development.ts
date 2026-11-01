@@ -48,7 +48,7 @@ function ageBand(age:number){
  return "experienced";
 }
 function randomDelta(key:string,span:number){return (hash(key)%(span*2+1))-span;}
-export function advanceSeasonDevelopment(input:Team[],season:number,standings:{id:string;position:number;points:number}[],driverStandings:{id:string;position:number;points:number}[]=[]){
+export function advanceSeasonDevelopment(input:Team[],season:number,standings:{id:string;position:number;points:number}[],driverStandings:{id:string;position:number;points:number}[]=[],championshipId="formula-1-2026"){
  const teams=ensureDevelopmentData(input,season);
  const rank=new Map(standings.map(x=>[x.id,x.position]));
  const next=teams.map(team=>{
@@ -82,9 +82,10 @@ export function advanceSeasonDevelopment(input:Team[],season:number,standings:{i
   const car=team.carAttributes||{power:80,downforce:80};
   const technicalMomentum=(technicalScore-.5)*5;
   const performanceInfluence=relative*.7;
+  const carClamp=(value:number)=>championshipId==="formula-2-2026"?Math.max(0,Math.min(70,Math.round(value))):clamp(value);
   return {...nextTeam,carAttributes:{
-   power:clamp(car.power+randomDelta(team.id+season+"power",3)+technicalMomentum+performanceInfluence),
-   downforce:clamp(car.downforce+randomDelta(team.id+season+"downforce",3)+technicalMomentum+performanceInfluence)
+   power:carClamp(car.power+randomDelta(team.id+season+"power",3)+technicalMomentum+performanceInfluence),
+   downforce:carClamp(car.downforce+randomDelta(team.id+season+"downforce",3)+technicalMomentum+performanceInfluence)
   }};
  });
  return next;
@@ -97,4 +98,8 @@ export function applyInitialAttributeBaseline(teams:Team[]):Team[]{
   carAttributes:{power:80,downforce:80},
   drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:80,qualifying:80,overtaking:80,defending:80,consistency:80}}))
  }));
+}
+
+export function applyFormula2InitialBaseline(teams:Team[]):Team[]{
+ return teams.map(team=>({...team,carAttributes:{power:60,downforce:60},drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60}}))}));
 }
