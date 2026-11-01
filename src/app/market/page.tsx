@@ -6,6 +6,7 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
 import {initializeDriverContracts,getContractEndLabel,type MarketContract,type MarketEvent} from "@/lib/market";
+import {getRetiredDrivers} from "@/lib/retirement";
 import type {Team,Championship} from "@/lib/types";
 
 type CategoryData={championship:Championship;teams:Team[];contracts:MarketContract[];events:MarketEvent[];season:number};
@@ -22,13 +23,13 @@ export default function MarketPage(){
    const championships=readUniverseChampionships();
    const f1Defaults=initialTeamsForChampionship("formula-1-2026");
    const f1Raw=localStorage.getItem(teamStorageKey("formula-1-2026"));
-   const f1Stored=f1Raw?JSON.parse(f1Raw):f1Defaults;
-   const f1Teams=mergeInitialTeams("formula-1-2026",Array.isArray(f1Stored)?f1Stored:f1Defaults);
+   let f1Teams:Team[]=f1Defaults;
+   try { const f1Stored=f1Raw?JSON.parse(f1Raw):f1Defaults; f1Teams=mergeInitialTeams("formula-1-2026",Array.isArray(f1Stored)?f1Stored:f1Defaults); } catch { f1Teams=f1Defaults; }
    const next:CategoryData[]=championships.map(championship=>{
     const defaults=initialTeamsForChampionship(championship.id);
     const raw=localStorage.getItem(teamStorageKey(championship.id));
-    const parsed=raw?JSON.parse(raw):defaults;
-    let teams:Team[]=defaults.length?mergeInitialTeams(championship.id,Array.isArray(parsed)?parsed:defaults):(Array.isArray(parsed)?parsed:[]);
+    let teams:Team[]=[];
+    try { const parsed=raw?JSON.parse(raw):defaults; teams=defaults.length?mergeInitialTeams(championship.id,Array.isArray(parsed)?parsed:defaults):(Array.isArray(parsed)?parsed:[]); } catch { teams=defaults; }
     if(championship.id==="formula-2-2026")teams=removeF1DriversFromF2(teams,f1Teams);
     const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season||2026;
     const contracts=initializeDriverContracts(teams,season,championship.id);
@@ -40,12 +41,21 @@ export default function MarketPage(){
   setReady(true);
  },[]);
  const visibleCategories=useMemo(()=>selectedCategory==="all"?categories:categories.filter(item=>item.championship.id===selectedCategory),[categories,selectedCategory]);
- const allContracts=useMemo(()=>visibleCategories.flatMap(item=>item.contracts.map(contract=>{
-  const team=item.teams.find(t=>t.id===contract.teamId);
-  const driver=item.teams.flatMap(t=>t.drivers).find(d=>d.id===contract.driverId);
-  const effectiveStatus=contract.status==="active"&&contract.endSeason<item.season?"expired":contract.status;
-  return {...contract,championshipId:item.championship.id,championshipName:item.championship.name,teamName:team?.name||"Equipe não encontrada",driverName:driver?.name||contract.driverId,effectiveStatus};
- })).sort((a,b)=>a.championshipName.localeCompare(b.championshipName)||a.driverName.localeCompare(b.driverName)),[visibleCategories]);
+ const allContracts=useMemo(()=>{
+  const rows=visibleCategories.flatMap(item=>item.contracts.map(contract=>{
+   const team=item.teams.find(t=>t.id===contract.teamId);
+   const driver=item.teams.flatMap(t=>t.drivers).find(d=>d.id===contract.driverId);
+   const archived=getRetiredDrivers().find(d=>d.driverId===contract.driverId);
+   const effectiveStatus=archived?"retired":contract.status==="active"&&contract.endSeason<item.season?"expired":contract.status;
+   return {...contract,championshipId:item.championship.id,championshipName:item.championship.name,teamName:team?.name||archived?.lastTeam||"Equipe não encontrada",driverName:driver?.name||archived?.driverName||contract.driverId,effectiveStatus};
+  }));
+  for(const retired of getRetiredDrivers()){
+   const category=visibleCategories.find(item=>item.championship.name===retired.championshipName);
+   if(!category||rows.some(row=>row.driverId===retired.driverId&&row.championshipId===category.championship.id))continue;
+   rows.push({driverId:retired.driverId,teamId:"retired",startSeason:retired.retirementSeason,endSeason:retired.retirementSeason,status:"retired" as const,championshipId:category.championship.id,championshipName:category.championship.name,teamName:retired.lastTeam,driverName:retired.driverName,effectiveStatus:"retired"});
+  }
+  return rows.sort((a,b)=>a.championshipName.localeCompare(b.championshipName)||a.driverName.localeCompare(b.driverName));
+ },[visibleCategories]);
  const allEvents=useMemo(()=>visibleCategories.flatMap(item=>item.events.map(event=>({...event,championshipName:item.championship.name}))).sort((a,b)=>b.season-a.season||b.createdAt.localeCompare(a.createdAt)),[visibleCategories]);
  const driverCount=visibleCategories.reduce((n,item)=>n+item.teams.reduce((m,team)=>m+team.drivers.length,0),0);
  const activeContracts=allContracts.filter(contract=>contract.effectiveStatus==="active").length;
