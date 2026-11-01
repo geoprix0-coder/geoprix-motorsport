@@ -7,7 +7,7 @@ import { ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-dev
 import type { TeamDevelopment } from "@/lib/season-development";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
 type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number}};
-const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:""});
+const newDriver=(n:number):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:"",age:25,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}});
 const newTeam=():Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:[newDriver(1),newDriver(2)],development:{developmentCapacity:50,investment:50,technicalEfficiency:50,technicalStability:50},carAttributes:{power:50,downforce:50}});
 export default function TeamsManager(){
 const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(initialChampionships[0]?.season||2026);
