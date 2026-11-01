@@ -55,7 +55,7 @@ export default function DriverProfile({driver,team,championshipId}:{driver:Drive
    const saved=raw?JSON.parse(raw) as Team[]:[team];
    const found=saved.find(t=>t.drivers.some(d=>d.id===driver.id));
    if(found){setCurrentTeam(found);const savedDriver=found.drivers.find(d=>d.id===driver.id);if(typeof savedDriver?.age==="number")setAge(savedDriver.age);if(savedDriver?.attributes)setAttributes(savedDriver.attributes);}
-   const contracts=initializeDriverContracts(saved);
+   const contracts=initializeDriverContracts(saved,2026,championshipId);
    setContract(contracts.find(item=>item.driverId===driver.id)||null);
   }catch{}
   try{
