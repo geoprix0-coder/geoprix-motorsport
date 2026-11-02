@@ -24,7 +24,7 @@ const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(n
 useEffect(()=>{if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championshipId);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[championshipId]);
 useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;const reconciled=mergeInitialTeams(championshipId,Array.isArray(saved)?saved:[]);let loaded=ensureDevelopmentData(reconciled,season);
 if(championshipId==="formula-regional-oceania-2026"){
- const slot=loaded.flatMap(team=>team.drivers.map(driver=>({team,driver}))).find(item=>item.driver.id==="fro-kiwi-cooper-shipman-slot");
+ const slot=loaded.flatMap(team=>team.drivers.map(driver=>({team,driver}))).find(item=>item.driver.id==="fro-kiwi-cooper-shipman-slot"&&item.driver.name==="Agente livre (substituição automática)");
  if(slot){
   const otherIds=["formula-1-2026","formula-2-2026","formula-3-2026","formula-regional-europe-2026","formula-regional-americas-2026"];
   const normalizeName=(value:string)=>value.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR").trim();
