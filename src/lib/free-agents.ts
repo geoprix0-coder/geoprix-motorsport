@@ -157,7 +157,7 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
 }
 
 
-export function automaticallyFillF2Vacancies(season: number, standings: {id:string;name:string;position:number;points:number}[] = []): { teams: Team[]; signings: MarketEvent[] } {
+export function automaticallyFillF3Vacancies(season: number, standings: {id:string;name:string;position:number;points:number}[] = []): { teams: Team[]; signings: MarketEvent[] } {
   const championshipId = "formula-3-2026";
   const teams = readTeams(championshipId).map(team => ({ ...team, drivers: [...(team.drivers || [])] }));
   const eventKey = "geoprix-market-history-" + championshipId + "-v1";
