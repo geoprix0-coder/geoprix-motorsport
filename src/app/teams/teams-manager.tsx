@@ -51,7 +51,7 @@ if(championshipId==="formula-regional-oceania-2026"){
  loaded=loaded.map(team=>({...team,drivers:team.drivers.map(driver=>{
   const placeholder=normalizeName(driver.name).includes("agente livre")||!driver.name.trim();
   const duplicate=occupied.has(normalizeName(driver.name));
-  if(!placeholder&&!duplicate)return driver;
+  if(!placeholder&&!duplicate){occupied.add(normalizeName(driver.name));return driver;}
   const agent=pool.find(candidate=>!usedAgents.has(candidate.id)&&!occupied.has(normalizeName(candidate.name)));
   let replacement:Driver;
   if(agent){
