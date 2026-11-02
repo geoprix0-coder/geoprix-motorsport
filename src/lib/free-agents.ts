@@ -69,12 +69,12 @@ export function readFreeAgents(): Driver[] {
 }
 
 export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
-  let f2Contracts:{driverId:string}[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-driver-contracts-formula-2-2026-v1")||"[]");f2Contracts=Array.isArray(parsed)?parsed:[]}catch{}
-  const f2DebutIds=new Set([...getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId),...f2Contracts.map(item=>item.driverId),...f2Teams.flatMap(team=>team.drivers.map(driver=>driver.id))]);
-  const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id));
   const f2Teams = readTeams("formula-2-2026");
   const f3Teams = readTeams("formula-3-2026");
   const f1Teams = readTeams("formula-1-2026");
+  let f2Contracts:{driverId:string}[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-driver-contracts-formula-2-2026-v1")||"[]");f2Contracts=Array.isArray(parsed)?parsed:[]}catch{}
+  const f2DebutIds=new Set([...getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId),...f2Contracts.map(item=>item.driverId),...f2Teams.flatMap(team=>team.drivers.map(driver=>driver.id)),...initialTeamsForChampionship("formula-2-2026").flatMap(team=>team.drivers.map(driver=>driver.id))]);
+  const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id));
   const existingDrivers = [...f1Teams, ...f2Teams, ...f3Teams].flatMap(team => team.drivers || []);
   let f2FreeAgents:Driver[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");f2FreeAgents=Array.isArray(parsed)?parsed:[]}catch{}
   const usedNames = new Set([...existingDrivers.map(driver => normalize(driver.name)), ...f2FreeAgents.map(driver=>normalize(driver.name)), ...agents.map(driver => normalize(driver.name)), ...getRetiredDrivers().map(driver => normalize(driver.driverName))]);
