@@ -70,7 +70,7 @@ export function readFreeAgents(): Driver[] {
 
 export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
   let f2Contracts:{driverId:string}[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-driver-contracts-formula-2-2026-v1")||"[]");f2Contracts=Array.isArray(parsed)?parsed:[]}catch{}
-  const f2DebutIds=new Set([...getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId),...f2Contracts.map(item=>item.driverId)]);
+  const f2DebutIds=new Set([...getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId),...f2Contracts.map(item=>item.driverId),...f2Teams.flatMap(team=>team.drivers.map(driver=>driver.id))]);
   const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id));
   const f2Teams = readTeams("formula-2-2026");
   const f3Teams = readTeams("formula-3-2026");
