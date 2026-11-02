@@ -202,7 +202,7 @@ export function getExtraordinaryCandidates(championshipId: string): Extraordinar
   const championships = readUniverseChampionships();
   const names = new Map(championships.map(item => [item.id, item.name]));
   const candidates: ExtraordinaryCandidate[] = [];
-  const seen = new Set<string>([...window.signedDriverIds, ...targetTeams.flatMap(team => team.drivers.map(driver => driver.id))]);
+  const seen = new Set<string>([...window.signedDriverIds, ...(target?.drivers || []).map(driver => driver.id)]);
   for (const sourceId of ids) {
     const sourceTier = tier(sourceId);
     for (const team of readTeams(sourceId)) {
