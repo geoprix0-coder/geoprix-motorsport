@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TrendingUp, TrendingDown, ClipboardList } from "lucide-react";
+import { buildDevelopmentReport } from "@/lib/season-development-report";
+import type { Round } from "@/lib/season-finalization-types";
 
 type Recommendation={subjectType:"driver"|"team";subjectId:string;subjectName:string;attribute:string;direction:"increase"|"decrease";points?:number;reason:string};
 type Report={id:string;roundId:string;round:number;circuitName:string;createdAt:string;kind?:"race"|"season-end";season?:number;recommendations:Recommendation[];notes:string[]};
@@ -14,7 +16,27 @@ export default function DevelopmentReportsPage(){
   try{
    const raw=localStorage.getItem("geoprix-development-reports-"+id);
    const parsed=raw?JSON.parse(raw):[];
-   if(Array.isArray(parsed))setReports(parsed.map((report:Report)=>({...report,kind:report.kind||"race",recommendations:report.kind==="season-end"?report.recommendations:report.recommendations.filter(item=>item.subjectType==="team")})).sort((a:Report,b:Report)=>b.round-a.round));
+    if(Array.isArray(parsed)){
+     let repaired=false;
+     const archiveRaw=localStorage.getItem("geoprix-calendar-history-"+id);
+     const archives=archiveRaw?JSON.parse(archiveRaw):[];
+     const normalized=parsed.map((report:Report)=>{
+      let next={...report,kind:report.kind||"race",recommendations:report.recommendations||[]};
+      if(next.kind==="season-end"&&!next.recommendations.some(item=>item.subjectType==="driver")){
+       const archive=Array.isArray(archives)?archives.find((item:{season:number;rounds:Round[]})=>item.season===next.season):null;
+       const archivedRounds=Array.isArray(archive?.rounds)?archive.rounds as Round[]:[];
+       const finalRound=[...archivedRounds].sort((a,b)=>a.round-b.round).at(-1);
+       if(finalRound){
+        const rebuilt=buildDevelopmentReport(id,archivedRounds,finalRound,true,next.season||2026);
+        next={...next,...rebuilt,id:next.id,createdAt:next.createdAt};
+        repaired=true;
+       }
+      }
+      return next;
+     }).sort((a:Report,b:Report)=>b.round-a.round);
+     if(repaired)localStorage.setItem("geoprix-development-reports-"+id,JSON.stringify(normalized));
+     setReports(normalized);
+    }
   }catch{setReports([])}
   setLoaded(true);
  },[id]);
