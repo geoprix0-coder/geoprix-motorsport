@@ -299,7 +299,7 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
   const event: MarketEvent = {
     id: crypto.randomUUID(),
     season: activeWindow.season,
-    type: candidate.sourceKind === "free-agent" ? "signing" : candidate.sourceChampionshipId === targetId ? "transfer" : "promotion",
+    type: candidate.sourceChampionshipId !== targetId ? "promotion" : candidate.sourceKind === "free-agent" ? "signing" : "transfer",
     driverId,
     driverName: candidate.driver.name,
     fromTeamId: candidate.sourceTeamId,
