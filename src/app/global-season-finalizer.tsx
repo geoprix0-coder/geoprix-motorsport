@@ -68,7 +68,7 @@ export default function GlobalSeasonFinalizer(){
     localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
    }
    const f1Result=results.find(result=>result.championshipId==="formula-1-2026");
-   const f2Result=results.find(result=>result.championshipId==="formula-2-2026");
+   const f2Result=results.find(result=>result.championshipId==="formula-2-2026"); const f3Result=results.find(result=>result.championshipId==="formula-3-2026");
    if(f1Result&&f2Result){
     const promotions=promoteF2DriversToF1Vacancies(f1Result.season,f1Result.teamStandings,f2Result.driverStandings);
     allEvents.push(...promotions.events);
