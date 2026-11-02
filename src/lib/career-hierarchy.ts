@@ -19,7 +19,7 @@ export function registerF1Debuts(drivers:Driver[],season=2026){registerDebuts(dr
 export function registerF2Debuts(drivers:Driver[],season=2026){registerDebuts(drivers,season,"f2")}
 export function removeF1DriversFromF2(f2Teams:Team[],f1Teams:Team[]):Team[]{
  const f1Ids=new Set(f1Teams.flatMap(t=>t.drivers.map(d=>d.id)));
- const retiredIds=new Set([...getCareerStatus().map(x=>x.driverId),...getRetiredDrivers().map(x=>x.driverId)]);
+ const retiredIds=new Set([...getCareerStatus().filter(x=>x.firstF1Season).map(x=>x.driverId),...getRetiredDrivers().map(x=>x.driverId)]);
  return f2Teams.map(team=>({...team,drivers:team.drivers.filter(d=>!f1Ids.has(d.id)&&!retiredIds.has(d.id))}));
 }
 export function validateChampionshipRoster(championshipId:string,teams:Team[],season=2026):{ok:boolean;teams:Team[];message:string}{
