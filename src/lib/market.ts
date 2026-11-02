@@ -133,6 +133,11 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
    if(team)team.drivers=team.drivers.filter(driver=>driver.id!==x.driver.id);
    contract.status="released";contract.endSeason=season;contract.endLabel=String(season);
    events.push({id:crypto.randomUUID(),season,type:"release",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:"unattached",toTeamName:"Sem contrato",contractEnd:season,reason:"Contrato não renovado: desempenho esportivo, comparação com o companheiro e perspectiva de carreira indicaram que a equipe deveria buscar outra opção.",createdAt:new Date().toISOString()});
+   if(championshipId==="formula-2-2026"){
+    let freeAgents:Team["drivers"]= [];
+    try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
+    if(!freeAgents.some(driver=>driver.id===x.driver.id)){freeAgents.push(x.driver);localStorage.setItem("geoprix-free-agents-v1",JSON.stringify(freeAgents));}
+   }
    continue;
   }
   contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
