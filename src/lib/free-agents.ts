@@ -167,7 +167,7 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
         toTeamId: team.id,
         toTeamName: team.name,
         contractEnd: season + 1,
-        reason: "Contratação automática para preencher uma vaga no grid. O piloto foi selecionado do banco de talentos e inicia sua carreira na Formula 2.",
+        reason: driver.id.startsWith("free-") ? "Contratação automática para preencher uma vaga no grid. O piloto foi selecionado do banco de jovens talentos e inicia sua carreira na Formula 2." : "Retorno automático ao grid após o encerramento de um contrato anterior, condicionado à existência de uma vaga na Formula 2.",
         createdAt: new Date().toISOString()
       });
     }
