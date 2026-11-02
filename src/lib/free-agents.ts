@@ -141,7 +141,7 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
   if (!target) return { ok: false, message: "Selecione uma equipe válida da Formula 3." };
   if (f2Teams.some(team => team.drivers.some(item => item.id === driver.id))) return { ok: false, message: "Este piloto já está vinculado à Formula 3." };
   const f2Ids=new Set(readTeams("formula-2-2026").flatMap(team=>team.drivers.map(item=>item.id)));
-  if(f2Ids.has(driver.id))return {ok:false,message:"Pilotos que já estrearam na Formula 2 não podem retornar à Formula 3."};
+  if(f2Ids.has(driver.id)||getCareerStatus().some(item=>item.driverId===driver.id&&(item.firstF2Season||item.firstF1Season)))return {ok:false,message:"Pilotos que já estrearam na Formula 2 não podem retornar à Formula 3."};
   if(target.drivers.length>=3)return {ok:false,message:"Cada equipe da Formula 3 possui exatamente 3 vagas."};
   if (f2Teams.some(team => team.drivers.some(item => item.number === driver.number))) return { ok: false, message: "O número deste piloto já está em uso na Formula 3." };
 
@@ -165,7 +165,8 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
   try { const parsed = JSON.parse(localStorage.getItem(eventKey) || "[]"); previousEvents = Array.isArray(parsed) ? parsed : []; } catch {}
   const releasedThisWindow = new Set(previousEvents.filter(event => event.season === season && event.type === "release").map(event => event.driverId));
   const allAgents = readFreeAgents();
-  let agents = allAgents.filter(agent => !releasedThisWindow.has(agent.id));
+  const f2DebutIds=new Set(getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId));
+  let agents = allAgents.filter(agent => !releasedThisWindow.has(agent.id)&&!f2DebutIds.has(agent.id)&&!teams.some(team=>team.drivers.some(driver=>driver.id===agent.id)));
   const contracts = initializeDriverContracts(teams, season, championshipId);
   const agentScore = (driver:Driver) => {
     const attributes = Object.values(driver.attributes || {racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
