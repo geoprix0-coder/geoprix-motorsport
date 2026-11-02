@@ -6,7 +6,7 @@ import { getRetiredDrivers } from "./retirement";
 import { initializeDriverContracts, type MarketContract, type MarketEvent } from "./market";
 import { ensureFreeAgentPool } from "./free-agents";
 
-export type ExtraordinaryVacancy = { championshipId: string; teamId: string; teamName: string };
+export type ExtraordinaryVacancy = { championshipId: string; teamId: string; teamName: string; slotsToFill: number };
 export type ExtraordinaryWindow = {
   id: string;
   championshipId: string;
@@ -265,8 +265,9 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
     if (!sourceTeam || !sourceTeam.drivers.some(driver => driver.id === driverId)) throw new Error("O vínculo original do piloto mudou. Atualize a página e tente novamente.");
     sourceTeam.drivers = sourceTeam.drivers.filter(driver => driver.id !== driverId);
     if (candidate.sourceChampionshipId !== targetId) writeTeams(candidate.sourceChampionshipId, sourceTeams);
-    const vacancy = { championshipId: candidate.sourceChampionshipId, teamId: sourceTeam.id, teamName: sourceTeam.name };
-    if (!activeWindow.sourceVacancies.some(item => item.championshipId === vacancy.championshipId && item.teamId === vacancy.teamId)) activeWindow.sourceVacancies.push(vacancy);
+    const vacancy = activeWindow.sourceVacancies.find(item => item.championshipId === candidate.sourceChampionshipId && item.teamId === sourceTeam.id);
+    if (vacancy) vacancy.slotsToFill += 1;
+    else activeWindow.sourceVacancies.push({ championshipId: candidate.sourceChampionshipId, teamId: sourceTeam.id, teamName: sourceTeam.name, slotsToFill: 1 });
     if (candidate.sourceChampionshipId !== targetId) expireContract(candidate.sourceChampionshipId, driverId, activeWindow.season);
   } else {
     const poolKey = candidate.sourcePoolKey;
@@ -366,7 +367,9 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
     const team = teams.find(item => item.id === vacancy.teamId);
     if (!team) continue;
     const season = Number(localStorage.getItem("geoprix-season-" + vacancy.championshipId)) || activeWindow.season;
-    while (occupied(team) < maxDrivers(vacancy.championshipId)) {
+    const slotsToFill = Math.max(1, vacancy.slotsToFill || 1);
+    let filledForTeam = 0;
+    while (filledForTeam < slotsToFill && occupied(team) < maxDrivers(vacancy.championshipId)) {
       const candidates = freeAgentCandidatesFor(vacancy.championshipId, occupiedIds).filter(item => !usedPoolIds.has(item.driver.id));
       const candidate = candidates.find(item => vacancy.championshipId !== F2 || !teams.some(other => other.drivers.some(driver => driver.number === item.driver.number)));
       if (!candidate) break;
@@ -402,8 +405,9 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
       appendEvent(vacancy.championshipId, event);
       events.push(event);
       filled += 1;
+      filledForTeam += 1;
     }
-    if (occupied(team) < maxDrivers(vacancy.championshipId)) unfilled.push(vacancy);
+    if (filledForTeam < slotsToFill) unfilled.push({ ...vacancy, slotsToFill: slotsToFill - filledForTeam });
   }
   for (const [championshipId, teams] of teamsByCategory) writeTeams(championshipId, teams);
   const history = readArray<{ id: string; closedAt: string; window: ExtraordinaryWindow; filled: number; unfilled: ExtraordinaryVacancy[] }>("geoprix-extraordinary-market-history-v1");
