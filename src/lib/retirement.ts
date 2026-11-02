@@ -70,6 +70,17 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
     }
   }
 
+  // Agentes livres da F1 continuam ativos no mercado e também podem se aposentar.
+  const f1FreeAgents = readArray<Team["drivers"][number]>("geoprix-f1-free-agents-v1");
+  for (const driver of f1FreeAgents) {
+    if (retiredIds.has(driver.id) || typeof driver.age !== "number" || !Number.isFinite(driver.age)) continue;
+    const age = driver.age + Math.max(0, season - 2026);
+    const existing = candidates.get(driver.id);
+    if (!existing || age > existing.age) {
+      candidates.set(driver.id, { driverId: driver.id, driverName: driver.name, age, lastTeam: "Agente livre da F1", championshipName: "FORMULA 1" });
+    }
+  }
+
   const newlyRetired: RetiredDriver[] = [];
   for (const candidate of candidates.values()) {
     // A realistic retirement window: increasingly likely from 38, certain at 41.
@@ -87,6 +98,8 @@ export function processAutomaticRetirements(season: number): RetiredDriver[] {
 
   if (newlyRetired.length) {
     const newIds = new Set(newlyRetired.map(item => item.driverId));
+    const remainingF1Agents = f1FreeAgents.filter(driver => !newIds.has(driver.id));
+    localStorage.setItem("geoprix-f1-free-agents-v1", JSON.stringify(remainingF1Agents));
     for (const championship of championships) {
       const key = teamStorageKey(championship.id);
       const raw = localStorage.getItem(key);
