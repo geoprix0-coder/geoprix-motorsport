@@ -7,7 +7,8 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {initializeDriverContracts,type MarketContract} from "@/lib/market";
 import type {Team,Championship,Driver} from "@/lib/types";
-import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
+import {registerF3Debuts,removeF1DriversFromF2} from "@/lib/career-hierarchy";
+import {replaceF3SeedVacancy} from "@/lib/free-agents";
 import {getRetiredDrivers,type RetiredDriver} from "@/lib/retirement";
 import {ensureFreeAgentPool} from "@/lib/free-agents";
 
@@ -38,6 +39,7 @@ export default function DriversPage(){
       const f1=f1Raw?JSON.parse(f1Raw) as Team[]:[];
       teams=removeF1DriversFromF2(teams,f1);
      }
+     if(championship.id==="formula-3-2026"){teams=replaceF3SeedVacancy(teams,championship.season||2026);registerF3Debuts(teams.flatMap(team=>team.drivers),championship.season||2026);}
      nextTeams[championship.id]=teams;
      const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season||2026;
      nextContracts[championship.id]=initializeDriverContracts(teams,season,championship.id);
