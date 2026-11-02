@@ -180,34 +180,62 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
   const experienceFit=experience>=3?100:experience===2?80:experience===1?60:40;
   return rankScore(standing,f2Standings.length)*.55+attributeAverage*.25+ageFit*.1+experienceFit*.1;
  };
- const candidates=f2Teams.flatMap(team=>team.drivers.map(driver=>({driver,team,score:candidateScore(driver),position:rank.get(driver.id)??999})))
-  .filter(item=>item.score>=60).sort((a,b)=>a.position-b.position||b.score-a.score);
+ const f2Candidates=f2Teams.flatMap(team=>team.drivers.map(driver=>({driver,team,score:candidateScore(driver),position:rank.get(driver.id)??999,source:"f2" as const})))
+  .filter(item=>item.score>=60);
+ const f1AgentKey="geoprix-f1-free-agents-v1";
+ let f1Agents:Team["drivers"]=[];
+ try{const parsed=JSON.parse(localStorage.getItem(f1AgentKey)||"[]");f1Agents=Array.isArray(parsed)?parsed:[];}catch{}
+ const f1Contracts:MarketContract[]=initializeDriverContracts(f1Teams,season,"formula-1-2026");
+ const f1Candidates=f1Agents.map(driver=>{
+  const values=Object.values(driver.attributes||{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
+  const average=values.reduce((sum,value)=>sum+(Number(value)||60),0)/Math.max(1,values.length);
+  const age=Number(driver.age)||30;
+  const ageFit=age<=25?90:age<=30?80:age<=34?65:age<=37?45:20;
+  const contract=f1Contracts.find(item=>item.driverId===driver.id);
+  const experience=Math.max(1,season-(contract?.startSeason??season-2));
+  const experienceFit=experience>=5?100:experience>=3?85:65;
+  return {driver,team:null as Team|null,score:average*.65+ageFit*.2+experienceFit*.15,position:999,source:"f1-free" as const};
+ }).filter(item=>item.score>=45);
+ const candidates=[...f2Candidates,...f1Candidates].sort((a,b)=>b.score-a.score);
  const f1Rank=new Map(f1Standings.map(row=>[row.id,row.position]));
  const vacancies=f1Teams.filter(team=>team.drivers.length<2).sort((a,b)=>(f1Rank.get(b.id)??f1Teams.length+1)-(f1Rank.get(a.id)??f1Teams.length+1));
  const events:MarketEvent[]=[];
  const promoted:Team["drivers"]= [];
+ const promoted:Team["drivers"]= [];
+ const signedF1Agents:Team["drivers"]= [];
+ const usedCandidates=new Set<string>();
  for(const target of vacancies){
   while(target.drivers.length<2&&candidates.length){
-   const candidate=candidates.shift()!;
-   const source=f2Teams.find(team=>team.id===candidate.team.id);
-   if(!source||!source.drivers.some(driver=>driver.id===candidate.driver.id))continue;
-   source.drivers=source.drivers.filter(driver=>driver.id!==candidate.driver.id);
-   target.drivers.push(candidate.driver);
-   promoted.push(candidate.driver);
-   const endSeason=season+2;
-   events.push({id:crypto.randomUUID(),season,type:"promotion",driverId:candidate.driver.id,driverName:candidate.driver.name,fromTeamId:source.id,fromTeamName:source.name,toTeamId:target.id,toTeamName:target.name,contractEnd:endSeason,reason:"Promoção automática da Formula 2 para a Formula 1: vaga disponível na equipe e avaliação favorável de classificação, atributos, idade e potencial esportivo.",createdAt:new Date().toISOString()});
+   const candidate=candidates.find(item=>!usedCandidates.has(item.driver.id));
+   if(!candidate)break;
+   candidates.splice(candidates.indexOf(candidate),1);
+   usedCandidates.add(candidate.driver.id);
+   if(candidate.source==="f2"){
+    const source=f2Teams.find(team=>team.id===candidate.team?.id);
+    if(!source||!source.drivers.some(driver=>driver.id===candidate.driver.id))continue;
+    source.drivers=source.drivers.filter(driver=>driver.id!==candidate.driver.id);
+    target.drivers.push(candidate.driver);
+    promoted.push(candidate.driver);
+    events.push({id:crypto.randomUUID(),season,type:"promotion",driverId:candidate.driver.id,driverName:candidate.driver.name,fromTeamId:source.id,fromTeamName:source.name,toTeamId:target.id,toTeamName:target.name,contractEnd:season+2,reason:"Promoção automática da Formula 2 para a Formula 1: a equipe tinha uma vaga e o piloto superou as alternativas disponíveis na avaliação de classificação, atributos, idade e experiência.",createdAt:new Date().toISOString()});
+   }else{
+    target.drivers.push(candidate.driver);
+    signedF1Agents.push(candidate.driver);
+    events.push({id:crypto.randomUUID(),season,type:"signing",driverId:candidate.driver.id,driverName:candidate.driver.name,fromTeamId:"f1-free-agents",fromTeamName:"Agente livre da F1",toTeamId:target.id,toTeamName:target.name,contractEnd:season+1,reason:"Contratação automática de um agente livre da Formula 1. O piloto foi escolhido entre os disponíveis por sua experiência, atributos e adequação à vaga.",createdAt:new Date().toISOString()});
+   }
   }
  }
  if(promoted.length){
   localStorage.setItem(teamStorageKey("formula-1-2026"),JSON.stringify(f1Teams));
   localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(f2Teams));
-  registerF1Debuts(promoted,season);
-  const f1Contracts=initializeDriverContracts(f1Teams,season,"formula-1-2026");
-  for(const driver of promoted){
-   const contract=f1Contracts.find(item=>item.driverId===driver.id);
-   if(contract){contract.teamId=f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||contract.teamId;contract.startSeason=season;contract.endSeason=season+2;contract.endLabel=String(season+2);contract.status="active";}
+  if(promoted.length)registerF1Debuts(promoted,season);
+  const nextF1Contracts=initializeDriverContracts(f1Teams,season,"formula-1-2026");
+  for(const driver of [...promoted,...signedF1Agents]){
+   let contract=nextF1Contracts.find(item=>item.driverId===driver.id);
+   if(!contract){contract={driverId:driver.id,driverName:driver.name,teamId:f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||"",startSeason:season,endSeason:season+2,status:"active"};nextF1Contracts.push(contract);}
+   contract.driverName=driver.name;contract.teamId=f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||contract.teamId;contract.startSeason=season;contract.endSeason=season+2;contract.endLabel=String(season+2);contract.status="active";
   }
-  localStorage.setItem("geoprix-driver-contracts-v1",JSON.stringify(f1Contracts));
+  localStorage.setItem("geoprix-driver-contracts-v1",JSON.stringify(nextF1Contracts));
+  if(signedF1Agents.length)localStorage.setItem(f1AgentKey,JSON.stringify(f1Agents.filter(agent=>!signedF1Agents.some(driver=>driver.id===agent.id))));
   const f2Contracts:MarketContract[]=initializeDriverContracts(f2Teams,season,"formula-2-2026");
   for(const driver of promoted){const contract=f2Contracts.find(item=>item.driverId===driver.id);if(contract){contract.status="expired";contract.endSeason=season;contract.endLabel=String(season);}}
   localStorage.setItem("geoprix-driver-contracts-formula-2-2026-v1",JSON.stringify(f2Contracts));
