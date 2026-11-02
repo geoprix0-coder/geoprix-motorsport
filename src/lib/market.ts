@@ -186,6 +186,8 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
  const f1AgentKey="geoprix-f1-free-agents-v1";
  let f1Agents:Team["drivers"]=[];
  try{const parsed=JSON.parse(localStorage.getItem(f1AgentKey)||"[]");f1Agents=Array.isArray(parsed)?parsed:[];}catch{}
+ const f1EventHistory:MarketEvent[]=JSON.parse(localStorage.getItem(marketStorageKey("events","formula-1-2026"))||"[]");
+ const recentlyReleasedFromTeam=new Map(f1EventHistory.filter(event=>event.season===season&&event.type==="release").map(event=>[event.driverId,event.fromTeamId]));
  const f1Contracts:MarketContract[]=initializeDriverContracts(f1Teams,season,"formula-1-2026");
  const f1Candidates=f1Agents.map(driver=>{
   const values=Object.values(driver.attributes||{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
@@ -206,7 +208,7 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
  const usedCandidates=new Set<string>();
  for(const target of vacancies){
   while(target.drivers.length<2&&candidates.length){
-   const candidate=candidates.find(item=>!usedCandidates.has(item.driver.id));
+   const candidate=candidates.find(item=>!usedCandidates.has(item.driver.id)&&!(item.source==="f1-free"&&recentlyReleasedFromTeam.get(item.driver.id)===target.id));
    if(!candidate)break;
    candidates.splice(candidates.indexOf(candidate),1);
    usedCandidates.add(candidate.driver.id);
