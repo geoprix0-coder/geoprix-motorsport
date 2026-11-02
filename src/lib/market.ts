@@ -157,6 +157,7 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
  const f2Teams=readTeams("formula-2-2026").map(team=>({...team,drivers:[...(team.drivers||[])]}));
  const rank=new Map(f2Standings.map(row=>[row.id,row.position]));
  const rankScore=(position:number,total:number)=>total<=1?100:100*(1-(position-1)/(total-1));
+ const f2Contracts:MarketContract[]=initializeDriverContracts(f2Teams,season,"formula-2-2026");
  const candidateScore=(driver:Team["drivers"][number])=>{
   const standing=rank.get(driver.id);
   if(!standing)return 0;
@@ -164,7 +165,10 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
   const attributeAverage=attributes.reduce((sum,value)=>sum+(Number(value)||60),0)/Math.max(1,attributes.length);
   const age=Number(driver.age)||25;
   const ageFit=age<=21?100:age<=25?90:age<=28?75:age<=32?50:25;
-  return rankScore(standing,f2Standings.length)*.6+attributeAverage*.3+ageFit*.1;
+  const contract=f2Contracts.find(item=>item.driverId===driver.id);
+  const experience=Math.max(0,season-(contract?.startSeason??season));
+  const experienceFit=experience>=3?100:experience===2?80:experience===1?60:40;
+  return rankScore(standing,f2Standings.length)*.55+attributeAverage*.25+ageFit*.1+experienceFit*.1;
  };
  const candidates=f2Teams.flatMap(team=>team.drivers.map(driver=>({driver,team,score:candidateScore(driver),position:rank.get(driver.id)??999})))
   .filter(item=>item.score>=60).sort((a,b)=>a.position-b.position||b.score-a.score);
