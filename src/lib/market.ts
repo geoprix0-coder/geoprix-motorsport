@@ -132,7 +132,17 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
    const team=nextTeams.find(t=>t.id===x.team.id);
    if(team)team.drivers=team.drivers.filter(driver=>driver.id!==x.driver.id);
    contract.status="released";contract.endSeason=season;contract.endLabel=String(season);
-   events.push({id:crypto.randomUUID(),season,type:"release",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:"unattached",toTeamName:"Sem contrato",contractEnd:season,reason:"Contrato não renovado: desempenho esportivo, comparação com o companheiro e perspectiva de carreira indicaram que a equipe deveria buscar outra opção.",createdAt:new Date().toISOString()});
+   const isF1=championshipId==="formula-1-2026";
+   const destinationId=isF1?"f1-free-agents":"unattached";
+   const destinationName=isF1?"Agente livre da F1":"Sem contrato";
+   events.push({id:crypto.randomUUID(),season,type:"release",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:destinationId,toTeamName:destinationName,contractEnd:season,reason:isF1?"Dispensa da Formula 1: a equipe optou por não renovar após avaliar resultados, desempenho relativo ao companheiro, idade e perspectiva esportiva. O piloto permanece elegível exclusivamente para outras equipes da F1.":"Contrato não renovado: desempenho esportivo, comparação com o companheiro e perspectiva de carreira indicaram que a equipe deveria buscar outra opção.",createdAt:new Date().toISOString()});
+   if(isF1){
+    const key="geoprix-f1-free-agents-v1";
+    let agents:Team["drivers"]=[];
+    try{const parsed=JSON.parse(localStorage.getItem(key)||"[]");agents=Array.isArray(parsed)?parsed:[];}catch{}
+    if(!agents.some(driver=>driver.id===x.driver.id))agents.push(x.driver);
+    localStorage.setItem(key,JSON.stringify(agents));
+   }
    if(championshipId==="formula-2-2026"){
     let freeAgents:Team["drivers"]= [];
     try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
