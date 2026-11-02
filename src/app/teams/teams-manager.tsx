@@ -32,17 +32,35 @@ if(championshipId==="formula-regional-oceania-2026"){
   let saved:Team[]=[];try{const raw=localStorage.getItem(teamStorageKey(id));const parsed=raw?JSON.parse(raw):defaults;saved=Array.isArray(parsed)?parsed:defaults}catch{saved=defaults}
   for(const driver of saved.flatMap(team=>team.drivers||[]))occupied.add(normalizeName(driver.name));
  }
- const pool=ensureFreeAgentPool(10);
+ const pool=ensureFreeAgentPool(20);
  const usedAgents=new Set<string>();
+ const firstNames=["Liam","Noah","Oliver","Lucas","Mateo","Theo","Jack","Ethan","Leo","Gabriel","Finn","Arthur","Rafael","Kai","Hugo"];
+ const lastNames=["Wilson","Taylor","Brown","Anderson","Martin","Campbell","Silva","Costa","Walker","Thompson","Young","Mitchell","Santos","Reed","Clark"];
+ const nationalities=["Nova Zelândia","Austrália","Japão","Brasil","Estados Unidos","Reino Unido","Argentina","França","Alemanha","México"];
+ const makeRandomDriver=(slot:Driver):Driver=>{
+  let name="";
+  for(let attempt=0;attempt<200;attempt++){
+   const candidate=firstNames[Math.floor(Math.random()*firstNames.length)]+" "+lastNames[Math.floor(Math.random()*lastNames.length)];
+   if(!occupied.has(normalizeName(candidate))){name=candidate;break;}
+  }
+  if(!name)name="Piloto Oceânico "+crypto.randomUUID().slice(0,8);
+  occupied.add(normalizeName(name));
+  return {id:slot.id,name,number:slot.number,nationality:nationalities[Math.floor(Math.random()*nationalities.length)],age:16+Math.floor(Math.random()*7),attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
+ };
  let replaced=0;
  loaded=loaded.map(team=>({...team,drivers:team.drivers.map(driver=>{
-  if(!occupied.has(normalizeName(driver.name)))return driver;
+  const placeholder=normalizeName(driver.name).includes("agente livre")||!driver.name.trim();
+  const duplicate=occupied.has(normalizeName(driver.name));
+  if(!placeholder&&!duplicate)return driver;
   const agent=pool.find(candidate=>!usedAgents.has(candidate.id)&&!occupied.has(normalizeName(candidate.name)));
-  if(!agent)return driver;
-  usedAgents.add(agent.id);
-  occupied.add(normalizeName(agent.name));
+  let replacement:Driver;
+  if(agent){
+   usedAgents.add(agent.id);
+   occupied.add(normalizeName(agent.name));
+   replacement={...agent,id:driver.id,number:driver.number,attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
+  }else replacement=makeRandomDriver(driver);
   replaced++;
-  return {...agent,id:driver.id,number:driver.number,attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
+  return replacement;
  })}));
  if(replaced){
   localStorage.setItem(FREE_AGENTS_KEY,JSON.stringify(readFreeAgents().filter(driver=>!usedAgents.has(driver.id))));
