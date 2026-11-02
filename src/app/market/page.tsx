@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ArrowLeft,ArrowRightLeft,CalendarClock,Handshake,Users} from "lucide-react";
+import {ArrowLeft,ArrowRightLeft,CalendarClock,Flag,Handshake,Users} from "lucide-react";
 import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
