@@ -72,9 +72,8 @@ export default function GlobalSeasonFinalizer(){
    if(f1Result&&f2Result){
     const promotions=promoteF2DriversToF1Vacancies(f1Result.season,f1Result.teamStandings,f2Result.driverStandings);
     allEvents.push(...promotions.events);
-    const recruitment=automaticallyFillF2Vacancies(f2Result.season,f2Result.teamStandings);
-    allEvents.push(...recruitment.signings);
    }
+   if(f3Result){const entryRecruitment=automaticallyFillF2Vacancies(f3Result.season,f3Result.teamStandings);allEvents.push(...entryRecruitment.signings);}
    ensureFreeAgentPool(10);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({seasons:results.map(result=>({championshipId:result.championshipId,season:result.season})),events:allEvents,processedAt:new Date().toISOString()}));
    window.dispatchEvent(new Event("geoprix-season-updated"));
