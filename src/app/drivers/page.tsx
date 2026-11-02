@@ -20,6 +20,7 @@ export default function DriversPage(){
  const [selectedCategory,setSelectedCategory]=useState("all");
  const [retiredDrivers,setRetiredDrivers]=useState<RetiredDriver[]>([]);
  const [freeAgents,setFreeAgents]=useState<Driver[]>([]);
+ const [f2FreeAgents,setF2FreeAgents]=useState<Driver[]>([]);
 
  useEffect(()=>{
   const load=()=>{
@@ -48,6 +49,7 @@ export default function DriversPage(){
    setTeamsByCategory(nextTeams);
    setContractsByCategory(nextContracts);
    setFreeAgents(ensureFreeAgentPool(10));
+   try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");setF2FreeAgents(Array.isArray(parsed)?parsed:[])}catch{setF2FreeAgents([])}
    if(selectedCategory!=="all"&&!registered.some(c=>c.id===selectedCategory))setSelectedCategory("all");
   };
   load();
@@ -102,6 +104,12 @@ export default function DriversPage(){
        <small style={{display:"block",color:"var(--muted)"}}>Disponível para contratação automática quando surgir uma vaga na F2</small>
       </article>)}
      </div>}
+    </div>
+
+    <div style={{padding:"18px",borderBottom:"1px solid var(--border)"}}>
+     <div className="list-heading"><h2>Agentes livres da F2</h2><span>{f2FreeAgents.length} disponíveis</span></div>
+     <p className="storage-note" style={{margin:"4px 0 14px"}}>Pilotos que já estrearam na F2 e tiveram seus contratos encerrados. Podem ser contratados por outra equipe da F2 ou por uma equipe da F1, mas nunca retornarão à F3.</p>
+     {f2FreeAgents.length===0?<div className="empty-state">Nenhum agente livre da F2 no momento.</div>:f2FreeAgents.map(driver=><article className="team-row" key={driver.id}><div><b>{driver.name}</b><small>{driver.nationality} · {driver.age??"—"} anos</small></div><span>#{driver.number}</span><span>Disponível para F2 / F1</span></article>)}
     </div>
 
     <div className="list-heading"><h2>Pilotos contratados</h2><span>{drivers.length} pilotos</span></div>
