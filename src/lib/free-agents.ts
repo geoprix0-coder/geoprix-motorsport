@@ -137,7 +137,6 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
   const f2Teams = readTeams("formula-3-2026");
   const target = f2Teams.find(team => team.id === teamId);
   if (!target) return { ok: false, message: "Selecione uma equipe válida da Formula 3." };
-  if (Number(driver.age)>20) return {ok:false,message:"O mercado de entrada da Formula 3 prioriza pilotos de até 20 anos."};
   if (f2Teams.some(team => team.drivers.some(item => item.id === driver.id))) return { ok: false, message: "Este piloto já está vinculado à Formula 3." };
   const f2Ids=new Set(readTeams("formula-2-2026").flatMap(team=>team.drivers.map(item=>item.id)));
   if(f2Ids.has(driver.id))return {ok:false,message:"Pilotos que já estrearam na Formula 2 não podem retornar à Formula 3."};
