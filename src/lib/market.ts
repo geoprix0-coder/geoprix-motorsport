@@ -146,8 +146,8 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
    }
    if(championshipId==="formula-2-2026"){
     let freeAgents:Team["drivers"]= [];
-    try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
-    if(!freeAgents.some(driver=>driver.id===x.driver.id)){freeAgents.push(x.driver);localStorage.setItem("geoprix-free-agents-v1",JSON.stringify(freeAgents));}
+    try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
+    if(!freeAgents.some(driver=>driver.id===x.driver.id)){freeAgents.push(x.driver);localStorage.setItem("geoprix-f2-free-agents-v1",JSON.stringify(freeAgents));}
    }
    continue;
   }
@@ -247,4 +247,13 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
   window.dispatchEvent(new Event("geoprix-rosters-updated"));
  }
  return {f1Teams,f2Teams,events};
+}
+
+/** F2 debuts remain eligible for F2 teams only; they can never re-enter F3. */
+export function hireF2FreeAgent(driverId:string,teamId:string,season:number):{ok:boolean;message:string}{
+ const key="geoprix-f2-free-agents-v1";let agents:Team["drivers"]=[];try{const parsed=JSON.parse(localStorage.getItem(key)||"[]");agents=Array.isArray(parsed)?parsed:[]}catch{}
+ const driver=agents.find(item=>item.id===driverId);if(!driver)return {ok:false,message:"Este agente livre da F2 não está disponível."};
+ const teamsKey=teamStorageKey("formula-2-2026");let teams:Team[]=[];try{const parsed=JSON.parse(localStorage.getItem(teamsKey)||"[]");teams=Array.isArray(parsed)?parsed:[]}catch{}
+ const target=teams.find(team=>team.id===teamId);if(!target)return {ok:false,message:"Selecione uma equipe válida da F2."};if(target.drivers.length>=2)return {ok:false,message:"A equipe já possui duas vagas ocupadas."};if(teams.some(team=>team.drivers.some(item=>item.id===driver.id)))return {ok:false,message:"O piloto já está contratado na F2."};
+ const next=teams.map(team=>team.id===teamId?{...team,drivers:[...team.drivers,driver]}:team);localStorage.setItem(teamsKey,JSON.stringify(next));initializeDriverContracts(next,season,"formula-2-2026");localStorage.setItem(key,JSON.stringify(agents.filter(item=>item.id!==driverId)));window.dispatchEvent(new Event("geoprix-rosters-updated"));return {ok:true,message:driver.name+" foi contratado por "+target.name+" na F2."};
 }
