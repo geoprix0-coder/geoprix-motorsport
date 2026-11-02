@@ -137,6 +137,7 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
    const destinationName=isF1?"Agente livre da F1":"Sem contrato";
    events.push({id:crypto.randomUUID(),season,type:"release",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:destinationId,toTeamName:destinationName,contractEnd:season,reason:isF1?"Dispensa da Formula 1: a equipe optou por não renovar após avaliar resultados, desempenho relativo ao companheiro, idade e perspectiva esportiva. O piloto permanece elegível exclusivamente para outras equipes da F1.":"Contrato não renovado: desempenho esportivo, comparação com o companheiro e perspectiva de carreira indicaram que a equipe deveria buscar outra opção.",createdAt:new Date().toISOString()});
    if(isF1){
+    registerF1Debuts([x.driver],season);
     const key="geoprix-f1-free-agents-v1";
     let agents:Team["drivers"]=[];
     try{const parsed=JSON.parse(localStorage.getItem(key)||"[]");agents=Array.isArray(parsed)?parsed:[];}catch{}
