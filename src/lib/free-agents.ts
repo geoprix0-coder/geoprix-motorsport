@@ -74,7 +74,7 @@ export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
   const f1Teams = readTeams("formula-1-2026");
   let f2Contracts:{driverId:string}[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-driver-contracts-formula-2-2026-v1")||"[]");f2Contracts=Array.isArray(parsed)?parsed:[]}catch{}
   const f2DebutIds=new Set([...getCareerStatus().filter(item=>item.firstF2Season||item.firstF1Season).map(item=>item.driverId),...f2Contracts.map(item=>item.driverId),...f2Teams.flatMap(team=>team.drivers.map(driver=>driver.id)),...initialTeamsForChampionship("formula-2-2026").flatMap(team=>team.drivers.map(driver=>driver.id))]);
-  const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id)).map(agent=>agent.id.startsWith("free-")&&(Number(agent.age)<16||Number(agent.age)>20)?{...agent,age:choose([16,17,18,19,20])}:agent);
+  const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id)).map(agent=>{if(!agent.id.startsWith("free-"))return agent;const attributes=agent.attributes||{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60};const migrated={...agent,age:Number(agent.age)<16||Number(agent.age)>20?choose([16,17,18,19,20]):agent.age,attributes:Object.values(attributes).every(value=>Number(value)===60)?{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}:attributes};return migrated;});
   const existingDrivers = [...f1Teams, ...f2Teams, ...f3Teams].flatMap(team => team.drivers || []);
   let f2FreeAgents:Driver[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");f2FreeAgents=Array.isArray(parsed)?parsed:[]}catch{}
   const usedNames = new Set([...existingDrivers.map(driver => normalize(driver.name)), ...f2FreeAgents.map(driver=>normalize(driver.name)), ...agents.map(driver => normalize(driver.name)), ...getRetiredDrivers().map(driver => normalize(driver.driverName))]);
@@ -101,7 +101,7 @@ export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
     if (!availableNumbers.length) break;
     const number = choose(availableNumbers);
     const agePool = [16,16,17,17,17,18,18,18,19,19,20,20];
-    const baseline = 60;
+    const baseline = 50;
     const driver: Driver = {
       id: "free-" + crypto.randomUUID(),
       name,
