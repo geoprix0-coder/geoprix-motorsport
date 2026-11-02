@@ -25,48 +25,34 @@ useEffect(()=>{if(!championship)return;const updateSeason=()=>{const stored=loca
 useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;const reconciled=mergeInitialTeams(championshipId,Array.isArray(saved)?saved:[]);let loaded=ensureDevelopmentData(reconciled,season);
 if(championshipId==="formula-regional-oceania-2026"){
  const otherIds=["formula-1-2026","formula-2-2026","formula-3-2026","formula-regional-europe-2026","formula-regional-americas-2026"];
- const normalizeName=(value:string)=>value.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR").trim();
+ const normalizeName=(value:string)=>String(value||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR").trim();
  const occupied=new Set<string>();
  for(const id of otherIds){
-  const defaults=initialTeamsForChampionship(id);
-  let saved:Team[]=[];try{const raw=localStorage.getItem(teamStorageKey(id));const parsed=raw?JSON.parse(raw):defaults;saved=Array.isArray(parsed)?parsed:defaults}catch{saved=defaults}
-  for(const driver of saved.flatMap(team=>team.drivers||[]))occupied.add(normalizeName(driver.name));
+  let roster:Team[]=initialTeamsForChampionship(id);
+  try{const raw=localStorage.getItem(teamStorageKey(id));if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed))roster=parsed;}}catch{}
+  for(const driver of roster.flatMap(team=>team.drivers||[])){const name=normalizeName(driver.name);if(name)occupied.add(name);}
  }
- const pool=ensureFreeAgentPool(20);
- const usedAgents=new Set<string>();
- const firstNames=["Liam","Noah","Oliver","Lucas","Mateo","Theo","Jack","Ethan","Leo","Gabriel","Finn","Arthur","Rafael","Kai","Hugo"];
- const lastNames=["Wilson","Taylor","Brown","Anderson","Martin","Campbell","Silva","Costa","Walker","Thompson","Young","Mitchell","Santos","Reed","Clark"];
- const nationalities=["Nova Zelândia","Austrália","Japão","Brasil","Estados Unidos","Reino Unido","Argentina","França","Alemanha","México"];
- const makeRandomDriver=(slot:Driver):Driver=>{
-  let name="";
-  for(let attempt=0;attempt<200;attempt++){
+ const firstNames=["Liam","Noah","Oliver","Lucas","Mateo","Theo","Jack","Ethan","Leo","Gabriel","Finn","Arthur","Rafael","Kai","Hugo","Aiden","Oscar","Blake","Max","Elliot"];
+ const lastNames=["Wilson","Taylor","Brown","Anderson","Martin","Campbell","Walker","Thompson","Young","Mitchell","Santos","Reed","Clark","Robinson","Harris","Carter","Evans","Cooper","Bennett","Morgan"];
+ const nationalities=["Nova Zelândia","Austrália","Japão","Brasil","Estados Unidos","Reino Unido","Argentina","França","Alemanha","México","Finlândia","Irlanda"];
+ let changed=false;
+ loaded=loaded.map(team=>({...team,drivers:(team.drivers||[]).map(driver=>{
+  const name=normalizeName(driver.name);
+  const placeholder=!name||name.includes("agente livre")||name.includes("substituicao automatica");
+  const duplicate=!placeholder&&occupied.has(name);
+  if(!placeholder&&!duplicate){occupied.add(name);return driver;}
+  let generatedName="";
+  for(let attempt=0;attempt<500;attempt++){
    const candidate=firstNames[Math.floor(Math.random()*firstNames.length)]+" "+lastNames[Math.floor(Math.random()*lastNames.length)];
-   if(!occupied.has(normalizeName(candidate))){name=candidate;break;}
+   if(!occupied.has(normalizeName(candidate))){generatedName=candidate;break;}
   }
-  if(!name)name="Piloto Oceânico "+crypto.randomUUID().slice(0,8);
-  occupied.add(normalizeName(name));
-  return {id:slot.id,name,number:slot.number,nationality:nationalities[Math.floor(Math.random()*nationalities.length)],age:16+Math.floor(Math.random()*7),attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
- };
- let replaced=0;
- loaded=loaded.map(team=>({...team,drivers:team.drivers.map(driver=>{
-  const placeholder=normalizeName(driver.name).includes("agente livre")||!driver.name.trim();
-  const duplicate=occupied.has(normalizeName(driver.name));
-  if(!placeholder&&!duplicate){occupied.add(normalizeName(driver.name));return driver;}
-  const agent=pool.find(candidate=>!usedAgents.has(candidate.id)&&!occupied.has(normalizeName(candidate.name)));
-  let replacement:Driver;
-  if(agent){
-   usedAgents.add(agent.id);
-   occupied.add(normalizeName(agent.name));
-   replacement={...agent,id:driver.id,number:driver.number,attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
-  }else replacement=makeRandomDriver(driver);
-  replaced++;
-  return replacement;
+  if(!generatedName)generatedName="Piloto Oceânico "+crypto.randomUUID().slice(0,8);
+  occupied.add(normalizeName(generatedName));
+  changed=true;
+  return {id:driver.id,name:generatedName,number:driver.number,nationality:nationalities[Math.floor(Math.random()*nationalities.length)],age:16+Math.floor(Math.random()*7),attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
  })}));
- if(replaced){
-  localStorage.setItem(FREE_AGENTS_KEY,JSON.stringify(readFreeAgents().filter(driver=>!usedAgents.has(driver.id))));
-  ensureFreeAgentPool(10);
- }
-}if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}if(championshipId==="formula-2-2026"){const f1Raw=localStorage.getItem(teamStorageKey("formula-1-2026"));const f1Teams=f1Raw?JSON.parse(f1Raw) as Team[]:[];loaded=removeF1DriversFromF2(loaded,f1Teams);registerF2Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId);if(!localStorage.getItem("geoprix-f2-initial-attributes-v2")){loaded=applyFormula2InitialBaseline(loaded);localStorage.setItem("geoprix-f2-initial-attributes-v2","true")}}else if(championshipId==="formula-1-2026"){registerF1Debuts(loaded.flatMap(t=>t.drivers),season)}else if(championshipId==="formula-3-2026"){loaded=replaceF3SeedVacancy(loaded,season);if(!localStorage.getItem("geoprix-f3-attribute-baseline-v4")){loaded=loaded.map(team=>({...team,carAttributes:{power:40,downforce:40},drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}}))}));localStorage.setItem("geoprix-f3-attribute-baseline-v4","true")}registerF3Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId)}setTeams(loaded)}catch{const fallback=initialTeamsForChampionship(championshipId);setTeams(championshipId==="formula-2-2026"?applyFormula2InitialBaseline(fallback):fallback)}setReady(true)},[championshipId]);
+ if(changed)localStorage.setItem(storageKey,JSON.stringify(loaded));
+ }if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}if(championshipId==="formula-2-2026"){const f1Raw=localStorage.getItem(teamStorageKey("formula-1-2026"));const f1Teams=f1Raw?JSON.parse(f1Raw) as Team[]:[];loaded=removeF1DriversFromF2(loaded,f1Teams);registerF2Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId);if(!localStorage.getItem("geoprix-f2-initial-attributes-v2")){loaded=applyFormula2InitialBaseline(loaded);localStorage.setItem("geoprix-f2-initial-attributes-v2","true")}}else if(championshipId==="formula-1-2026"){registerF1Debuts(loaded.flatMap(t=>t.drivers),season)}else if(championshipId==="formula-3-2026"){loaded=replaceF3SeedVacancy(loaded,season);if(!localStorage.getItem("geoprix-f3-attribute-baseline-v4")){loaded=loaded.map(team=>({...team,carAttributes:{power:40,downforce:40},drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}}))}));localStorage.setItem("geoprix-f3-attribute-baseline-v4","true")}registerF3Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId)}setTeams(loaded)}catch{const fallback=initialTeamsForChampionship(championshipId);setTeams(championshipId==="formula-2-2026"?applyFormula2InitialBaseline(fallback):fallback)}setReady(true)},[championshipId]);
 useEffect(()=>{if(ready)localStorage.setItem(storageKey,JSON.stringify(teams))},[teams,ready,storageKey]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
