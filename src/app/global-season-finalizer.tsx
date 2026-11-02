@@ -5,7 +5,7 @@ import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
 import {finalizeChampionshipSeason,readChampionshipCalendar} from "@/lib/season-finalization";
 import {processAutomaticRetirements} from "@/lib/retirement";
-import {automaticallyFillF2Vacancies,ensureFreeAgentPool} from "@/lib/free-agents";
+import {automaticallyFillF3Vacancies,ensureFreeAgentPool} from "@/lib/free-agents";
 import {runAutomaticMarket,promoteF2DriversToF1Vacancies,type MarketEvent} from "@/lib/market";
 import type {Championship,Team} from "@/lib/types";
 
@@ -73,7 +73,7 @@ export default function GlobalSeasonFinalizer(){
     const promotions=promoteF2DriversToF1Vacancies(f1Result.season,f1Result.teamStandings,f2Result.driverStandings);
     allEvents.push(...promotions.events);
    }
-   if(f3Result){const entryRecruitment=automaticallyFillF2Vacancies(f3Result.season,f3Result.teamStandings);allEvents.push(...entryRecruitment.signings);}
+   if(f3Result){const entryRecruitment=automaticallyFillF3Vacancies(f3Result.season,f3Result.teamStandings);allEvents.push(...entryRecruitment.signings);}
    ensureFreeAgentPool(10);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({seasons:results.map(result=>({championshipId:result.championshipId,season:result.season})),events:allEvents,processedAt:new Date().toISOString()}));
    window.dispatchEvent(new Event("geoprix-season-updated"));
