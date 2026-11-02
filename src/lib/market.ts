@@ -22,10 +22,13 @@ function marketStorageKey(kind:"contracts"|"events",championshipId:string){
 }
 export function initializeDriverContracts(teams:Team[],season=2026,championshipId="formula-1-2026"){
  const key=marketStorageKey("contracts",championshipId);
- const stored:MarketContract[]=JSON.parse(localStorage.getItem(key)||"[]");
+ let stored:MarketContract[]=JSON.parse(localStorage.getItem(key)||"[]");
+ const blankDriverIds=new Set(teams.flatMap(team=>team.drivers.filter(driver=>!driver.name.trim()).map(driver=>driver.id)));
+ stored=stored.filter(contract=>!blankDriverIds.has(contract.driverId));
  const retiredIds=new Set<string>((JSON.parse(localStorage.getItem("geoprix-retired-drivers-v1")||"[]") as {driverId:string}[]).map(item=>item.driverId));
  const byId=new Map(stored.map(c=>[c.driverId,c]));
  for(const team of teams)for(const driver of team.drivers){
+  if(!driver.name.trim())continue;
   if(retiredIds.has(driver.id)){
    const existing=byId.get(driver.id);
    if(existing)existing.status="retired";
