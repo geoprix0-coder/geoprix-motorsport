@@ -103,8 +103,8 @@ function eligibleSourceIds(targetId: string): string[] {
 function eligibleCareer(driver: Driver, targetId: string, sourceId: string): boolean {
   const career = getCareerStatus().find(item => item.driverId === driver.id);
   if (getRetiredDrivers().some(item => item.driverId === driver.id)) return false;
-  if (targetId === F1) return sourceId === F1 || sourceId === F2;
-  if (targetId === F2) return sourceId === F2 || (sourceId === F3 && !career?.firstF2Season && !career?.firstF1Season);
+  if (targetId === F1) return sourceId === F1 || (sourceId === F2 && !career?.firstF1Season);
+  if (targetId === F2) return (sourceId === F2 && !career?.firstF1Season) || (sourceId === F3 && !career?.firstF2Season && !career?.firstF1Season);
   if (targetId === F3) return sourceId === F3 && !career?.firstF2Season && !career?.firstF1Season;
   return sourceId === targetId;
 }
@@ -244,13 +244,13 @@ export function getExtraordinaryCandidates(championshipId: string): Extraordinar
 }
 
 export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
-  const window = readWindow();
-  if (!window) throw new Error("Não existe uma janela extraordinária aberta.");
-  const candidate = getExtraordinaryCandidates(window.championshipId).find(item => item.driver.id === driverId);
+  const activeWindow = readWindow();
+  if (!activeWindow) throw new Error("Não existe uma janela extraordinária aberta.");
+  const candidate = getExtraordinaryCandidates(activeWindow.championshipId).find(item => item.driver.id === driverId);
   if (!candidate) throw new Error("Este piloto não está mais disponível ou não é elegível para esta categoria.");
-  const targetId = window.championshipId;
+  const targetId = activeWindow.championshipId;
   const targetTeams = readTeams(targetId).map(team => ({ ...team, drivers: [...team.drivers] }));
-  const targetTeam = targetTeams.find(team => team.id === window.teamId);
+  const targetTeam = targetTeams.find(team => team.id === activeWindow.teamId);
   if (!targetTeam || !hasVacancy(targetTeam, targetId)) throw new Error("A equipe de destino não possui mais vagas.");
   if (targetId === F2) {
     const duplicateNumber = readTeams(F2).some(team => team.drivers.some(driver => driver.id !== driverId && driver.number === candidate.driver.number));
@@ -266,15 +266,15 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
     sourceTeam.drivers = sourceTeam.drivers.filter(driver => driver.id !== driverId);
     if (candidate.sourceChampionshipId !== targetId) writeTeams(candidate.sourceChampionshipId, sourceTeams);
     const vacancy = { championshipId: candidate.sourceChampionshipId, teamId: sourceTeam.id, teamName: sourceTeam.name };
-    if (!window.sourceVacancies.some(item => item.championshipId === vacancy.championshipId && item.teamId === vacancy.teamId)) window.sourceVacancies.push(vacancy);
-    if (candidate.sourceChampionshipId !== targetId) expireContract(candidate.sourceChampionshipId, driverId, window.season);
+    if (!activeWindow.sourceVacancies.some(item => item.championshipId === vacancy.championshipId && item.teamId === vacancy.teamId)) activeWindow.sourceVacancies.push(vacancy);
+    if (candidate.sourceChampionshipId !== targetId) expireContract(candidate.sourceChampionshipId, driverId, activeWindow.season);
   } else {
     const poolKey = candidate.sourcePoolKey;
     if (poolKey) {
       const remaining = readArray<Driver>(poolKey).filter(driver => driver.id !== driverId);
       localStorage.setItem(poolKey, JSON.stringify(remaining));
     }
-    expireContract(candidate.sourceChampionshipId, driverId, window.season);
+    expireContract(candidate.sourceChampionshipId, driverId, activeWindow.season);
   }
 
   const blankIndex = targetTeam.drivers.findIndex(driver => !driver.name.trim());
@@ -288,17 +288,17 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
     if (existing) {
       existing.teamId = targetTeam.id;
       existing.status = "active";
-      existing.startSeason = window.season;
-      existing.endSeason = window.season + 1;
-      existing.endLabel = String(window.season + 1);
+      existing.startSeason = activeWindow.season;
+      existing.endSeason = activeWindow.season + 1;
+      existing.endLabel = String(activeWindow.season + 1);
       localStorage.setItem(sourceContractKey, JSON.stringify(contracts));
     }
   }
-  updateContracts(targetId, targetTeams, driverId, targetTeam.id, window.season);
-  registerCategoryDebut(targetId, candidate.driver, window.season);
+  updateContracts(targetId, targetTeams, driverId, targetTeam.id, activeWindow.season);
+  registerCategoryDebut(targetId, candidate.driver, activeWindow.season);
   const event: MarketEvent = {
     id: crypto.randomUUID(),
-    season: window.season,
+    season: activeWindow.season,
     type: candidate.sourceKind === "free-agent" ? "signing" : candidate.sourceChampionshipId === targetId ? "transfer" : "promotion",
     driverId,
     driverName: candidate.driver.name,
@@ -306,17 +306,17 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
     fromTeamName: candidate.sourceTeamName,
     toTeamId: targetTeam.id,
     toTeamName: targetTeam.name,
-    contractEnd: window.season + 1,
+    contractEnd: activeWindow.season + 1,
     reason: "Movimentação realizada pela janela extraordinária antes do início da temporada. " + (candidate.sourceChampionshipId === targetId ? "Transferência entre equipes da mesma categoria." : candidate.sourceKind === "free-agent" ? "Contratação de piloto sem equipe." : "Promoção para uma categoria superior."),
     createdAt: new Date().toISOString(),
     windowType: "extraordinary"
   };
   appendEvent(targetId, event);
-  window.signedDriverIds.push(driverId);
-  localStorage.setItem(WINDOW_KEY, JSON.stringify(window));
-  window.dispatchEvent(new Event("geoprix-rosters-updated"));
-  window.dispatchEvent(new Event("geoprix-market-updated"));
-  return window;
+  activeWindow.signedDriverIds.push(driverId);
+  localStorage.setItem(WINDOW_KEY, JSON.stringify(activeWindow));
+  globalThis.window.dispatchEvent(new Event("geoprix-rosters-updated"));
+  globalThis.window.dispatchEvent(new Event("geoprix-market-updated"));
+  return activeWindow;
 }
 
 function freeAgentCandidatesFor(targetId: string, occupiedIds: Set<string>): ExtraordinaryCandidate[] {
@@ -345,10 +345,10 @@ function freeAgentCandidatesFor(targetId: string, occupiedIds: Set<string>): Ext
 }
 
 export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
-  const window = readWindow();
-  if (!window) throw new Error("Não existe uma janela extraordinária aberta.");
-  if (window.championshipId === F3) ensureFreeAgentPool(10);
-  const vacancies = [...window.sourceVacancies].sort((a, b) => tier(a.championshipId) - tier(b.championshipId));
+  const activeWindow = readWindow();
+  if (!activeWindow) throw new Error("Não existe uma janela extraordinária aberta.");
+  if (activeWindow.sourceVacancies.some(item => item.championshipId === F3)) ensureFreeAgentPool(10);
+  const vacancies = [...activeWindow.sourceVacancies].sort((a, b) => tier(a.championshipId) - tier(b.championshipId));
   const teamsByCategory = new Map<string, Team[]>();
   for (const vacancy of vacancies) {
     if (!teamsByCategory.has(vacancy.championshipId)) teamsByCategory.set(vacancy.championshipId, readTeams(vacancy.championshipId).map(team => ({ ...team, drivers: [...team.drivers] })));
@@ -363,7 +363,7 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
     const teams = teamsByCategory.get(vacancy.championshipId) || [];
     const team = teams.find(item => item.id === vacancy.teamId);
     if (!team) continue;
-    const season = Number(localStorage.getItem("geoprix-season-" + vacancy.championshipId)) || window.season;
+    const season = Number(localStorage.getItem("geoprix-season-" + vacancy.championshipId)) || activeWindow.season;
     while (occupied(team) < maxDrivers(vacancy.championshipId)) {
       const candidates = freeAgentCandidatesFor(vacancy.championshipId, occupiedIds).filter(item => !usedPoolIds.has(item.driver.id));
       const candidate = candidates.find(item => vacancy.championshipId !== F2 || !teams.some(other => other.drivers.some(driver => driver.number === item.driver.number)));
@@ -403,12 +403,11 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
   }
   for (const [championshipId, teams] of teamsByCategory) writeTeams(championshipId, teams);
   const history = readArray<{ id: string; closedAt: string; window: ExtraordinaryWindow; filled: number; unfilled: ExtraordinaryVacancy[] }>("geoprix-extraordinary-market-history-v1");
-  history.push({ id: window.id, closedAt: new Date().toISOString(), window, filled, unfilled });
+  history.push({ id: window.id, closedAt: new Date().toISOString(), window: activeWindow, filled, unfilled });
   localStorage.setItem("geoprix-extraordinary-market-history-v1", JSON.stringify(history));
   localStorage.removeItem(WINDOW_KEY);
-  if (usedPoolIds.size && usedPoolIds.has("free-agent-placeholder")) localStorage.removeItem("free-agent-placeholder");
   if (readArray<Driver>("geoprix-free-agents-v1").length < 10) ensureFreeAgentPool(10);
-  window.dispatchEvent(new Event("geoprix-rosters-updated"));
-  window.dispatchEvent(new Event("geoprix-market-updated"));
+  globalThis.window.dispatchEvent(new Event("geoprix-rosters-updated"));
+  globalThis.window.dispatchEvent(new Event("geoprix-market-updated"));
   return { filled, unfilled, events };
 }
