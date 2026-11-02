@@ -2,7 +2,7 @@ import type { Driver, Team } from "./types";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "./championship-data";
 import { initializeDriverContracts, type MarketEvent, type MarketContract } from "./market";
 import { getRetiredDrivers } from "./retirement";
-import { getCareerStatus } from "./career-hierarchy";
+import { getCareerStatus, registerF3Debuts } from "./career-hierarchy";
 
 export const FREE_AGENTS_KEY = "geoprix-free-agents-v1";
 export const FREE_AGENTS_MINIMUM = 10;
@@ -145,6 +145,7 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
 
   const updated = f2Teams.map(team => team.id === teamId ? { ...team, drivers: [...team.drivers, driver] } : team);
   localStorage.setItem(teamStorageKey("formula-3-2026"), JSON.stringify(updated));
+  registerF3Debuts([driver],season);
   initializeDriverContracts(updated, season, "formula-3-2026");
   localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(agents.filter(item => item.id !== driverId)));
   ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
@@ -206,6 +207,7 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
 
   if (signings.length) {
     localStorage.setItem(teamStorageKey(championshipId), JSON.stringify(teams));
+    registerF3Debuts(signings.map(event=>teams.flatMap(team=>team.drivers).find(driver=>driver.id===event.driverId)).filter((driver):driver is Driver=>Boolean(driver)),season);
     const contracts: MarketContract[] = initializeDriverContracts(teams, season, championshipId);
     const signedIds = new Set(signings.map(event => event.driverId));
     for (const contract of contracts) {
