@@ -4,10 +4,9 @@ import Link from "next/link";
 import {ArrowLeft,ArrowRightLeft,CalendarClock,Flag,Handshake,Users} from "lucide-react";
 import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
-import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
+import {removeF1DriversFromF2,registerF2Debuts,registerF3Debuts} from "@/lib/career-hierarchy";
 import {initializeDriverContracts,getContractEndLabel,type MarketContract,type MarketEvent} from "@/lib/market";
 import {getRetiredDrivers} from "@/lib/retirement";
-import {registerF2Debuts,registerF3Debuts} from "@/lib/career-hierarchy";
 import {ensureFreeAgentPool,hireFreeAgent,replaceF3SeedVacancy} from "@/lib/free-agents";
 import type {Team,Championship} from "@/lib/types";
 
