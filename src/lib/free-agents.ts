@@ -2,6 +2,7 @@ import type { Driver, Team } from "./types";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "./championship-data";
 import { initializeDriverContracts, type MarketEvent, type MarketContract } from "./market";
 import { getRetiredDrivers } from "./retirement";
+import { getCareerStatus } from "./career-hierarchy";
 
 export const FREE_AGENTS_KEY = "geoprix-free-agents-v1";
 export const FREE_AGENTS_MINIMUM = 10;
@@ -68,7 +69,8 @@ export function readFreeAgents(): Driver[] {
 }
 
 export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
-  const agents = readFreeAgents();
+  const f2DebutIds=new Set(getCareerStatus().filter(item=>item.firstF2Season).map(item=>item.driverId));
+  const agents = readFreeAgents().filter(agent=>!f2DebutIds.has(agent.id));
   const f2Teams = readTeams("formula-2-2026");
   const f3Teams = readTeams("formula-3-2026");
   const f1Teams = readTeams("formula-1-2026");
@@ -113,6 +115,19 @@ export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
 
   localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(next));
   return next;
+}
+
+export function replaceF3SeedVacancy(teams:Team[],season:number):Team[]{
+ const vacancy=teams.flatMap(team=>team.drivers.map(driver=>({team,driver}))).find(item=>item.driver.id==="f3-var-yamakoshi-replacement");
+ if(!vacancy)return teams;
+ const pool=ensureFreeAgentPool(FREE_AGENTS_MINIMUM);const agent=pool[0];if(!agent)return teams;
+ const replacement={...agent,id:"f3-var-free-agent-"+agent.id.replace(/[^a-zA-Z0-9-]/g,""),number:13};
+ const next=teams.map(team=>team.id===vacancy.team.id?{...team,drivers:team.drivers.map(driver=>driver.id===vacancy.driver.id?replacement:driver)}:team);
+ localStorage.setItem(teamStorageKey("formula-3-2026"),JSON.stringify(next));
+ localStorage.setItem(FREE_AGENTS_KEY,JSON.stringify(pool.slice(1)));
+ initializeDriverContracts(next,season,"formula-3-2026");
+ window.dispatchEvent(new Event("geoprix-free-agents-updated"));
+ return next;
 }
 
 export function hireFreeAgent(driverId: string, teamId: string, season: number): { ok: boolean; message: string } {
