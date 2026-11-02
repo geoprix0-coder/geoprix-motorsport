@@ -21,6 +21,7 @@ export default function DriversPage(){
  const [retiredDrivers,setRetiredDrivers]=useState<RetiredDriver[]>([]);
  const [freeAgents,setFreeAgents]=useState<Driver[]>([]);
  const [f2FreeAgents,setF2FreeAgents]=useState<Driver[]>([]);
+ const [f1FreeAgents,setF1FreeAgents]=useState<Driver[]>([]);
 
  useEffect(()=>{
   const load=()=>{
@@ -50,6 +51,7 @@ export default function DriversPage(){
    setContractsByCategory(nextContracts);
    setFreeAgents(ensureFreeAgentPool(10));
    try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");setF2FreeAgents(Array.isArray(parsed)?parsed:[])}catch{setF2FreeAgents([])}
+   try{const parsed=JSON.parse(localStorage.getItem("geoprix-f1-free-agents-v1")||"[]");setF1FreeAgents(Array.isArray(parsed)?parsed:[])}catch{setF1FreeAgents([])}
    if(selectedCategory!=="all"&&!registered.some(c=>c.id===selectedCategory))setSelectedCategory("all");
   };
   load();
@@ -101,7 +103,7 @@ export default function DriversPage(){
        <div style={{display:"flex",flexWrap:"wrap",gap:6,margin:"12px 0",fontSize:9,color:"var(--muted)"}}>
         <span>Race Pace 60</span><span>Qualifying 60</span><span>Overtaking 60</span><span>Defending 60</span><span>Consistency 60</span>
        </div>
-       <small style={{display:"block",color:"var(--muted)"}}>Disponível para contratação automática quando surgir uma vaga na F2</small>
+       <small style={{display:"block",color:"var(--muted)"}}>Disponível para contratação automática quando surgir uma vaga na F3</small>
       </article>)}
      </div>}
     </div>
@@ -110,6 +112,12 @@ export default function DriversPage(){
      <div className="list-heading"><h2>Agentes livres da F2</h2><span>{f2FreeAgents.length} disponíveis</span></div>
      <p className="storage-note" style={{margin:"4px 0 14px"}}>Pilotos que já estrearam na F2 e tiveram seus contratos encerrados. Podem ser contratados por outra equipe da F2 ou por uma equipe da F1, mas nunca retornarão à F3.</p>
      {f2FreeAgents.length===0?<div className="empty-state">Nenhum agente livre da F2 no momento.</div>:f2FreeAgents.map(driver=><article className="team-row" key={driver.id}><div><b>{driver.name}</b><small>{driver.nationality} · {driver.age??"—"} anos</small></div><span>#{driver.number}</span><span>Disponível para F2 / F1</span></article>)}
+    </div>
+
+    <div style={{padding:"18px",borderBottom:"1px solid var(--border)"}}>
+     <div className="list-heading"><h2>Agentes livres da F1</h2><span>{f1FreeAgents.length} disponíveis</span></div>
+     <p className="storage-note" style={{margin:"4px 0 14px"}}>Pilotos dispensados ou sem renovação na Formula 1. Permanecem no mercado exclusivo da F1 e só podem ser contratados por equipes dessa categoria.</p>
+     {f1FreeAgents.length===0?<div className="empty-state">Nenhum agente livre da F1 no momento.</div>:f1FreeAgents.map(driver=><article className="team-row" key={driver.id}><div><b>{driver.name}</b><small>{driver.nationality} · {driver.age??"—"} anos</small></div><span>#{driver.number}</span><span>Disponível exclusivamente para F1</span></article>)}
     </div>
 
     <div className="list-heading"><h2>Pilotos contratados</h2><span>{drivers.length} pilotos</span></div>
