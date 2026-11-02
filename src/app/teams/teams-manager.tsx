@@ -8,7 +8,7 @@ import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "
 import { applyFormula2InitialBaseline, applyInitialAttributeBaseline, ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
 import type { TeamDevelopment } from "@/lib/season-development";
 import { registerF1Debuts, registerF2Debuts, registerF3Debuts, removeF1DriversFromF2, validateChampionshipRoster } from "@/lib/career-hierarchy";
-import { replaceF3SeedVacancy } from "@/lib/free-agents";
+import { replaceF3SeedVacancy, ensureFreeAgentPool, readFreeAgents, FREE_AGENTS_KEY } from "@/lib/free-agents";
 import { initializeDriverContracts } from "@/lib/market";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
 type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number}};
@@ -22,7 +22,28 @@ const initialTeams=initialTeamsForChampionship(championshipId);
 const storageKey=teamStorageKey(championshipId);
 const [teams,setTeams]=useState<Team[]>([]),[edit,setEdit]=useState<Team|null>(null),[ready,setReady]=useState(false),[notice,setNotice]=useState(""),[season,setSeason]=useState(championship?.season||2026);
 useEffect(()=>{if(!championship)return;const updateSeason=()=>{const stored=localStorage.getItem("geoprix-season-"+championshipId);setSeason(stored?Math.max(championship.season,Number(stored)||championship.season):championship.season)};updateSeason();window.addEventListener("geoprix-season-updated",updateSeason);window.addEventListener("storage",updateSeason);return()=>{window.removeEventListener("geoprix-season-updated",updateSeason);window.removeEventListener("storage",updateSeason)}},[championshipId]);
-useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;const reconciled=mergeInitialTeams(championshipId,Array.isArray(saved)?saved:[]);let loaded=ensureDevelopmentData(reconciled,season);if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}if(championshipId==="formula-2-2026"){const f1Raw=localStorage.getItem(teamStorageKey("formula-1-2026"));const f1Teams=f1Raw?JSON.parse(f1Raw) as Team[]:[];loaded=removeF1DriversFromF2(loaded,f1Teams);registerF2Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId);if(!localStorage.getItem("geoprix-f2-initial-attributes-v2")){loaded=applyFormula2InitialBaseline(loaded);localStorage.setItem("geoprix-f2-initial-attributes-v2","true")}}else if(championshipId==="formula-1-2026"){registerF1Debuts(loaded.flatMap(t=>t.drivers),season)}else if(championshipId==="formula-3-2026"){loaded=replaceF3SeedVacancy(loaded,season);if(!localStorage.getItem("geoprix-f3-attribute-baseline-v4")){loaded=loaded.map(team=>({...team,carAttributes:{power:40,downforce:40},drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}}))}));localStorage.setItem("geoprix-f3-attribute-baseline-v4","true")}registerF3Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId)}setTeams(loaded)}catch{const fallback=initialTeamsForChampionship(championshipId);setTeams(championshipId==="formula-2-2026"?applyFormula2InitialBaseline(fallback):fallback)}setReady(true)},[championshipId]);
+useEffect(()=>{try{const raw=localStorage.getItem(storageKey);const saved=raw?JSON.parse(raw):initialTeams;const reconciled=mergeInitialTeams(championshipId,Array.isArray(saved)?saved:[]);let loaded=ensureDevelopmentData(reconciled,season);
+if(championshipId==="formula-regional-oceania-2026"){
+ const slot=loaded.flatMap(team=>team.drivers.map(driver=>({team,driver}))).find(item=>item.driver.id==="fro-kiwi-cooper-shipman-slot");
+ if(slot){
+  const otherIds=["formula-1-2026","formula-2-2026","formula-3-2026","formula-regional-europe-2026","formula-regional-americas-2026"];
+  const normalizeName=(value:string)=>value.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase("pt-BR").trim();
+  const occupied=new Set<string>();
+  for(const id of otherIds){
+   const defaults=initialTeamsForChampionship(id);
+   let saved:Team[]=[];try{const raw=localStorage.getItem(teamStorageKey(id));const parsed=raw?JSON.parse(raw):defaults;saved=Array.isArray(parsed)?parsed:defaults}catch{saved=defaults}
+   for(const driver of saved.flatMap(team=>team.drivers||[]))occupied.add(normalizeName(driver.name));
+  }
+  const pool=ensureFreeAgentPool(10);
+  const agent=pool.find(driver=>!occupied.has(normalizeName(driver.name)));
+  if(agent){
+   const replacement={...agent,id:slot.driver.id,number:slot.driver.number,attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
+   loaded=loaded.map(team=>team.id===slot.team.id?{...team,drivers:team.drivers.map(driver=>driver.id===slot.driver.id?replacement:driver)}:team);
+   localStorage.setItem(FREE_AGENTS_KEY,JSON.stringify(readFreeAgents().filter(driver=>driver.id!==agent.id)));
+   ensureFreeAgentPool(10);
+  }
+ }
+}if(championshipId==="formula-1-2026"&&!localStorage.getItem("geoprix-initial-attributes-v2")){loaded=applyInitialAttributeBaseline(loaded);localStorage.setItem("geoprix-initial-attributes-v2","true")}if(championshipId==="formula-2-2026"){const f1Raw=localStorage.getItem(teamStorageKey("formula-1-2026"));const f1Teams=f1Raw?JSON.parse(f1Raw) as Team[]:[];loaded=removeF1DriversFromF2(loaded,f1Teams);registerF2Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId);if(!localStorage.getItem("geoprix-f2-initial-attributes-v2")){loaded=applyFormula2InitialBaseline(loaded);localStorage.setItem("geoprix-f2-initial-attributes-v2","true")}}else if(championshipId==="formula-1-2026"){registerF1Debuts(loaded.flatMap(t=>t.drivers),season)}else if(championshipId==="formula-3-2026"){loaded=replaceF3SeedVacancy(loaded,season);if(!localStorage.getItem("geoprix-f3-attribute-baseline-v4")){loaded=loaded.map(team=>({...team,carAttributes:{power:40,downforce:40},drivers:team.drivers.map(driver=>({...driver,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}}))}));localStorage.setItem("geoprix-f3-attribute-baseline-v4","true")}registerF3Debuts(loaded.flatMap(t=>t.drivers),season);initializeDriverContracts(loaded,season,championshipId)}setTeams(loaded)}catch{const fallback=initialTeamsForChampionship(championshipId);setTeams(championshipId==="formula-2-2026"?applyFormula2InitialBaseline(fallback):fallback)}setReady(true)},[championshipId]);
 useEffect(()=>{if(ready)localStorage.setItem(storageKey,JSON.stringify(teams))},[teams,ready,storageKey]);
 const count=teams.reduce((n,t)=>n+t.drivers.filter(d=>d.name.trim()).length,0);
 function changeDriver(i:number,p:Partial<Driver>){if(edit)setEdit({...edit,drivers:edit.drivers.map((d,j)=>j===i?{...d,...p}:d)})}
