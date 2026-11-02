@@ -63,7 +63,6 @@ export default function MarketPage(){
  const promotions=allEvents.filter(event=>event.type==="promotion").length;
  const signings=allEvents.filter(event=>event.type==="signing").length;
  const releases=allEvents.filter(event=>event.type==="release").length;
- const retiredCount=allContracts.filter(contract=>contract.effectiveStatus==="retired").length;
  return <main className="manager-shell"><header className="manager-top"><Link href="/drivers/" className="back-link"><ArrowLeft size={15}/> Voltar para Pilotos</Link><span className="eyebrow">MERCADO GLOBAL · GEOPRIX</span></header><div className="manager-content">
  <div className="manager-heading"><div><span className="eyebrow">JANELA DE TRANSFERÊNCIAS</span><h1>Mercado de pilotos</h1><p>Negociações, contratos e movimentações de todas as categorias do universo.</p></div><span className="tag green">AUTOMÁTICO</span></div>
  <section className="manager-stats"><div><Users/><b>{driverCount}</b><small>Pilotos nas categorias</small></div><div><Handshake/><b>{activeContracts}</b><small>Contratos ativos</small></div><div><ArrowRightLeft/><b>{transfers}</b><small>Transferências</small></div><div><CalendarClock/><b>{promotions}</b><small>Promoções F2 → F1</small></div><div><Flag/><b>{signings+releases}</b><small>Contratações e dispensas</small></div></section>
