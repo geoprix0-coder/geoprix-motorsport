@@ -202,7 +202,6 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
  const vacancies=f1Teams.filter(team=>team.drivers.length<2).sort((a,b)=>(f1Rank.get(b.id)??f1Teams.length+1)-(f1Rank.get(a.id)??f1Teams.length+1));
  const events:MarketEvent[]=[];
  const promoted:Team["drivers"]= [];
- const promoted:Team["drivers"]= [];
  const signedF1Agents:Team["drivers"]= [];
  const usedCandidates=new Set<string>();
  for(const target of vacancies){
