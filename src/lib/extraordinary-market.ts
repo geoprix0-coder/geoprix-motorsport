@@ -309,7 +309,9 @@ export function signExtraordinaryDriver(driverId: string): ExtraordinaryWindow {
     contractEnd: activeWindow.season + 1,
     reason: "Movimentação realizada pela janela extraordinária antes do início da temporada. " + (candidate.sourceChampionshipId === targetId ? "Transferência entre equipes da mesma categoria." : candidate.sourceKind === "free-agent" ? "Contratação de piloto sem equipe." : "Promoção para uma categoria superior."),
     createdAt: new Date().toISOString(),
-    windowType: "extraordinary"
+    windowType: "extraordinary",
+    fromChampionshipId: candidate.sourceChampionshipId,
+    toChampionshipId: targetId
   };
   appendEvent(targetId, event);
   activeWindow.signedDriverIds.push(driverId);
@@ -393,7 +395,9 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
         contractEnd: season + 1,
         reason: "Reposição automática após a janela extraordinária. A equipe recebeu um piloto elegível do mercado disponível sem intervenção do usuário.",
         createdAt: new Date().toISOString(),
-        windowType: "extraordinary"
+        windowType: "extraordinary",
+        fromChampionshipId: candidate.sourceChampionshipId,
+        toChampionshipId: vacancy.championshipId
       };
       appendEvent(vacancy.championshipId, event);
       events.push(event);
