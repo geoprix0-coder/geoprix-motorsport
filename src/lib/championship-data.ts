@@ -1,6 +1,7 @@
 import type { Team } from "./types";
 import { initialFormula2Teams } from "./formula2-2026";
 import { initialFormula3Teams } from "./formula3-2026";
+import { initialFormulaRegionalEuropeTeams } from "./formula-regional-europe-2026";
 import { initialTeams } from "./seed";
 
 export function teamStorageKey(championshipId: string): string {
@@ -13,6 +14,7 @@ export function initialTeamsForChampionship(championshipId: string): Team[] {
   if (championshipId === "formula-1-2026") return initialTeams;
   if (championshipId === "formula-2-2026") return initialFormula2Teams;
   if (championshipId === "formula-3-2026") return initialFormula3Teams;
+  if (championshipId === "formula-regional-europe-2026") return initialFormulaRegionalEuropeTeams;
   return [];
 }
 
