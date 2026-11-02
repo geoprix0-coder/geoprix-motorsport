@@ -2,7 +2,7 @@ import type { Team } from "./types";
 import { teamStorageKey } from "./championship-data";
 import { registerF1Debuts } from "./career-hierarchy";
 
-export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"|"retired"|"released"};
+export type MarketContract={driverId:string;driverName?:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"|"retired"|"released"};
 const initialContractYears:Record<string,{year:number;label:string}>={
  "lando norris":{year:2030,label:"2030"},"oscar piastri":{year:2028,label:"2028"},
  "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026"},
@@ -32,11 +32,11 @@ export function initializeDriverContracts(teams:Team[],season=2026,championshipI
    else{const contract:MarketContract={driverId:driver.id,teamId:team.id,startSeason:season,endSeason:season,status:"retired"};stored.push(contract);byId.set(driver.id,contract)}
    continue;
   }
-  if(byId.has(driver.id))continue;
+  if(byId.has(driver.id)){const existing=byId.get(driver.id)!;if(!existing.driverName)existing.driverName=driver.name;continue;}
   const initial=initialContractYears[driver.name.trim().toLocaleLowerCase("pt-BR")];
   const contract:MarketContract=initial
-   ?{driverId:driver.id,teamId:team.id,startSeason:season,endSeason:initial.year,endLabel:initial.label,status:"active"}
-   :{driverId:driver.id,teamId:team.id,startSeason:season,endSeason:season+1,status:"active"};
+   ?{driverId:driver.id,driverName:driver.name,teamId:team.id,startSeason:season,endSeason:initial.year,endLabel:initial.label,status:"active"}
+   :{driverId:driver.id,driverName:driver.name,teamId:team.id,startSeason:season,endSeason:season+1,status:"active"};
   stored.push(contract);byId.set(driver.id,contract);
  }
  localStorage.setItem(key,JSON.stringify(stored));
