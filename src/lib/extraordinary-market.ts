@@ -403,7 +403,7 @@ export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
   }
   for (const [championshipId, teams] of teamsByCategory) writeTeams(championshipId, teams);
   const history = readArray<{ id: string; closedAt: string; window: ExtraordinaryWindow; filled: number; unfilled: ExtraordinaryVacancy[] }>("geoprix-extraordinary-market-history-v1");
-  history.push({ id: window.id, closedAt: new Date().toISOString(), window: activeWindow, filled, unfilled });
+  history.push({ id: activeWindow.id, closedAt: new Date().toISOString(), window: activeWindow, filled, unfilled });
   localStorage.setItem("geoprix-extraordinary-market-history-v1", JSON.stringify(history));
   localStorage.removeItem(WINDOW_KEY);
   if (readArray<Driver>("geoprix-free-agents-v1").length < 10) ensureFreeAgentPool(10);
