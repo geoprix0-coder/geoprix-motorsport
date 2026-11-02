@@ -7,8 +7,8 @@ import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/li
 import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
 import {initializeDriverContracts,getContractEndLabel,type MarketContract,type MarketEvent} from "@/lib/market";
 import {getRetiredDrivers} from "@/lib/retirement";
-import {registerF2Debuts} from "@/lib/career-hierarchy";
-import {ensureFreeAgentPool,hireFreeAgent} from "@/lib/free-agents";
+import {registerF2Debuts,registerF3Debuts} from "@/lib/career-hierarchy";
+import {ensureFreeAgentPool,hireFreeAgent,replaceF3SeedVacancy} from "@/lib/free-agents";
 import type {Team,Championship} from "@/lib/types";
 
 type CategoryData={championship:Championship;teams:Team[];contracts:MarketContract[];events:MarketEvent[];season:number};
@@ -36,6 +36,7 @@ export default function MarketPage(){
     let teams:Team[]=[];
     try { const parsed=raw?JSON.parse(raw):defaults; teams=defaults.length?mergeInitialTeams(championship.id,Array.isArray(parsed)?parsed:defaults):(Array.isArray(parsed)?parsed:[]); } catch { teams=defaults; }
     if(championship.id==="formula-2-2026")teams=removeF1DriversFromF2(teams,f1Teams);
+    if(championship.id==="formula-3-2026"){teams=replaceF3SeedVacancy(teams,championship.season||2026);registerF3Debuts(teams.flatMap(team=>team.drivers),championship.season||2026);}
     const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season||2026;
     const contracts=initializeDriverContracts(teams,season,championship.id);
     return {championship,teams,contracts,events:readEvents(championship.id),season};
