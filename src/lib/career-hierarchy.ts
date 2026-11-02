@@ -53,7 +53,8 @@ export function validateChampionshipRoster(championshipId:string,teams:Team[],se
    const remaining=removeF1DriversFromF2(f2Teams,teams);
    localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(remaining));
   }
-  const f3Ids=new Set([...f3Teams.flatMap(t=>t.drivers.map(d=>d.id)),...getCareerStatus().filter(x=>x.firstF3Season&&!x.firstF2Season).map(x=>x.driverId)]);
+  let f3FreeAgentIds:string[]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");f3FreeAgentIds=Array.isArray(parsed)?parsed.map((driver:{id:string})=>driver.id):[]}catch{}
+  const f3Ids=new Set([...f3Teams.flatMap(t=>t.drivers.map(d=>d.id)),...getCareerStatus().filter(x=>x.firstF3Season&&!x.firstF2Season).map(x=>x.driverId),...f3FreeAgentIds]);
   if(teams.some(t=>t.drivers.some(d=>f3Ids.has(d.id))))return {ok:false,teams,message:"Equipes de Formula 1 não podem contratar diretamente pilotos da Formula 3. O piloto precisa estrear na Formula 2 primeiro."};
  }
  return {ok:true,teams,message:""};
