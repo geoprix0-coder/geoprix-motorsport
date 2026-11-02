@@ -41,6 +41,7 @@ export default function MarketPage(){
     const contracts=initializeDriverContracts(teams,season,championship.id);
     return {championship,teams,contracts,events:readEvents(championship.id),season};
    });
+   ensureFreeAgentPool(10);
    setCategories(next);
    if(selectedCategory!=="all"&&!next.some(item=>item.championship.id===selectedCategory))setSelectedCategory("all");
   }catch{setCategories([])}
