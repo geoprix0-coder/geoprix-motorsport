@@ -11,7 +11,7 @@ function registerDebuts(drivers:Driver[],season:number,category:"f1"|"f2"|"f3"){
  for(const driver of drivers){
   const existing=status.find(x=>x.driverId===driver.id);
   if(existing){if(category==="f1"&&!existing.firstF1Season)existing.firstF1Season=season;if(category==="f2"&&!existing.firstF2Season)existing.firstF2Season=season;if(category==="f3"&&!existing.firstF3Season)existing.firstF3Season=season;existing.driverName=driver.name;}
-  else status.push({driverId:driver.id,driverName:driver.name,...(category==="f1"?{firstF1Season:season}:{firstF2Season:season}),promotedAt:new Date().toISOString()});
+  else status.push({driverId:driver.id,driverName:driver.name,...(category==="f1"?{firstF1Season:season}:category==="f2"?{firstF2Season:season}:{firstF3Season:season}),promotedAt:new Date().toISOString()});
  }
  localStorage.setItem(CAREER_KEY,JSON.stringify(status));
 }
