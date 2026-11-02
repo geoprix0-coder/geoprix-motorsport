@@ -98,7 +98,7 @@ export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
     const availableNumbers = Array.from({ length: 98 }, (_, index) => index + 2).filter(number => !usedNumbers.has(number));
     if (!availableNumbers.length) break;
     const number = choose(availableNumbers);
-    const agePool = [15,16,16,17,17,17,18,18,18,19,19,20,20];
+    const agePool = [16,16,17,17,17,18,18,18,19,19,20,20];
     const baseline = 60;
     const driver: Driver = {
       id: "free-" + crypto.randomUUID(),
