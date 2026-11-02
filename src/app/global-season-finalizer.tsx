@@ -10,6 +10,7 @@ import {runAutomaticMarket,promoteF2DriversToF1Vacancies,type MarketEvent} from 
 import type {Championship,Team} from "@/lib/types";
 
 type Status={id:string;name:string;season:number;rounds:number;completed:number;ready:boolean};
+const CORE_CHAMPIONSHIPS=new Set(["formula-1-2026","formula-2-2026","formula-3-2026"]);
 function readTeams(championshipId:string):Team[]{
  try{
   const raw=localStorage.getItem(teamStorageKey(championshipId));
@@ -23,7 +24,7 @@ export default function GlobalSeasonFinalizer(){
  const [busy,setBusy]=useState(false);
  const refresh=useCallback(()=>{
   const championships:Championship[]=readUniverseChampionships();
-  const next=championships.map(championship=>{
+  const next=championships.filter(championship=>CORE_CHAMPIONSHIPS.has(championship.id)||readChampionshipCalendar(championship.id).length>0).map(championship=>{
    const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season;
    const rounds=readChampionshipCalendar(championship.id);
    const completed=rounds.filter(round=>round.status==="completed"&&round.results.length>0).length;
@@ -47,7 +48,7 @@ export default function GlobalSeasonFinalizer(){
    const rounds=readChampionshipCalendar(championship.id);
    const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season;
    return {championship,rounds,season};
-  });
+  }).filter(item=>CORE_CHAMPIONSHIPS.has(item.championship.id)||item.rounds.length>0);
   if(!current.length||current.some(item=>!item.rounds.length||item.rounds.some(round=>round.status!=="completed"||!round.results.length))){
    setNotice("Ainda existem campeonatos com corridas sem resultados. Finalize todas as etapas de todos os campeonatos antes de continuar.");
    return;
@@ -87,7 +88,7 @@ export default function GlobalSeasonFinalizer(){
  }
  const pending=statuses.filter(item=>!item.ready).length;
  return <section className="global-season-panel">
-  <div className="global-season-heading"><div><span className="eyebrow">ENCERRAMENTO GLOBAL</span><h2>Finalização das temporadas</h2><p>O encerramento só é liberado quando todos os campeonatos tiverem resultados registrados em todas as corridas.</p></div><span className={allReady?"global-season-status ready":"global-season-status"}>{allReady?<><CheckCircle2 size={15}/> TODOS CONCLUÍDOS</>:<><Lock size={15}/> {pending} PENDENTE(S)</>}</span></div>
+  <div className="global-season-heading"><div><span className="eyebrow">ENCERRAMENTO GLOBAL</span><h2>Finalização das temporadas</h2><p>O encerramento é liberado quando todos os campeonatos com calendário ativo tiverem resultados registrados em todas as corridas.</p></div><span className={allReady?"global-season-status ready":"global-season-status"}>{allReady?<><CheckCircle2 size={15}/> TODOS CONCLUÍDOS</>:<><Lock size={15}/> {pending} PENDENTE(S)</>}</span></div>
   <div className="global-season-list">{statuses.map(item=><div className="global-season-row" key={item.id}><div className="global-season-name"><Trophy size={16}/><div><b>{item.name}</b><small>Temporada {item.season}</small></div></div><div className="global-season-progress"><b>{item.completed}/{item.rounds}</b><small>{item.rounds===0?"Calendário não cadastrado":item.ready?"Todas as corridas concluídas":"Corridas com resultados"}</small></div><span className={item.ready?"global-season-check ready":"global-season-check"}>{item.ready?"Concluído":"Pendente"}</span></div>)}</div>
   <div className="global-season-footer"><small><CalendarDays size={14}/> {statuses.filter(item=>item.rounds>0).reduce((sum,item)=>sum+item.completed,0)} de {statuses.reduce((sum,item)=>sum+item.rounds,0)} corridas concluídas no universo</small><button className="action-button" onClick={finishAll} disabled={!allReady||busy}>{busy?"Finalizando...":<><Flag size={16}/> Finalizar todas as temporadas</>}</button></div>
   {notice&&<p className="notice">{notice}</p>}
