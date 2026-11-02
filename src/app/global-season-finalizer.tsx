@@ -6,7 +6,7 @@ import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/li
 import {finalizeChampionshipSeason,readChampionshipCalendar} from "@/lib/season-finalization";
 import {processAutomaticRetirements} from "@/lib/retirement";
 import {automaticallyFillF2Vacancies,ensureFreeAgentPool} from "@/lib/free-agents";
-import {runAutomaticMarket,type MarketEvent} from "@/lib/market";
+import {runAutomaticMarket,promoteF2DriversToF1Vacancies,type MarketEvent} from "@/lib/market";
 import type {Championship,Team} from "@/lib/types";
 
 type Status={id:string;name:string;season:number;rounds:number;completed:number;ready:boolean};
@@ -65,11 +65,15 @@ export default function GlobalSeasonFinalizer(){
     const marketResult=runAutomaticMarket(currentTeams,result.season,result.driverStandings,result.teamStandings,result.championshipId);
     localStorage.setItem(teamStorageKey(result.championshipId),JSON.stringify(marketResult.teams));
     allEvents.push(...marketResult.events);
-    if(result.championshipId==="formula-2-2026"){
-     const recruitment=automaticallyFillF2Vacancies(result.season,result.teamStandings);
-     allEvents.push(...recruitment.signings);
-    }
     localStorage.setItem("geoprix-season-"+result.championshipId,String(result.nextSeason));
+   }
+   const f1Result=results.find(result=>result.championshipId==="formula-1-2026");
+   const f2Result=results.find(result=>result.championshipId==="formula-2-2026");
+   if(f1Result&&f2Result){
+    const promotions=promoteF2DriversToF1Vacancies(f1Result.season,f1Result.teamStandings,f2Result.driverStandings);
+    allEvents.push(...promotions.events);
+    const recruitment=automaticallyFillF2Vacancies(f2Result.season,f2Result.teamStandings);
+    allEvents.push(...recruitment.signings);
    }
    ensureFreeAgentPool(10);
    localStorage.setItem("geoprix-market-last-window",JSON.stringify({seasons:results.map(result=>({championshipId:result.championshipId,season:result.season})),events:allEvents,processedAt:new Date().toISOString()}));
