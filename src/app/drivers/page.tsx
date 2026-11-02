@@ -30,7 +30,7 @@ export default function DriversPage(){
     try{
      const key=teamStorageKey(championship.id);
      const raw=localStorage.getItem(key);
-     const defaults=championship.id==="formula-1-2026"||championship.id==="formula-2-2026"?initialTeamsForChampionship(championship.id):[];
+     const defaults=championship.id==="formula-1-2026"||championship.id==="formula-2-2026"||championship.id==="formula-3-2026"?initialTeamsForChampionship(championship.id):[];
      const stored=raw?JSON.parse(raw):defaults;
      let teams=defaults.length?mergeInitialTeams(championship.id,Array.isArray(stored)?stored as Team[]:defaults):(Array.isArray(stored)?stored as Team[]:[]);
      if(championship.id==="formula-2-2026"){
@@ -86,7 +86,7 @@ export default function DriversPage(){
 
     <div style={{padding:"18px",borderBottom:"1px solid var(--border)"}}>
      <div className="list-heading"><h2><Flag size={17}/> Agentes livres</h2><span>{freeAgents.length} disponíveis · mínimo 10</span></div>
-     <p className="storage-note" style={{margin:"4px 0 14px"}}>Novos talentos fictícios são gerados automaticamente para manter um banco de pelo menos 10 pilotos. As contratações acontecem sem intervenção do usuário, somente para preencher vagas na Formula 2 e respeitando o limite de 2 pilotos por equipe.</p>
+     <p className="storage-note" style={{margin:"4px 0 14px"}}>Novos talentos fictícios são gerados automaticamente para manter um banco de pelo menos 10 pilotos. As contratações acontecem sem intervenção do usuário, somente para preencher vagas na Formula 3 e respeitando o limite de 3 pilotos por equipe. Pilotos que já estrearam na F2 ficam fora deste banco.</p>
      
      {freeAgents.length===0?<div className="empty-state">Não foi possível gerar agentes livres. Verifique o armazenamento do navegador.</div>:<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(245px,1fr))",gap:10}}>
       {freeAgents.map(driver=><article key={driver.id} style={{border:"1px solid var(--border)",borderRadius:9,padding:13,background:"var(--surface)"}}>
