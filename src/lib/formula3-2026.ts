@@ -1,7 +1,7 @@
 import type { Team } from "./types";
 
-const driver=(id:string,name:string,number:number,nationality:string,age:number)=>({id,name,number,nationality,age,attributes:{racePace:55,qualifying:55,overtaking:55,defending:55,consistency:55}});
-const team=(id:string,name:string,country:string,base:string,drivers:ReturnType<typeof driver>[]):Team=>({id,name,country,base,drivers,carAttributes:{power:55,downforce:55}});
+const driver=(id:string,name:string,number:number,nationality:string,age:number)=>({id,name,number,nationality,age,attributes:{racePace:50,qualifying:50,overtaking:50,defending:50,consistency:50}});
+const team=(id:string,name:string,country:string,base:string,drivers:ReturnType<typeof driver>[]):Team=>({id,name,country,base,drivers,carAttributes:{power:40,downforce:40}});
 export const initialFormula3Teams:Team[]=[
  team("f3-campos","Campos Racing","Espanha","Alzira, Espanha",[driver("f3-campos-nael","Théophile Naël",1,"França",19),driver("f3-campos-ugochukwu","Ugo Ugochukwu",2,"Estados Unidos",19),driver("f3-campos-rivera","Ernesto Rivera",3,"México",17)]),
  team("f3-trident","TRIDENT","Itália","Ossona, Itália",[driver("f3-trident-stromsted","Noah Strømsted",4,"Dinamarca",19),driver("f3-trident-slater","Freddie Slater",5,"Reino Unido",18),driver("f3-trident-depalo","Matteo De Palo",6,"Itália",18)]),
