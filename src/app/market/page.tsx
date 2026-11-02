@@ -77,7 +77,7 @@ export default function MarketPage(){
   if(target.drivers.length>=2){setMarketNotice("A equipe selecionada já possui dois pilotos. Libere uma vaga antes de contratar.");return;}
   if(candidate.source!=="f2-team"&&f2Category.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))){setMarketNotice("Este piloto já está contratado na F2.");return;}
   if(candidate.source==="f2-team"&&candidate.teamId===target.id){setMarketNotice("O piloto já pertence à equipe selecionada.");return;}
-  if(f2Category.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))||categories.find(item=>item.championship.id==="formula-1-2026")?.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))){setMarketNotice("Este piloto já está contratado em uma categoria superior.");return;}
+  if((candidate.source!=="f2-team"&&f2Category.teams.some(team=>team.drivers.some(driver=>driver.id===driverId)))||categories.find(item=>item.championship.id==="formula-1-2026")?.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))){setMarketNotice("Este piloto já está contratado em uma categoria superior.");return;}
   let nextF2=f2Category.teams.map(team=>({...team,drivers:team.drivers.filter(driver=>candidate.source!=="f2-team"||team.id!==candidate.teamId||driver.id!==driverId)}));nextF2=nextF2.map(team=>team.id===target.id?{...team,drivers:[...team.drivers,candidate.driver]}:team);
   let nextF3=candidate.source==="f3"?f3Category.teams.map(team=>({...team,drivers:team.drivers.filter(driver=>driver.id!==driverId)})):f3Category.teams;
   localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(nextF2));
