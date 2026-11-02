@@ -44,7 +44,7 @@ export function initializeDriverContracts(teams:Team[],season=2026,championshipI
 }
 export function getContractEndLabel(contract:MarketContract){return contract.endLabel||String(contract.endSeason);}
 
-export type MarketEvent={id:string;season:number;type:"transfer"|"renewal"|"signing"|"promotion"|"release";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string};
+export type MarketEvent={id:string;season:number;type:"transfer"|"renewal"|"signing"|"promotion"|"release";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string;windowType?:"extraordinary"};
 type Standing={id:string;name:string;position:number;points:number};
 function hash(value:string){let h=0;for(let i=0;i<value.length;i++)h=(h*31+value.charCodeAt(i))>>>0;return h;}
 export function runAutomaticMarket(teams:Team[],season:number,driverStandings:Standing[],teamStandings:Standing[],championshipId="formula-1-2026"){
