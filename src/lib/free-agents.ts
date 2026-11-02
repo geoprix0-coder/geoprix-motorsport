@@ -144,6 +144,18 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
   const releasedThisWindow = new Set(previousEvents.filter(event => event.season === season && event.type === "release").map(event => event.driverId));
   const allAgents = readFreeAgents();
   let agents = allAgents.filter(agent => !releasedThisWindow.has(agent.id));
+  const contracts = initializeDriverContracts(teams, season, championshipId);
+  const agentScore = (driver:Driver) => {
+    const attributes = Object.values(driver.attributes || {racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
+    const average = attributes.reduce((sum,value) => sum + (Number(value) || 60),0) / Math.max(1,attributes.length);
+    const age = Number(driver.age) || 22;
+    const ageFit = age <= 20 ? 100 : age <= 24 ? 90 : age <= 27 ? 75 : age <= 31 ? 50 : 25;
+    const contract = contracts.find(item => item.driverId === driver.id);
+    const experience = Math.max(0,season - (contract?.startSeason ?? season));
+    const experienceFit = experience >= 3 ? 100 : experience === 2 ? 80 : experience === 1 ? 60 : 40;
+    return average * 0.65 + ageFit * 0.25 + experienceFit * 0.1;
+  };
+  agents.sort((a,b) => agentScore(b) - agentScore(a));
   const signings: MarketEvent[] = [];
   const rank = new Map(standings.map(row => [row.id, row.position]));
   const orderedTeams = [...teams].sort((a, b) =>
