@@ -68,8 +68,8 @@ export default function MarketPage(){
  const f2Category=categories.find(item=>item.championship.id==="formula-2-2026");
  const f3Category=categories.find(item=>item.championship.id==="formula-3-2026");
  const f2Candidates=(f3Category?.teams.flatMap(team=>team.drivers.map(driver=>({driver,teamId:team.id,teamName:team.name,source:"f3" as const})))||[]);
- let f2FreeAgents:Team["drivers"]=[];
- if(typeof window!=="undefined"){try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");f2FreeAgents=Array.isArray(parsed)?parsed:[];}catch{}}
+ let f2FreeAgents:Team["drivers"]=[];let f3FreeAgents:Team["drivers"]=[];
+ if(typeof window!=="undefined"){try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");f2FreeAgents=Array.isArray(parsed)?parsed:[];}catch{}try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");f3FreeAgents=Array.isArray(parsed)?parsed:[];}catch{}}
  const f2TeamCandidates=f2Category?.teams.flatMap(team=>team.drivers.map(driver=>({driver,teamId:team.id,teamName:team.name,source:"f2-team" as const})))||[];
  const allF2Candidates=[...f2Candidates,...f3FreeAgents.map(driver=>({driver,teamId:"f3-free-agents",teamName:"Agente livre da F3",source:"f3-free" as const})),...f2FreeAgents.map(driver=>({driver,teamId:"f2-free-agents",teamName:"Agente livre da F2",source:"f2-free" as const})),...f2TeamCandidates];
  function hireIntoF2(driverId:string){
