@@ -138,7 +138,12 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
 export function automaticallyFillF2Vacancies(season: number, standings: {id:string;name:string;position:number;points:number}[] = []): { teams: Team[]; signings: MarketEvent[] } {
   const championshipId = "formula-2-2026";
   const teams = readTeams(championshipId).map(team => ({ ...team, drivers: [...(team.drivers || [])] }));
-  let agents = readFreeAgents();
+  const eventKey = "geoprix-market-history-" + championshipId + "-v1";
+  let previousEvents: MarketEvent[] = [];
+  try { const parsed = JSON.parse(localStorage.getItem(eventKey) || "[]"); previousEvents = Array.isArray(parsed) ? parsed : []; } catch {}
+  const releasedThisWindow = new Set(previousEvents.filter(event => event.season === season && event.type === "release").map(event => event.driverId));
+  const allAgents = readFreeAgents();
+  let agents = allAgents.filter(agent => !releasedThisWindow.has(agent.id));
   const signings: MarketEvent[] = [];
   const rank = new Map(standings.map(row => [row.id, row.position]));
   const orderedTeams = [...teams].sort((a, b) =>
@@ -180,11 +185,9 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
       }
     }
     localStorage.setItem("geoprix-driver-contracts-" + championshipId + "-v1", JSON.stringify(contracts));
-    const eventKey = "geoprix-market-history-" + championshipId + "-v1";
-    let history: MarketEvent[] = [];
-    try { const parsed = JSON.parse(localStorage.getItem(eventKey) || "[]"); history = Array.isArray(parsed) ? parsed : []; } catch {}
-    localStorage.setItem(eventKey, JSON.stringify([...history, ...signings]));
-    localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(agents));
+    localStorage.setItem(eventKey, JSON.stringify([...previousEvents, ...signings]));
+    const signedIds = new Set(signings.map(event => event.driverId));
+    localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(allAgents.filter(agent => !signedIds.has(agent.id))));
     ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
     window.dispatchEvent(new Event("geoprix-rosters-updated"));
     window.dispatchEvent(new Event("geoprix-free-agents-updated"));
