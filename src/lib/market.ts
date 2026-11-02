@@ -103,13 +103,13 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  const usedDrivers=new Set<string>(),usedTeams=new Set<string>();
  for(const candidate of [...candidates].sort((a,b)=>b.score-a.score)){
   if(usedDrivers.has(candidate.driver.id)||usedTeams.has(candidate.team.id))continue;
-  const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!usedDrivers.has(other.driver.id)&&!usedTeams.has(other.team.id)&&Math.abs(other.teamPosition-candidate.teamPosition)>=2&&((candidate.teamPosition<other.teamPosition&&candidate.score>other.score)||(candidate.teamPosition>other.teamPosition&&candidate.score<other.score))).sort((a,b)=>Math.abs(b.teamPosition-candidate.teamPosition)-Math.abs(a.teamPosition-candidate.teamPosition))[0];
+  const partner=candidates.filter(other=>other.team.id!==candidate.team.id&&!usedDrivers.has(other.driver.id)&&!usedTeams.has(other.team.id)&&Math.abs(other.teamPosition-candidate.teamPosition)>=2&&((candidate.teamPosition<other.teamPosition&&candidate.score<other.score)||(candidate.teamPosition>other.teamPosition&&candidate.score>other.score))).sort((a,b)=>Math.abs(b.teamPosition-candidate.teamPosition)-Math.abs(a.teamPosition-candidate.teamPosition))[0];
   if(!partner)continue;
   const stronger=candidate.teamPosition<partner.teamPosition?candidate:partner;
   const weaker=candidate.teamPosition<partner.teamPosition?partner:candidate;
   const stabilityGap=Math.max(pairGap(stronger.team),pairGap(weaker.team));
   const requiredGain=stabilityGap>=18?7:stabilityGap>=12?10:15;
-  if(stronger.score-weaker.score>=requiredGain){
+  if(weaker.score-stronger.score>=requiredGain){
    transfers.push({a:stronger,b:weaker});usedDrivers.add(stronger.driver.id);usedDrivers.add(weaker.driver.id);usedTeams.add(stronger.team.id);usedTeams.add(weaker.team.id);
   }
  }
@@ -224,7 +224,7 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
    }
   }
  }
- if(promoted.length){
+ if(promoted.length||signedF1Agents.length){
   localStorage.setItem(teamStorageKey("formula-1-2026"),JSON.stringify(f1Teams));
   localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(f2Teams));
   if(promoted.length)registerF1Debuts(promoted,season);
