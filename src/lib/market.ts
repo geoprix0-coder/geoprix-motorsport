@@ -148,6 +148,9 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
     let freeAgents:Team["drivers"]= [];
     try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
     if(!freeAgents.some(driver=>driver.id===x.driver.id)){freeAgents.push(x.driver);localStorage.setItem("geoprix-f2-free-agents-v1",JSON.stringify(freeAgents));}
+   }else if(championshipId==="formula-3-2026"){
+    let freeAgents:Team["drivers"]=[];try{const parsed=JSON.parse(localStorage.getItem("geoprix-free-agents-v1")||"[]");freeAgents=Array.isArray(parsed)?parsed:[];}catch{}
+    if(!freeAgents.some(driver=>driver.id===x.driver.id)){freeAgents.push(x.driver);localStorage.setItem("geoprix-free-agents-v1",JSON.stringify(freeAgents));}
    }
    continue;
   }
