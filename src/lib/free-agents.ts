@@ -123,7 +123,7 @@ export function replaceF3SeedVacancy(teams:Team[],season:number):Team[]{
  const vacancy=teams.flatMap(team=>team.drivers.map(driver=>({team,driver}))).find(item=>item.driver.id==="f3-var-yamakoshi-replacement");
  if(!vacancy)return teams;
  const pool=ensureFreeAgentPool(FREE_AGENTS_MINIMUM);const agent=pool[0];if(!agent)return teams;
- const replacement={...agent,id:"f3-var-free-agent-"+agent.id.replace(/[^a-zA-Z0-9-]/g,""),number:13};
+ const replacement={...agent,id:"f3-var-free-agent-"+agent.id.replace(/[^a-zA-Z0-9-]/g,""),number:vacancy.driver.number};
  const next=teams.map(team=>team.id===vacancy.team.id?{...team,drivers:team.drivers.map(driver=>driver.id===vacancy.driver.id?replacement:driver)}:team);
  localStorage.setItem(teamStorageKey("formula-3-2026"),JSON.stringify(next));
  localStorage.setItem(FREE_AGENTS_KEY,JSON.stringify(pool.slice(1)));
