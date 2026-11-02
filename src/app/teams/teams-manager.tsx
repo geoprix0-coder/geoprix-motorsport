@@ -8,7 +8,7 @@ import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "
 import { applyFormula2InitialBaseline, applyInitialAttributeBaseline, ensureDevelopmentData, TEAM_DEVELOPMENT_LABELS } from "@/lib/season-development";
 import type { TeamDevelopment } from "@/lib/season-development";
 import { registerF1Debuts, registerF2Debuts, registerF3Debuts, removeF1DriversFromF2, validateChampionshipRoster } from "@/lib/career-hierarchy";
-import { replaceF3SeedVacancy, ensureFreeAgentPool, readFreeAgents, FREE_AGENTS_KEY } from "@/lib/free-agents";
+import { replaceF3SeedVacancy } from "@/lib/free-agents";
 import { initializeDriverContracts } from "@/lib/market";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
 type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number}};
