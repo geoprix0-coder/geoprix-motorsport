@@ -30,12 +30,12 @@ export default function ChampionshipRegulationPage() {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Regulation>;
         setRegulation({
-          positionPoints: Array.isArray(parsed.positionPoints) && parsed.positionPoints.length > 0 ? parsed.positionPoints.map(value => Math.max(0, Number(value) || 0)) : defaultRegulation.positionPoints,
+          positionPoints: (()=>{const points=Array.isArray(parsed.positionPoints)&&parsed.positionPoints.length>0?parsed.positionPoints.map(value=>Math.max(0,Number(value)||0)):defaultRegulation.positionPoints;const minimum=championshipId==="formula-3-2026"?30:championshipId==="formula-2-2026"?22:20;return [...points,...Array(Math.max(0,minimum-points.length)).fill(0)];})(),
           bonusRules: Array.isArray(parsed.bonusRules) ? parsed.bonusRules : defaultRegulation.bonusRules,
         });
       }
     } catch {
-      setRegulation(defaultRegulation);
+      setRegulation({...defaultRegulation,positionPoints:[...defaultRegulation.positionPoints,...Array(Math.max(0,(championshipId==="formula-3-2026"?30:championshipId==="formula-2-2026"?22:20)-defaultRegulation.positionPoints.length)).fill(0)]});
     }
   }, [storageKey]);
 
