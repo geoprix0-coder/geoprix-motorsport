@@ -53,9 +53,7 @@ export default function ExtraordinaryMarketPanel() {
     }));
     setCategories(next);
     setActiveWindow(getExtraordinaryWindow());
-    if (!selectedChampionshipId && next.length) {
-      setSelectedChampionshipId(next.find(item => item.championship.id === "formula-2-2026")?.championship.id || next[0].championship.id);
-    }
+    setSelectedChampionshipId(current => current && next.some(item => item.championship.id === current) ? current : next.find(item => item.championship.id === "formula-2-2026")?.championship.id || next[0]?.championship.id || "");
   };
 
   useEffect(() => {
