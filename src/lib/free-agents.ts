@@ -186,7 +186,6 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
     }
     localStorage.setItem("geoprix-driver-contracts-" + championshipId + "-v1", JSON.stringify(contracts));
     localStorage.setItem(eventKey, JSON.stringify([...previousEvents, ...signings]));
-    const signedIds = new Set(signings.map(event => event.driverId));
     localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(allAgents.filter(agent => !signedIds.has(agent.id))));
     ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
     window.dispatchEvent(new Event("geoprix-rosters-updated"));
