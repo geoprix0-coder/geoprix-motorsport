@@ -70,10 +70,11 @@ export function readFreeAgents(): Driver[] {
 export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
   const agents = readFreeAgents();
   const f2Teams = readTeams("formula-2-2026");
+  const f3Teams = readTeams("formula-3-2026");
   const f1Teams = readTeams("formula-1-2026");
-  const existingDrivers = [...f1Teams, ...f2Teams].flatMap(team => team.drivers || []);
+  const existingDrivers = [...f1Teams, ...f2Teams, ...f3Teams].flatMap(team => team.drivers || []);
   const usedNames = new Set([...existingDrivers.map(driver => normalize(driver.name)), ...agents.map(driver => normalize(driver.name)), ...getRetiredDrivers().map(driver => normalize(driver.driverName))]);
-  const usedNumbers = new Set([...f2Teams.flatMap(team => team.drivers || []).map(driver => driver.number), ...agents.map(driver => driver.number)]);
+  const usedNumbers = new Set([...f2Teams.flatMap(team => team.drivers || []).map(driver => driver.number), ...f3Teams.flatMap(team => team.drivers || []).map(driver => driver.number), ...agents.map(driver => driver.number)]);
   const next = [...agents];
 
   while (next.length < minimum) {
@@ -95,7 +96,7 @@ export function ensureFreeAgentPool(minimum = FREE_AGENTS_MINIMUM): Driver[] {
     const availableNumbers = Array.from({ length: 98 }, (_, index) => index + 2).filter(number => !usedNumbers.has(number));
     if (!availableNumbers.length) break;
     const number = choose(availableNumbers);
-    const agePool = [16,16,17,17,18,18,19,19,20,20,21,21,22,23,24,25];
+    const agePool = [15,16,16,17,17,17,18,18,18,19,19,20,20];
     const baseline = 60;
     const driver: Driver = {
       id: "free-" + crypto.randomUUID(),
@@ -118,25 +119,29 @@ export function hireFreeAgent(driverId: string, teamId: string, season: number):
   const agents = readFreeAgents();
   const driver = agents.find(item => item.id === driverId);
   if (!driver) return { ok: false, message: "Este agente livre não está mais disponível." };
-  const f2Teams = readTeams("formula-2-2026");
+  const f2Teams = readTeams("formula-3-2026");
   const target = f2Teams.find(team => team.id === teamId);
-  if (!target) return { ok: false, message: "Selecione uma equipe válida da Formula 2." };
-  if (f2Teams.some(team => team.drivers.some(item => item.id === driver.id))) return { ok: false, message: "Este piloto já está vinculado à Formula 2." };
-  if (f2Teams.some(team => team.drivers.some(item => item.number === driver.number))) return { ok: false, message: "O número deste piloto já está em uso na Formula 2." };
+  if (!target) return { ok: false, message: "Selecione uma equipe válida da Formula 3." };
+  if (Number(driver.age)>20) return {ok:false,message:"O mercado de entrada da Formula 3 prioriza pilotos de até 20 anos."};
+  if (f2Teams.some(team => team.drivers.some(item => item.id === driver.id))) return { ok: false, message: "Este piloto já está vinculado à Formula 3." };
+  const f2Ids=new Set(readTeams("formula-2-2026").flatMap(team=>team.drivers.map(item=>item.id)));
+  if(f2Ids.has(driver.id))return {ok:false,message:"Pilotos que já estrearam na Formula 2 não podem retornar à Formula 3."};
+  if(target.drivers.length>=3)return {ok:false,message:"Cada equipe da Formula 3 possui exatamente 3 vagas."};
+  if (f2Teams.some(team => team.drivers.some(item => item.number === driver.number))) return { ok: false, message: "O número deste piloto já está em uso na Formula 3." };
 
   const updated = f2Teams.map(team => team.id === teamId ? { ...team, drivers: [...team.drivers, driver] } : team);
-  localStorage.setItem(teamStorageKey("formula-2-2026"), JSON.stringify(updated));
-  initializeDriverContracts(updated, season, "formula-2-2026");
+  localStorage.setItem(teamStorageKey("formula-3-2026"), JSON.stringify(updated));
+  initializeDriverContracts(updated, season, "formula-3-2026");
   localStorage.setItem(FREE_AGENTS_KEY, JSON.stringify(agents.filter(item => item.id !== driverId)));
   ensureFreeAgentPool(FREE_AGENTS_MINIMUM);
   window.dispatchEvent(new Event("geoprix-rosters-updated"));
   window.dispatchEvent(new Event("geoprix-free-agents-updated"));
-  return { ok: true, message: driver.name + " foi contratado por " + target.name + " na Formula 2." };
+  return { ok: true, message: driver.name + " foi contratado por " + target.name + " na Formula 3." };
 }
 
 
 export function automaticallyFillF2Vacancies(season: number, standings: {id:string;name:string;position:number;points:number}[] = []): { teams: Team[]; signings: MarketEvent[] } {
-  const championshipId = "formula-2-2026";
+  const championshipId = "formula-3-2026";
   const teams = readTeams(championshipId).map(team => ({ ...team, drivers: [...(team.drivers || [])] }));
   const eventKey = "geoprix-market-history-" + championshipId + "-v1";
   let previousEvents: MarketEvent[] = [];
@@ -148,8 +153,8 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
   const agentScore = (driver:Driver) => {
     const attributes = Object.values(driver.attributes || {racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
     const average = attributes.reduce((sum,value) => sum + (Number(value) || 60),0) / Math.max(1,attributes.length);
-    const age = Number(driver.age) || 22;
-    const ageFit = age <= 20 ? 100 : age <= 24 ? 90 : age <= 27 ? 75 : age <= 31 ? 50 : 25;
+    const age = Number(driver.age) || 18;
+    const ageFit = age <= 17 ? 100 : age <= 19 ? 90 : age <= 20 ? 75 : 20;
     const contract = contracts.find(item => item.driverId === driver.id);
     const experience = Math.max(0,season - (contract?.startSeason ?? season));
     const experienceFit = experience >= 3 ? 100 : experience === 2 ? 80 : experience === 1 ? 60 : 40;
@@ -163,7 +168,7 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
   );
 
   for (const team of orderedTeams) {
-    while (team.drivers.length < 2 && agents.length > 0) {
+    while (team.drivers.length < 3 && agents.length > 0) {
       const availableIndex = agents.findIndex(candidate => !teams.some(other => other.drivers.some(existing => existing.number === candidate.number)));
       if (availableIndex < 0) break;
       const driver = agents.splice(availableIndex, 1)[0];
@@ -179,7 +184,7 @@ export function automaticallyFillF2Vacancies(season: number, standings: {id:stri
         toTeamId: team.id,
         toTeamName: team.name,
         contractEnd: season + 1,
-        reason: driver.id.startsWith("free-") ? "Contratação automática para preencher uma vaga no grid. O piloto foi selecionado do banco de jovens talentos e inicia sua carreira na Formula 2." : "Retorno automático ao grid após o encerramento de um contrato anterior, condicionado à existência de uma vaga na Formula 2.",
+        reason: driver.id.startsWith("free-") ? "Contratação automática para preencher uma vaga no grid da Formula 3. O piloto foi selecionado do banco de jovens talentos." : "Retorno automático ao grid da Formula 3, permitido apenas para pilotos sem estreia na Formula 2.",
         createdAt: new Date().toISOString()
       });
     }
