@@ -52,7 +52,7 @@ export default function MarketPage(){
    const driver=item.teams.flatMap(t=>t.drivers).find(d=>d.id===contract.driverId);
    const archived=getRetiredDrivers().find(d=>d.driverId===contract.driverId);
    const effectiveStatus=archived?"retired":contract.status==="active"&&contract.endSeason<item.season?"expired":contract.status;
-   return {...contract,championshipId:item.championship.id,championshipName:item.championship.name,teamName:team?.name||(item.championship.id==="formula-1-2026"&&contract.status==="released"?"Agente livre da F1":null)||archived?.lastTeam||"Equipe não encontrada",driverName:driver?.name||archived?.driverName||contract.driverName||contract.driverId,effectiveStatus};
+   return {...contract,championshipId:item.championship.id,championshipName:item.championship.name,teamName:team?.name||(item.championship.id==="formula-1-2026"&&contract.status==="released"?"Agente livre da F1":item.championship.id==="formula-2-2026"&&contract.status==="released"?"Agente livre da F2":item.championship.id==="formula-3-2026"&&contract.status==="released"?"Agente livre da F3":null)||archived?.lastTeam||"Equipe não encontrada",driverName:driver?.name||archived?.driverName||contract.driverName||contract.driverId,effectiveStatus};
   }));
   for(const retired of getRetiredDrivers()){
    const category=visibleCategories.find(item=>item.championship.name===retired.championshipName);
