@@ -1,6 +1,8 @@
 import type { Team } from "./types";
+import { teamStorageKey } from "./championship-data";
+import { registerF1Debuts } from "./career-hierarchy";
 
-export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"|"retired"};
+export type MarketContract={driverId:string;teamId:string;startSeason:number;endSeason:number;endLabel?:string;status:"active"|"expired"|"retired"|"released"};
 const initialContractYears:Record<string,{year:number;label:string}>={
  "lando norris":{year:2030,label:"2030"},"oscar piastri":{year:2028,label:"2028"},
  "george russell":{year:2027,label:"2027"},"kimi antonelli":{year:2026,label:"2026"},
@@ -42,7 +44,7 @@ export function initializeDriverContracts(teams:Team[],season=2026,championshipI
 }
 export function getContractEndLabel(contract:MarketContract){return contract.endLabel||String(contract.endSeason);}
 
-export type MarketEvent={id:string;season:number;type:"transfer"|"renewal"|"signing";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string};
+export type MarketEvent={id:string;season:number;type:"transfer"|"renewal"|"signing"|"promotion"|"release";driverId:string;driverName:string;fromTeamId:string;fromTeamName:string;toTeamId:string;toTeamName:string;contractEnd:number;reason:string;createdAt:string};
 type Standing={id:string;name:string;position:number;points:number};
 function hash(value:string){let h=0;for(let i=0;i<value.length;i++)h=(h*31+value.charCodeAt(i))>>>0;return h;}
 export function runAutomaticMarket(teams:Team[],season:number,driverStandings:Standing[],teamStandings:Standing[],championshipId="formula-1-2026"){
@@ -76,14 +78,21 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
   });
   return comparisons[0]*.5+comparisons[1]*.3+comparisons[2]*.2;
  };
- const ageValue=(age:number)=>age<=23?2:age<=27?1:age<=32?0:age<=36?-1:-2;
+ const ageScore=(age:number)=>age<=21?100:age<=25?90:age<=28?75:age<=32?55:age<=36?35:15;
+ const attributeScore=(driver:Team["drivers"][number])=>{
+  const values=Object.values(driver.attributes||{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
+  return values.reduce((sum,value)=>sum+(Number(value)||60),0)/Math.max(1,values.length);
+ };
  const candidates=allDrivers.map(x=>{
   const contract=contracts.find(c=>c.driverId===x.driver.id)!;
   const age=Number(x.driver.age)||25;
   const performance=performanceScore(x.driver.id);
   const comparison=teammateScore(x.driver.id,x.team);
-  const score=performance*.75+comparison*.25+ageValue(age);
-  return {...x,contract,performance,comparison,score,teamPosition:teamPosition(x.team.id)};
+  const attributes=attributeScore(x.driver);
+  const experience=Math.max(0,season-contract.startSeason);
+  const experienceScore=experience>=3?100:experience===2?80:experience===1?60:40;
+  const score=performance*.45+comparison*.2+attributes*.2+ageScore(age)*.1+experienceScore*.05;
+  return {...x,contract,performance,comparison,attributes,experience,score,age,teamPosition:teamPosition(x.team.id)};
  }).filter(x=>x.contract.endSeason<=season&&x.contract.status==="active");
  const pairGap=(team:Team)=>{
   if(team.drivers.length<2)return 100;
@@ -118,9 +127,75 @@ export function runAutomaticMarket(teams:Team[],season:number,driverStandings:St
  }
  for(const x of candidates.filter(x=>!usedDrivers.has(x.driver.id))){
   const contract=contracts.find(c=>c.driverId===x.driver.id)!;
+  const shouldRelease=x.score<34&&x.performance<25&&(x.age>=25||x.comparison<25);
+  if(shouldRelease){
+   const team=nextTeams.find(t=>t.id===x.team.id);
+   if(team)team.drivers=team.drivers.filter(driver=>driver.id!==x.driver.id);
+   contract.status="released";contract.endSeason=season;contract.endLabel=String(season);
+   events.push({id:crypto.randomUUID(),season,type:"release",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:"unattached",toTeamName:"Sem contrato",contractEnd:season,reason:"Contrato não renovado: desempenho esportivo, comparação com o companheiro e perspectiva de carreira indicaram que a equipe deveria buscar outra opção.",createdAt:new Date().toISOString()});
+   continue;
+  }
   contract.startSeason=season;contract.endSeason=season+1+(hash(x.driver.id+season)%3);contract.endLabel=String(contract.endSeason);contract.status="active";
-  events.push({id:crypto.randomUUID(),season,type:"renewal",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:x.team.id,toTeamName:x.team.name,contractEnd:contract.endSeason,reason:"Renovação automática: a estabilidade da dupla foi priorizada porque não surgiu uma alternativa com ganho esportivo suficiente.",createdAt:new Date().toISOString()});
+  events.push({id:crypto.randomUUID(),season,type:"renewal",driverId:x.driver.id,driverName:x.driver.name,fromTeamId:x.team.id,fromTeamName:x.team.name,toTeamId:x.team.id,toTeamName:x.team.name,contractEnd:contract.endSeason,reason:"Renovação automática: avaliação de resultados, desempenho relativo ao companheiro, atributos, idade e experiência indicou que a continuidade era a melhor decisão esportiva.",createdAt:new Date().toISOString()});
  }
  localStorage.setItem(contractKey,JSON.stringify(contracts));localStorage.setItem(eventKey,JSON.stringify(events));localStorage.setItem(processedKey,"true");
  return {teams:nextTeams,events:events.filter(e=>e.season===season),alreadyProcessed:false};
+}
+
+
+/** Promove automaticamente talentos da F2 apenas para vagas reais na F1. */
+export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing[],f2Standings:Standing[]):{f1Teams:Team[];f2Teams:Team[];events:MarketEvent[]}{
+ const readTeams=(id:string):Team[]=>{
+  try{const parsed=JSON.parse(localStorage.getItem(teamStorageKey(id))||"[]");return Array.isArray(parsed)?parsed:[];}catch{return [];}
+ };
+ const f1Teams=readTeams("formula-1-2026").map(team=>({...team,drivers:[...(team.drivers||[])]}));
+ const f2Teams=readTeams("formula-2-2026").map(team=>({...team,drivers:[...(team.drivers||[])]}));
+ const rank=new Map(f2Standings.map(row=>[row.id,row.position]));
+ const rankScore=(position:number,total:number)=>total<=1?100:100*(1-(position-1)/(total-1));
+ const candidateScore=(driver:Team["drivers"][number])=>{
+  const standing=rank.get(driver.id);
+  if(!standing)return 0;
+  const attributes=Object.values(driver.attributes||{racePace:60,qualifying:60,overtaking:60,defending:60,consistency:60});
+  const attributeAverage=attributes.reduce((sum,value)=>sum+(Number(value)||60),0)/Math.max(1,attributes.length);
+  const age=Number(driver.age)||25;
+  const ageFit=age<=21?100:age<=25?90:age<=28?75:age<=32?50:25;
+  return rankScore(standing,f2Standings.length)*.6+attributeAverage*.3+ageFit*.1;
+ };
+ const candidates=f2Teams.flatMap(team=>team.drivers.map(driver=>({driver,team,score:candidateScore(driver),position:rank.get(driver.id)??999})))
+  .filter(item=>item.score>=60).sort((a,b)=>a.position-b.position||b.score-a.score);
+ const f1Rank=new Map(f1Standings.map(row=>[row.id,row.position]));
+ const vacancies=f1Teams.filter(team=>team.drivers.length<2).sort((a,b)=>(f1Rank.get(b.id)??f1Teams.length+1)-(f1Rank.get(a.id)??f1Teams.length+1));
+ const events:MarketEvent[]=[];
+ const promoted:Team["drivers"]= [];
+ for(const target of vacancies){
+  while(target.drivers.length<2&&candidates.length){
+   const candidate=candidates.shift()!;
+   const source=f2Teams.find(team=>team.id===candidate.team.id);
+   if(!source||!source.drivers.some(driver=>driver.id===candidate.driver.id))continue;
+   source.drivers=source.drivers.filter(driver=>driver.id!==candidate.driver.id);
+   target.drivers.push(candidate.driver);
+   promoted.push(candidate.driver);
+   const endSeason=season+2;
+   events.push({id:crypto.randomUUID(),season,type:"promotion",driverId:candidate.driver.id,driverName:candidate.driver.name,fromTeamId:source.id,fromTeamName:source.name,toTeamId:target.id,toTeamName:target.name,contractEnd:endSeason,reason:"Promoção automática da Formula 2 para a Formula 1: vaga disponível na equipe e avaliação favorável de classificação, atributos, idade e potencial esportivo.",createdAt:new Date().toISOString()});
+  }
+ }
+ if(promoted.length){
+  localStorage.setItem(teamStorageKey("formula-1-2026"),JSON.stringify(f1Teams));
+  localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(f2Teams));
+  registerF1Debuts(promoted,season);
+  const f1Contracts=initializeDriverContracts(f1Teams,season,"formula-1-2026");
+  for(const driver of promoted){
+   const contract=f1Contracts.find(item=>item.driverId===driver.id);
+   if(contract){contract.teamId=f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||contract.teamId;contract.startSeason=season;contract.endSeason=season+2;contract.endLabel=String(season+2);contract.status="active";}
+  }
+  localStorage.setItem("geoprix-driver-contracts-v1",JSON.stringify(f1Contracts));
+  const f2Contracts:MarketContract[]=initializeDriverContracts(f2Teams,season,"formula-2-2026");
+  for(const driver of promoted){const contract=f2Contracts.find(item=>item.driverId===driver.id);if(contract){contract.status="expired";contract.endSeason=season;contract.endLabel=String(season);}}
+  localStorage.setItem("geoprix-driver-contracts-formula-2-2026-v1",JSON.stringify(f2Contracts));
+  const eventKey=marketStorageKey("events","formula-1-2026");
+  const history:MarketEvent[]=JSON.parse(localStorage.getItem(eventKey)||"[]");
+  localStorage.setItem(eventKey,JSON.stringify([...history,...events]));
+  window.dispatchEvent(new Event("geoprix-rosters-updated"));
+ }
+ return {f1Teams,f2Teams,events};
 }
