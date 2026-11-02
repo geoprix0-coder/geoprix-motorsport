@@ -33,7 +33,7 @@ export default function DriversPage(){
     try{
      const key=teamStorageKey(championship.id);
      const raw=localStorage.getItem(key);
-     const defaults=championship.id==="formula-1-2026"||championship.id==="formula-2-2026"||championship.id==="formula-3-2026"?initialTeamsForChampionship(championship.id):[];
+     const defaults=initialTeamsForChampionship(championship.id);
      const stored=raw?JSON.parse(raw):defaults;
      let teams=defaults.length?mergeInitialTeams(championship.id,Array.isArray(stored)?stored as Team[]:defaults):(Array.isArray(stored)?stored as Team[]:[]);
      if(championship.id==="formula-2-2026"){
