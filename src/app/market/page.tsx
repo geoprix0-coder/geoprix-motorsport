@@ -61,7 +61,7 @@ export default function MarketPage(){
   }
   return rows.sort((a,b)=>a.championshipName.localeCompare(b.championshipName)||a.driverName.localeCompare(b.driverName));
  },[visibleCategories]);
- const allEvents=useMemo(()=>visibleCategories.flatMap(item=>item.events.map(event=>({...event,championshipName:item.championship.name}))).sort((a,b)=>b.season-a.season||b.createdAt.localeCompare(a.createdAt)),[visibleCategories]);
+ const allEvents=useMemo(()=>visibleCategories.flatMap(item=>item.events.map(event=>({...event,championshipId:item.championship.id,championshipName:item.championship.name}))).sort((a,b)=>b.season-a.season||b.createdAt.localeCompare(a.createdAt)),[visibleCategories]);
  const years=useMemo(()=>Array.from(new Set(allEvents.map(event=>event.season))).sort((a,b)=>b-a),[allEvents]);
  const f2Category=categories.find(item=>item.championship.id==="formula-2-2026");
  const f3Category=categories.find(item=>item.championship.id==="formula-3-2026");
