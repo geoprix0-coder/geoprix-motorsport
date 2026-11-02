@@ -350,7 +350,7 @@ function freeAgentCandidatesFor(targetId: string, occupiedIds: Set<string>): Ext
 export function closeExtraordinaryWindow(): ExtraordinaryCloseResult {
   const activeWindow = readWindow();
   if (!activeWindow) throw new Error("Não existe uma janela extraordinária aberta.");
-  if (activeWindow.sourceVacancies.some(item => item.championshipId === F3)) ensureFreeAgentPool(10);
+  if (activeWindow.sourceVacancies.some(item => item.championshipId === F2 || item.championshipId === F3)) ensureFreeAgentPool(10);
   const vacancies = [...activeWindow.sourceVacancies].sort((a, b) => tier(a.championshipId) - tier(b.championshipId));
   const teamsByCategory = new Map<string, Team[]>();
   for (const vacancy of vacancies) {
