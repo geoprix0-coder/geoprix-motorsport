@@ -31,7 +31,7 @@ export function validateChampionshipRoster(championshipId:string,teams:Team[],se
  const f3Teams=read(teamStorageKey("formula-3-2026"));
  if(championshipId==="formula-3-2026"){
   if(teams.some(team=>team.drivers.length>3))return {ok:false,teams,message:"Cada equipe da Formula 3 pode ter no máximo 3 pilotos."};
-  const debutedF2=new Set([...f2Teams.flatMap(t=>t.drivers.map(d=>d.id)),...getCareerStatus().filter(x=>x.firstF2Season).map(x=>x.driverId)]);
+  const debutedF2=new Set([...f2Teams.flatMap(t=>t.drivers.map(d=>d.id)),...getCareerStatus().filter(x=>x.firstF2Season||x.firstF1Season).map(x=>x.driverId)]);
   if(teams.some(t=>t.drivers.some(d=>debutedF2.has(d.id))))return {ok:false,teams,message:"Este piloto já estreou na Formula 2 e não pode competir na Formula 3."};
   const f1Ids=new Set(f1Teams.flatMap(t=>t.drivers.map(d=>d.id)));
   if(teams.some(t=>t.drivers.some(d=>f1Ids.has(d.id))))return {ok:false,teams,message:"Pilotos vinculados à Formula 1 não podem competir na Formula 3."};
