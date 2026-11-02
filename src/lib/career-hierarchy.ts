@@ -1,10 +1,10 @@
 import type { Team, Driver } from "./types";
-import { teamStorageKey } from "./championship-data";
+import { initialTeamsForChampionship, teamStorageKey } from "./championship-data";
 import { getRetiredDrivers } from "./retirement";
 
 export type DriverCareerStatus={driverId:string;driverName:string;firstF1Season?:number;firstF2Season?:number;promotedAt:string};
 const CAREER_KEY="geoprix-driver-career-status-v1";
-const read=(key:string):Team[]=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value:[]}catch{return []}};
+const read=(key:string):Team[]=>{try{const raw=localStorage.getItem(key);if(!raw){const id=key==="geoprix-teams-v1"?"formula-1-2026":key.replace("geoprix-teams-","").replace(/-v1$/,"");return initialTeamsForChampionship(id);}const value=JSON.parse(raw);return Array.isArray(value)?value:[]}catch{return []}};
 export function getCareerStatus():DriverCareerStatus[]{try{const value=JSON.parse(localStorage.getItem(CAREER_KEY)||"[]");return Array.isArray(value)?value:[]}catch{return []}}
 function registerDebuts(drivers:Driver[],season:number,category:"f1"|"f2"){
  const status=getCareerStatus();
