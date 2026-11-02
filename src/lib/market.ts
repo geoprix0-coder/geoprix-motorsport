@@ -241,7 +241,7 @@ export function promoteF2DriversToF1Vacancies(season:number,f1Standings:Standing
   if(promoted.length||signedF2FreeAgents.length)registerF1Debuts([...promoted,...signedF2FreeAgents],season);
   if(signedF2FreeAgents.length)localStorage.setItem("geoprix-f2-free-agents-v1",JSON.stringify(f2FreeAgents.filter(driver=>!signedF2FreeAgents.some(signed=>signed.id===driver.id))));
   const nextF1Contracts=initializeDriverContracts(f1Teams,season,"formula-1-2026");
-  for(const driver of [...promoted,...signedF1Agents]){
+  for(const driver of [...promoted,...signedF1Agents,...signedF2FreeAgents]){
    let contract=nextF1Contracts.find(item=>item.driverId===driver.id);
    if(!contract){contract={driverId:driver.id,driverName:driver.name,teamId:f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||"",startSeason:season,endSeason:season+2,status:"active"};nextF1Contracts.push(contract);}
    contract.driverName=driver.name;contract.teamId=f1Teams.find(team=>team.drivers.some(item=>item.id===driver.id))?.id||contract.teamId;contract.startSeason=season;contract.endSeason=season+2;contract.endLabel=String(season+2);contract.status="active";
