@@ -8,6 +8,7 @@ import {removeF1DriversFromF2} from "@/lib/career-hierarchy";
 import {initializeDriverContracts,getContractEndLabel,type MarketContract,type MarketEvent} from "@/lib/market";
 import {getRetiredDrivers} from "@/lib/retirement";
 import {registerF2Debuts} from "@/lib/career-hierarchy";
+import {ensureFreeAgentPool,hireFreeAgent} from "@/lib/free-agents";
 import type {Team,Championship} from "@/lib/types";
 
 type CategoryData={championship:Championship;teams:Team[];contracts:MarketContract[];events:MarketEvent[];season:number};
@@ -76,9 +77,9 @@ export default function MarketPage(){
   if(f2Category.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))){setMarketNotice("Este piloto já está contratado na F2.");return;}
   if(f2Category.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))||categories.find(item=>item.championship.id==="formula-1-2026")?.teams.some(team=>team.drivers.some(driver=>driver.id===driverId))){setMarketNotice("Este piloto já está contratado em uma categoria superior.");return;}
   const nextF2=f2Category.teams.map(team=>team.id===target.id?{...team,drivers:[...team.drivers,candidate.driver]}:team);
-  const nextF3=candidate.source==="f3"?f3Category.teams.map(team=>({...team,drivers:team.drivers.filter(driver=>driver.id!==driverId)})):f3Category.teams;
+  let nextF3=candidate.source==="f3"?f3Category.teams.map(team=>({...team,drivers:team.drivers.filter(driver=>driver.id!==driverId)})):f3Category.teams;
   localStorage.setItem(teamStorageKey("formula-2-2026"),JSON.stringify(nextF2));
-  if(candidate.source==="f3")localStorage.setItem(teamStorageKey("formula-3-2026"),JSON.stringify(nextF3));
+  if(candidate.source==="f3"){localStorage.setItem(teamStorageKey("formula-3-2026"),JSON.stringify(nextF3));const available=ensureFreeAgentPool(10);if(available[0]){hireFreeAgent(available[0].id,candidate.teamId,f3Category.season);try{const refreshed=JSON.parse(localStorage.getItem(teamStorageKey("formula-3-2026"))||"[]");if(Array.isArray(refreshed))nextF3=refreshed;}catch{}}}
   else localStorage.setItem("geoprix-f2-free-agents-v1",JSON.stringify(f2FreeAgents.filter(driver=>driver.id!==driverId)));
   registerF2Debuts([candidate.driver],f2Category.season);
   const nextContracts=initializeDriverContracts(nextF2,f2Category.season,"formula-2-2026");
