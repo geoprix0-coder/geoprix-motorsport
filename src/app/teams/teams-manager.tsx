@@ -41,6 +41,12 @@ if(championshipId==="formula-regional-oceania-2026"){
   const placeholder=!name||name.includes("agente livre")||name.includes("substituicao automatica");
   const duplicate=!placeholder&&occupied.has(name);
   if(!placeholder&&!duplicate){occupied.add(name);return driver;}
+  if(placeholder&&team.id==="fro-kiwi"&&driver.number===14){
+   const replacementName="Aiden McKenzie";
+   occupied.add(normalizeName(replacementName));
+   changed=true;
+   return {id:driver.id,name:replacementName,number:14,nationality:"Nova Zelândia",age:18,attributes:{racePace:40,qualifying:40,overtaking:40,defending:40,consistency:40}};
+  }
   let generatedName="";
   for(let attempt=0;attempt<500;attempt++){
    const candidate=firstNames[Math.floor(Math.random()*firstNames.length)]+" "+lastNames[Math.floor(Math.random()*lastNames.length)];
