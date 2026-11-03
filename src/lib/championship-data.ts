@@ -446,6 +446,46 @@ const formula4ChinaFoundingTeams: Team[] = [
   { id: "f4cn-wuhan-racing", name: "Wuhan Racing", country: "China", base: "Wuhan, Hubei", drivers: [] },
 ];
 
+
+const formula4ChinaFoundingTeams: Team[] = [
+  { id: "f4cn-dragon-motorsport", name: "Dragon Motorsport", country: "China", base: "Xangai", drivers: [
+    { id: "cn-001", name: "Zhang Wei", number: 3, nationality: "China", age: 17, attributes: { racePace: 56, qualifying: 58, overtaking: 55, defending: 54, consistency: 57 } },
+    { id: "cn-002", name: "Li Jun", number: 12, nationality: "China", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 57, defending: 55, consistency: 56 } },
+    { id: "cn-003", name: "Vihaan Kapoor", number: 23, nationality: "Índia", age: 17, attributes: { racePace: 57, qualifying: 55, overtaking: 58, defending: 54, consistency: 55 } },
+    { id: "cn-004", name: "Akash Patel", number: 35, nationality: "Índia", age: 16, attributes: { racePace: 53, qualifying: 57, overtaking: 56, defending: 55, consistency: 54 } }
+  ] },
+  { id: "f4cn-beijing-racing", name: "Beijing Racing", country: "China", base: "Pequim", drivers: [
+    { id: "cn-005", name: "Wang Haoyu", number: 5, nationality: "China", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 57, consistency: 58 } },
+    { id: "cn-006", name: "Chen Rui", number: 15, nationality: "China", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 54, defending: 56, consistency: 55 } },
+    { id: "cn-007", name: "Nguyễn Minh", number: 27, nationality: "Vietnã", age: 17, attributes: { racePace: 56, qualifying: 54, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "cn-008", name: "Trần Đức", number: 39, nationality: "Vietnã", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 53, consistency: 55 } }
+  ] },
+  { id: "f4cn-pearl-river-competition", name: "Pearl River Competition", country: "China", base: "Guangzhou, Guangdong", drivers: [
+    { id: "cn-009", name: "Liu Zihan", number: 7, nationality: "China", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 57 } },
+    { id: "cn-010", name: "Huang Yuchen", number: 17, nationality: "China", age: 15, attributes: { racePace: 53, qualifying: 55, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "cn-011", name: "Muhammad Faris", number: 31, nationality: "Malásia", age: 18, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 58, consistency: 56 } },
+    { id: "cn-012", name: "Amir Hakim", number: 46, nationality: "Malásia", age: 16, attributes: { racePace: 55, qualifying: 54, overtaking: 57, defending: 56, consistency: 54 } }
+  ] },
+  { id: "f4cn-chengdu-motorsport", name: "Chengdu Motorsport", country: "China", base: "Chengdu, Sichuan", drivers: [
+    { id: "cn-013", name: "Zhou Yifan", number: 9, nationality: "China", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 55, defending: 56, consistency: 58 } },
+    { id: "cn-014", name: "Xu Kai", number: 19, nationality: "China", age: 17, attributes: { racePace: 58, qualifying: 55, overtaking: 57, defending: 54, consistency: 56 } },
+    { id: "cn-015", name: "Batsaikhan Enkh", number: 33, nationality: "Mongólia", age: 17, attributes: { racePace: 54, qualifying: 56, overtaking: 58, defending: 55, consistency: 57 } },
+    { id: "cn-016", name: "Temuujin Bold", number: 51, nationality: "Mongólia", age: 16, attributes: { racePace: 55, qualifying: 54, overtaking: 56, defending: 57, consistency: 55 } }
+  ] },
+  { id: "f4cn-zhejiang-grand-prix", name: "Zhejiang Grand Prix", country: "China", base: "Hangzhou, Zhejiang", drivers: [
+    { id: "cn-017", name: "Sun Yichen", number: 11, nationality: "China", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 57, defending: 58, consistency: 59 } },
+    { id: "cn-018", name: "Zhao Ming", number: 21, nationality: "China", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 55, consistency: 56 } },
+    { id: "cn-019", name: "Ethan Clarke", number: 37, nationality: "Austrália", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "cn-020", name: "Jack Thompson", number: 54, nationality: "Austrália", age: 16, attributes: { racePace: 54, qualifying: 57, overtaking: 55, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4cn-wuhan-racing", name: "Wuhan Racing", country: "China", base: "Wuhan, Hubei", drivers: [
+    { id: "cn-021", name: "Wu Zeyu", number: 13, nationality: "China", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 57, consistency: 58 } },
+    { id: "cn-022", name: "Lin Haoran", number: 25, nationality: "China", age: 15, attributes: { racePace: 53, qualifying: 55, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "cn-023", name: "Rafael Almeida", number: 39, nationality: "Brasil", age: 16, attributes: { racePace: 56, qualifying: 55, overtaking: 58, defending: 56, consistency: 57 } },
+    { id: "cn-024", name: "Gabriel Santos", number: 63, nationality: "Brasil", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 56, defending: 58, consistency: 56 } }
+  ] }
+];
+
 const formula4IndonesiaFoundingTeams: Team[] = [
   { id: "f4id-garuda-motorsport", name: "Garuda Motorsport", country: "Indonésia", base: "Jacarta, Java", drivers: [] },
   { id: "f4id-nusantara-racing", name: "Nusantara Racing", country: "Indonésia", base: "Bandung, Java", drivers: [] },
