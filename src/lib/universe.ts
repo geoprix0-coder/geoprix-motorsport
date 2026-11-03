@@ -2,13 +2,14 @@ import type { Championship } from "./types";
 import { initialChampionships } from "./seed";
 
 export const UNIVERSE_CHAMPIONSHIPS_KEY = "geoprix-universe-championships-v1";
-const EMPTY_UNIVERSE_MIGRATION_KEY = "geoprix-full-reset-v3";
+const EMPTY_UNIVERSE_MIGRATION_KEY = "geoprix-full-reset-v4";
 
 /** Zera os dados antigos uma única vez após a nova versão ser carregada. */
 export function clearSportingUniverseData(): void {
   if (typeof window === "undefined") return;
   if (localStorage.getItem(EMPTY_UNIVERSE_MIGRATION_KEY) === "true") return;
   localStorage.clear();
+  sessionStorage.clear();
   localStorage.setItem(EMPTY_UNIVERSE_MIGRATION_KEY, "true");
 }
 
