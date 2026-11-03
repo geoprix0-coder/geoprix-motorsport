@@ -11,6 +11,7 @@ const CIRCUITS_KEY = "geoprix-circuits-v1";
  */
 export function clearSportingUniverseData(): void {
   if (typeof window === "undefined") return;
+  if (localStorage.getItem(EMPTY_UNIVERSE_MIGRATION_KEY) === "true") return;
   const keysToRemove: string[] = [];
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
