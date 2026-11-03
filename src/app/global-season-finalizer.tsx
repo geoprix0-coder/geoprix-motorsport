@@ -10,7 +10,6 @@ import {runAutomaticMarket,promoteF2DriversToF1Vacancies,type MarketEvent} from 
 import type {Championship,Team} from "@/lib/types";
 
 type Status={id:string;name:string;season:number;rounds:number;completed:number;ready:boolean};
-const CORE_CHAMPIONSHIPS=new Set(["formula-1-2026","formula-2-2026","formula-3-2026"]);
 function readTeams(championshipId:string):Team[]{
  try{
   const raw=localStorage.getItem(teamStorageKey(championshipId));
@@ -24,7 +23,7 @@ export default function GlobalSeasonFinalizer(){
  const [busy,setBusy]=useState(false);
  const refresh=useCallback(()=>{
   const championships:Championship[]=readUniverseChampionships();
-  const next=championships.filter(championship=>CORE_CHAMPIONSHIPS.has(championship.id)||readChampionshipCalendar(championship.id).length>0).map(championship=>{
+  const next=championships.map(championship=>{
    const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season;
    const rounds=readChampionshipCalendar(championship.id);
    const completed=rounds.filter(round=>round.status==="completed"&&round.results.length>0).length;
@@ -48,7 +47,7 @@ export default function GlobalSeasonFinalizer(){
    const rounds=readChampionshipCalendar(championship.id);
    const season=Number(localStorage.getItem("geoprix-season-"+championship.id))||championship.season;
    return {championship,rounds,season};
-  }).filter(item=>CORE_CHAMPIONSHIPS.has(item.championship.id)||item.rounds.length>0);
+  });
   if(!current.length||current.some(item=>!item.rounds.length||item.rounds.some(round=>round.status!=="completed"||!round.results.length))){
    setNotice("Ainda existem campeonatos com corridas sem resultados. Finalize todas as etapas de todos os campeonatos antes de continuar.");
    return;
