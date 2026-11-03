@@ -516,12 +516,42 @@ const formula4IndonesiaFoundingTeams: Team[] = [
 ];
 
 const formula4AustraliaFoundingTeams: Team[] = [
-  { id: "f4au-southern-cross-racing", name: "Southern Cross Racing", country: "Austrália", base: "Melbourne, Victoria", drivers: [] },
-  { id: "f4au-sydney-motorsport", name: "Sydney Motorsport", country: "Austrália", base: "Sydney, Nova Gales do Sul", drivers: [] },
-  { id: "f4au-queensland-performance", name: "Queensland Performance", country: "Austrália", base: "Brisbane, Queensland", drivers: [] },
-  { id: "f4au-western-australia-racing", name: "Western Australia Racing", country: "Austrália", base: "Perth, Austrália Ocidental", drivers: [] },
-  { id: "f4au-adelaide-competition", name: "Adelaide Competition", country: "Austrália", base: "Adelaide, Austrália Meridional", drivers: [] },
-  { id: "f4au-tasmania-motorsport", name: "Tasmania Motorsport", country: "Austrália", base: "Hobart, Tasmânia", drivers: [] },
+  { id: "f4au-southern-cross-racing", name: "Southern Cross Racing", country: "Austrália", base: "Melbourne, Victoria", drivers: [
+    { id: "au-001", name: "Oliver Bennett", number: 3, nationality: "Austrália", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "au-002", name: "Jack Wilson", number: 12, nationality: "Austrália", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 54, consistency: 55 } },
+    { id: "au-003", name: "Liam McKenzie", number: 23, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 57, qualifying: 55, overtaking: 58, defending: 56, consistency: 56 } },
+    { id: "au-004", name: "Aiden Nakamura", number: 35, nationality: "Japão", age: 16, attributes: { racePace: 54, qualifying: 57, overtaking: 56, defending: 55, consistency: 55 } }
+  ] },
+  { id: "f4au-sydney-motorsport", name: "Sydney Motorsport", country: "Austrália", base: "Sydney, Nova Gales do Sul", drivers: [
+    { id: "au-005", name: "Thomas Walker", number: 7, nationality: "Austrália", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 58, defending: 57, consistency: 59 } },
+    { id: "au-006", name: "Cooper Mitchell", number: 18, nationality: "Austrália", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 56, defending: 55, consistency: 54 } },
+    { id: "au-007", name: "Ethan Brooks", number: 27, nationality: "Austrália", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 57 } },
+    { id: "au-008", name: "Daniel Tan", number: 42, nationality: "Singapura", age: 17, attributes: { racePace: 56, qualifying: 58, overtaking: 55, defending: 56, consistency: 57 } }
+  ] },
+  { id: "f4au-queensland-performance", name: "Queensland Performance", country: "Austrália", base: "Brisbane, Queensland", drivers: [
+    { id: "au-009", name: "Noah Campbell", number: 5, nationality: "Austrália", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "au-010", name: "Harrison Clarke", number: 16, nationality: "Austrália", age: 15, attributes: { racePace: 52, qualifying: 54, overtaking: 55, defending: 53, consistency: 54 } },
+    { id: "au-011", name: "Blake Anderson", number: 29, nationality: "Austrália", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "au-012", name: "Ryan Lim", number: 38, nationality: "Malásia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 57, defending: 55, consistency: 55 } }
+  ] },
+  { id: "f4au-western-australia-racing", name: "Western Australia Racing", country: "Austrália", base: "Perth, Austrália Ocidental", drivers: [
+    { id: "au-013", name: "Mason Taylor", number: 9, nationality: "Austrália", age: 18, attributes: { racePace: 60, qualifying: 58, overtaking: 59, defending: 57, consistency: 58 } },
+    { id: "au-014", name: "Lachlan Foster", number: 21, nationality: "Austrália", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 57, consistency: 55 } },
+    { id: "au-015", name: "Flynn O'Connor", number: 31, nationality: "Austrália", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "au-016", name: "Kai Watanabe", number: 44, nationality: "Japão", age: 17, attributes: { racePace: 57, qualifying: 59, overtaking: 56, defending: 54, consistency: 57 } }
+  ] },
+  { id: "f4au-adelaide-competition", name: "Adelaide Competition", country: "Austrália", base: "Adelaide, Austrália Meridional", drivers: [
+    { id: "au-017", name: "Xavier Collins", number: 11, nationality: "Austrália", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 56, defending: 58, consistency: 57 } },
+    { id: "au-018", name: "Hudson Reed", number: 24, nationality: "Austrália", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 56, consistency: 55 } },
+    { id: "au-019", name: "Finn Sullivan", number: 33, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 59, qualifying: 57, overtaking: 58, defending: 56, consistency: 58 } },
+    { id: "au-020", name: "Arjun Nair", number: 47, nationality: "Singapura", age: 16, attributes: { racePace: 54, qualifying: 57, overtaking: 56, defending: 55, consistency: 56 } }
+  ] },
+  { id: "f4au-tasmania-motorsport", name: "Tasmania Motorsport", country: "Austrália", base: "Hobart, Tasmânia", drivers: [
+    { id: "au-021", name: "Charlie Morgan", number: 14, nationality: "Austrália", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 58, consistency: 59 } },
+    { id: "au-022", name: "Darcy Evans", number: 26, nationality: "Austrália", age: 15, attributes: { racePace: 52, qualifying: 53, overtaking: 55, defending: 54, consistency: 53 } },
+    { id: "au-023", name: "Samuel Price", number: 36, nationality: "Austrália", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 58, defending: 57, consistency: 56 } },
+    { id: "au-024", name: "Amir Rahman", number: 49, nationality: "Malásia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } }
+  ] }
 ];
 
 // Equipes fundadoras são inseridas sem apagar cadastros feitos pelo usuário.
