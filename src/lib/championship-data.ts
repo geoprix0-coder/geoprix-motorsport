@@ -126,12 +126,42 @@ const formula4FranceFoundingTeams: Team[] = [
 ];
 
 const formula4UnitedKingdomFoundingTeams: Team[] = [
-  { id: "f4uk-britannia-racing", name: "Britannia Racing", country: "Reino Unido", base: "Silverstone, Inglaterra", drivers: [] },
-  { id: "f4uk-crown-motorsport", name: "Crown Motorsport", country: "Reino Unido", base: "Birmingham, Inglaterra", drivers: [] },
-  { id: "f4uk-northstar-racing", name: "Northstar Racing", country: "Reino Unido", base: "Manchester, Inglaterra", drivers: [] },
-  { id: "f4uk-highland-motorsport", name: "Highland Motorsport", country: "Reino Unido", base: "Glasgow, Escócia", drivers: [] },
-  { id: "f4uk-emerald-racing", name: "Emerald Racing", country: "Reino Unido", base: "Belfast, Irlanda do Norte", drivers: [] },
-  { id: "f4uk-apex-british-competition", name: "Apex British Competition", country: "Reino Unido", base: "Oxford, Inglaterra", drivers: [] },
+  { id: "f4uk-britannia-racing", name: "Britannia Racing", country: "Reino Unido", base: "Silverstone, Inglaterra", drivers: [
+    { id: "uk-001", name: "Oliver Bennett", number: 2, nationality: "Reino Unido", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 55, defending: 54, consistency: 56 } },
+    { id: "uk-002", name: "Jack Harrison", number: 8, nationality: "Reino Unido", age: 16, attributes: { racePace: 56, qualifying: 59, overtaking: 53, defending: 52, consistency: 54 } },
+    { id: "uk-003", name: "Luca Ferrari", number: 17, nationality: "Itália", age: 17, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 53, consistency: 52 } },
+    { id: "uk-004", name: "Daniel Svensson", number: 26, nationality: "Suécia", age: 16, attributes: { racePace: 53, qualifying: 52, overtaking: 54, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4uk-crown-motorsport", name: "Crown Motorsport", country: "Reino Unido", base: "Birmingham, Inglaterra", drivers: [
+    { id: "uk-005", name: "Harry Collins", number: 4, nationality: "Reino Unido", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 57, consistency: 55 } },
+    { id: "uk-006", name: "Ethan Brooks", number: 13, nationality: "Reino Unido", age: 16, attributes: { racePace: 55, qualifying: 54, overtaking: 58, defending: 55, consistency: 53 } },
+    { id: "uk-007", name: "Nicolás Herrera", number: 23, nationality: "Espanha", age: 17, attributes: { racePace: 52, qualifying: 56, overtaking: 53, defending: 55, consistency: 57 } },
+    { id: "uk-008", name: "Tomáš Novák", number: 32, nationality: "República Tcheca", age: 16, attributes: { racePace: 58, qualifying: 58, overtaking: 56, defending: 57, consistency: 55 } }
+  ] },
+  { id: "f4uk-northstar-racing", name: "Northstar Racing", country: "Reino Unido", base: "Manchester, Inglaterra", drivers: [
+    { id: "uk-009", name: "William Foster", number: 6, nationality: "Reino Unido", age: 17, attributes: { racePace: 60, qualifying: 61, overtaking: 57, defending: 55, consistency: 58 } },
+    { id: "uk-010", name: "Archie Mitchell", number: 15, nationality: "Reino Unido", age: 15, attributes: { racePace: 55, qualifying: 58, overtaking: 54, defending: 52, consistency: 53 } },
+    { id: "uk-011", name: "Rafael Mendes", number: 28, nationality: "Portugal", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 56, consistency: 54 } },
+    { id: "uk-012", name: "Felix Schneider", number: 37, nationality: "Alemanha", age: 18, attributes: { racePace: 58, qualifying: 54, overtaking: 57, defending: 59, consistency: 56 } }
+  ] },
+  { id: "f4uk-highland-motorsport", name: "Highland Motorsport", country: "Reino Unido", base: "Glasgow, Escócia", drivers: [
+    { id: "uk-013", name: "Finlay MacLeod", number: 10, nationality: "Reino Unido", age: 17, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 57, consistency: 56 } },
+    { id: "uk-014", name: "Callum Fraser", number: 20, nationality: "Reino Unido", age: 16, attributes: { racePace: 57, qualifying: 54, overtaking: 59, defending: 53, consistency: 52 } },
+    { id: "uk-015", name: "Antoine Lefèvre", number: 34, nationality: "França", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "uk-016", name: "Kenji Watanabe", number: 43, nationality: "Japão", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 55, defending: 58, consistency: 57 } }
+  ] },
+  { id: "f4uk-emerald-racing", name: "Emerald Racing", country: "Reino Unido", base: "Belfast, Irlanda do Norte", drivers: [
+    { id: "uk-017", name: "Cian Murphy", number: 12, nationality: "Irlanda", age: 17, attributes: { racePace: 61, qualifying: 59, overtaking: 58, defending: 57, consistency: 60 } },
+    { id: "uk-018", name: "Sean Gallagher", number: 22, nationality: "Irlanda", age: 16, attributes: { racePace: 56, qualifying: 60, overtaking: 55, defending: 54, consistency: 56 } },
+    { id: "uk-019", name: "Matteo Conti", number: 39, nationality: "Itália", age: 18, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 56, consistency: 53 } },
+    { id: "uk-020", name: "Alexander Petrov", number: 48, nationality: "Bulgária", age: 16, attributes: { racePace: 53, qualifying: 54, overtaking: 56, defending: 55, consistency: 54 } }
+  ] },
+  { id: "f4uk-apex-british-competition", name: "Apex British Competition", country: "Reino Unido", base: "Oxford, Inglaterra", drivers: [
+    { id: "uk-021", name: "George Turner", number: 14, nationality: "Reino Unido", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 58, consistency: 59 } },
+    { id: "uk-022", name: "Edward Clarke", number: 25, nationality: "Reino Unido", age: 17, attributes: { racePace: 55, qualifying: 54, overtaking: 58, defending: 55, consistency: 54 } },
+    { id: "uk-023", name: "Lucas van den Berg", number: 42, nationality: "Países Baixos", age: 16, attributes: { racePace: 57, qualifying: 56, overtaking: 54, defending: 59, consistency: 58 } },
+    { id: "uk-024", name: "Miguel Santos", number: 57, nationality: "Brasil", age: 17, attributes: { racePace: 54, qualifying: 53, overtaking: 57, defending: 58, consistency: 55 } }
+  ] },
 ];
 
 const formula4ItalyFoundingTeams: Team[] = [
