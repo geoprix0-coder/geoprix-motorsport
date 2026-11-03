@@ -1,3 +1,5 @@
+export function generateStaticParams() { return [{ id: "__empty__" }]; }
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
