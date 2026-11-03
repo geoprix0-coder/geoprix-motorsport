@@ -85,13 +85,15 @@ const asiaPacificFormulaRegionalFoundingTeams: Team[] = [
   { id: "apfr-kiwi-grand-prix", name: "Kiwi Grand Prix", country: "Nova Zelândia", base: "Auckland, Nova Zelândia", drivers: [] },
   { id: "apfr-gulf-falcon-racing", name: "Gulf Falcon Racing", country: "Emirados Árabes Unidos", base: "Dubai, Emirados Árabes Unidos", drivers: [] },
 ];
-\n// Equipes fundadoras são inseridas sem apagar cadastros feitos pelo usuário.
+
+// Equipes fundadoras são inseridas sem apagar cadastros feitos pelo usuário.
 export function initialTeamsForChampionship(championshipId: string): Team[] {
   if (championshipId === "world-formula-2026") return worldFormulaFoundingTeams;
   if (championshipId === "formula-2-2026") return formula2FoundingTeams;
   if (championshipId === "formula-3-2026") return formula3FoundingTeams;
   if (championshipId === "european-formula-regional-2026") return europeanFormulaRegionalFoundingTeams;
-  if (championshipId === "americas-formula-regional-2026") return americasFormulaRegionalFoundingTeams;\n  if (championshipId === "asia-pacific-formula-regional-2026") return asiaPacificFormulaRegionalFoundingTeams;
+  if (championshipId === "americas-formula-regional-2026") return americasFormulaRegionalFoundingTeams;
+  if (championshipId === "asia-pacific-formula-regional-2026") return asiaPacificFormulaRegionalFoundingTeams;
   return [];
 }
 
