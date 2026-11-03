@@ -438,16 +438,6 @@ const formula4MongoliaFoundingTeams: Team[] = [
 ];
 
 const formula4ChinaFoundingTeams: Team[] = [
-  { id: "f4cn-dragon-motorsport", name: "Dragon Motorsport", country: "China", base: "Xangai", drivers: [] },
-  { id: "f4cn-beijing-racing", name: "Beijing Racing", country: "China", base: "Pequim", drivers: [] },
-  { id: "f4cn-pearl-river-competition", name: "Pearl River Competition", country: "China", base: "Guangzhou, Guangdong", drivers: [] },
-  { id: "f4cn-chengdu-motorsport", name: "Chengdu Motorsport", country: "China", base: "Chengdu, Sichuan", drivers: [] },
-  { id: "f4cn-zhejiang-grand-prix", name: "Zhejiang Grand Prix", country: "China", base: "Hangzhou, Zhejiang", drivers: [] },
-  { id: "f4cn-wuhan-racing", name: "Wuhan Racing", country: "China", base: "Wuhan, Hubei", drivers: [] },
-];
-
-
-const formula4ChinaFoundingTeams: Team[] = [
   { id: "f4cn-dragon-motorsport", name: "Dragon Motorsport", country: "China", base: "Xangai", drivers: [
     { id: "cn-001", name: "Zhang Wei", number: 3, nationality: "China", age: 17, attributes: { racePace: 56, qualifying: 58, overtaking: 55, defending: 54, consistency: 57 } },
     { id: "cn-002", name: "Li Jun", number: 12, nationality: "China", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 57, defending: 55, consistency: 56 } },
