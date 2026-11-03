@@ -49,7 +49,7 @@ export default function DriversPage(){
    }
    setTeamsByCategory(nextTeams);
    setContractsByCategory(nextContracts);
-   setFreeAgents(ensureFreeAgentPool(10));
+   setFreeAgents(registered.length ? ensureFreeAgentPool(10) : []);
    try{const parsed=JSON.parse(localStorage.getItem("geoprix-f2-free-agents-v1")||"[]");setF2FreeAgents(Array.isArray(parsed)?parsed:[])}catch{setF2FreeAgents([])}
    try{const parsed=JSON.parse(localStorage.getItem("geoprix-f1-free-agents-v1")||"[]");setF1FreeAgents(Array.isArray(parsed)?parsed:[])}catch{setF1FreeAgents([])}
    if(selectedCategory!=="all"&&!registered.some(c=>c.id===selectedCategory))setSelectedCategory("all");
