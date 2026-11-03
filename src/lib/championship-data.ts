@@ -165,12 +165,42 @@ const formula4UnitedKingdomFoundingTeams: Team[] = [
 ];
 
 const formula4ItalyFoundingTeams: Team[] = [
-  { id: "f4it-scuderia-torino", name: "Scuderia Torino", country: "Itália", base: "Turim, Piemonte", drivers: [] },
-  { id: "f4it-modena-corse", name: "Modena Corse", country: "Itália", base: "Modena, Emilia-Romagna", drivers: [] },
-  { id: "f4it-lombardia-motorsport", name: "Lombardia Motorsport", country: "Itália", base: "Milão, Lombardia", drivers: [] },
-  { id: "f4it-toscana-racing", name: "Toscana Racing", country: "Itália", base: "Florença, Toscana", drivers: [] },
-  { id: "f4it-adriatica-competition", name: "Adriatica Competition", country: "Itália", base: "Rimini, Emilia-Romagna", drivers: [] },
-  { id: "f4it-sicilia-motorsport", name: "Sicilia Motorsport", country: "Itália", base: "Palermo, Sicília", drivers: [] },
+  { id: "f4it-scuderia-torino", name: "Scuderia Torino", country: "Itália", base: "Turim, Piemonte", drivers: [
+    { id: "it-001", name: "Alessandro Moretti", number: 3, nationality: "Itália", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "it-002", name: "Lorenzo Conti", number: 8, nationality: "Itália", age: 16, attributes: { racePace: 56, qualifying: 58, overtaking: 57, defending: 54, consistency: 55 } },
+    { id: "it-003", name: "Emil Bergström", number: 19, nationality: "Suécia", age: 17, attributes: { racePace: 55, qualifying: 54, overtaking: 56, defending: 58, consistency: 57 } },
+    { id: "it-004", name: "Noah Williams", number: 27, nationality: "Reino Unido", age: 16, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 53, consistency: 54 } }
+  ] },
+  { id: "f4it-modena-corse", name: "Modena Corse", country: "Itália", base: "Modena, Emilia-Romagna", drivers: [
+    { id: "it-005", name: "Matteo Rinaldi", number: 5, nationality: "Itália", age: 18, attributes: { racePace: 61, qualifying: 60, overtaking: 58, defending: 57, consistency: 59 } },
+    { id: "it-006", name: "Federico Romano", number: 14, nationality: "Itália", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 56, defending: 55, consistency: 54 } },
+    { id: "it-007", name: "Carlos Mendoza", number: 22, nationality: "Espanha", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 59, defending: 56, consistency: 55 } },
+    { id: "it-008", name: "Jan Novotný", number: 31, nationality: "República Tcheca", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 53, defending: 57, consistency: 56 } }
+  ] },
+  { id: "f4it-lombardia-motorsport", name: "Lombardia Motorsport", country: "Itália", base: "Milão, Lombardia", drivers: [
+    { id: "it-009", name: "Andrea Ferrari", number: 6, nationality: "Itália", age: 17, attributes: { racePace: 60, qualifying: 61, overtaking: 58, defending: 56, consistency: 59 } },
+    { id: "it-010", name: "Riccardo Galli", number: 16, nationality: "Itália", age: 15, attributes: { racePace: 53, qualifying: 55, overtaking: 54, defending: 52, consistency: 54 } },
+    { id: "it-011", name: "Gabriel Dubois", number: 25, nationality: "França", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 55, defending: 58, consistency: 57 } },
+    { id: "it-012", name: "Daniel Müller", number: 38, nationality: "Alemanha", age: 18, attributes: { racePace: 58, qualifying: 56, overtaking: 57, defending: 59, consistency: 58 } }
+  ] },
+  { id: "f4it-toscana-racing", name: "Toscana Racing", country: "Itália", base: "Florença, Toscana", drivers: [
+    { id: "it-013", name: "Tommaso Ricci", number: 9, nationality: "Itália", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 54 } },
+    { id: "it-014", name: "Edoardo Bianchi", number: 18, nationality: "Itália", age: 17, attributes: { racePace: 59, qualifying: 57, overtaking: 58, defending: 56, consistency: 58 } },
+    { id: "it-015", name: "Lucas Pereira", number: 29, nationality: "Brasil", age: 16, attributes: { racePace: 55, qualifying: 54, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "it-016", name: "Oliver Clarke", number: 41, nationality: "Reino Unido", age: 18, attributes: { racePace: 58, qualifying: 59, overtaking: 57, defending: 56, consistency: 57 } }
+  ] },
+  { id: "f4it-adriatica-competition", name: "Adriatica Competition", country: "Itália", base: "Rimini, Emilia-Romagna", drivers: [
+    { id: "it-017", name: "Pietro De Luca", number: 11, nationality: "Itália", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 55 } },
+    { id: "it-018", name: "Marco Esposito", number: 21, nationality: "Itália", age: 16, attributes: { racePace: 56, qualifying: 55, overtaking: 57, defending: 58, consistency: 54 } },
+    { id: "it-019", name: "Yuki Tanaka", number: 34, nationality: "Japão", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 55, defending: 57, consistency: 59 } },
+    { id: "it-020", name: "Finn Andersen", number: 47, nationality: "Dinamarca", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 54, consistency: 58 } }
+  ] },
+  { id: "f4it-sicilia-motorsport", name: "Sicilia Motorsport", country: "Itália", base: "Palermo, Sicília", drivers: [
+    { id: "it-021", name: "Giovanni Greco", number: 12, nationality: "Itália", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 57, defending: 58, consistency: 60 } },
+    { id: "it-022", name: "Samuel Costa", number: 24, nationality: "Itália", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 58, defending: 54, consistency: 55 } },
+    { id: "it-023", name: "Miguel Torres", number: 36, nationality: "Portugal", age: 17, attributes: { racePace: 57, qualifying: 55, overtaking: 56, defending: 57, consistency: 58 } },
+    { id: "it-024", name: "Arvid Lindström", number: 53, nationality: "Finlândia", age: 15, attributes: { racePace: 54, qualifying: 53, overtaking: 55, defending: 56, consistency: 54 } }
+  ] }
 ];
 
 const formula4SpainFoundingTeams: Team[] = [
