@@ -204,12 +204,42 @@ const formula4ItalyFoundingTeams: Team[] = [
 ];
 
 const formula4SpainFoundingTeams: Team[] = [
-  { id: "f4es-iberia-motorsport", name: "Iberia Motorsport", country: "Espanha", base: "Madri, Comunidade de Madri", drivers: [] },
-  { id: "f4es-barcelona-racing-team", name: "Barcelona Racing Team", country: "Espanha", base: "Barcelona, Catalunha", drivers: [] },
-  { id: "f4es-valencia-corse", name: "Valencia Corse", country: "Espanha", base: "Valência, Comunidade Valenciana", drivers: [] },
-  { id: "f4es-andalucia-motorsport", name: "Andalucía Motorsport", country: "Espanha", base: "Sevilha, Andaluzia", drivers: [] },
-  { id: "f4es-euskadi-racing", name: "Euskadi Racing", country: "Espanha", base: "Bilbao, País Basco", drivers: [] },
-  { id: "f4es-galicia-competition", name: "Galicia Competition", country: "Espanha", base: "Vigo, Galícia", drivers: [] },
+  { id: "f4es-iberia-motorsport", name: "Iberia Motorsport", country: "Espanha", base: "Madri, Comunidade de Madri", drivers: [
+    { id: "es-001", name: "Alejandro García", number: 4, nationality: "Espanha", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "es-002", name: "Bruno Ferreira", number: 12, nationality: "Portugal", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "es-003", name: "Youssef El Amrani", number: 23, nationality: "Marrocos", age: 17, attributes: { racePace: 55, qualifying: 54, overtaking: 57, defending: 58, consistency: 55 } },
+    { id: "es-004", name: "Arjun Mehta", number: 35, nationality: "Índia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 54, consistency: 57 } }
+  ] },
+  { id: "f4es-barcelona-racing-team", name: "Barcelona Racing Team", country: "Espanha", base: "Barcelona, Catalunha", drivers: [
+    { id: "es-005", name: "Marc Vidal", number: 6, nationality: "Espanha", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 58 } },
+    { id: "es-006", name: "Nicolás Restrepo", number: 15, nationality: "Colômbia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 59, defending: 57, consistency: 56 } },
+    { id: "es-007", name: "Théo Marchand", number: 28, nationality: "França", age: 18, attributes: { racePace: 59, qualifying: 60, overtaking: 58, defending: 57, consistency: 58 } },
+    { id: "es-008", name: "Daniel Okafor", number: 42, nationality: "África do Sul", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 59, consistency: 57 } }
+  ] },
+  { id: "f4es-valencia-corse", name: "Valencia Corse", country: "Espanha", base: "Valência, Comunidade Valenciana", drivers: [
+    { id: "es-009", name: "Javier Navarro", number: 7, nationality: "Espanha", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "es-010", name: "Mateo Rojas", number: 17, nationality: "Chile", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 58, defending: 54, consistency: 55 } },
+    { id: "es-011", name: "Kenji Sato", number: 31, nationality: "Japão", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 55, defending: 58, consistency: 56 } },
+    { id: "es-012", name: "Lucas Moreira", number: 46, nationality: "Brasil", age: 16, attributes: { racePace: 57, qualifying: 55, overtaking: 56, defending: 57, consistency: 58 } }
+  ] },
+  { id: "f4es-andalucia-motorsport", name: "Andalucía Motorsport", country: "Espanha", base: "Sevilha, Andaluzia", drivers: [
+    { id: "es-013", name: "Pablo Romero", number: 9, nationality: "Espanha", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 58, defending: 57, consistency: 59 } },
+    { id: "es-014", name: "Diego Salazar", number: 19, nationality: "México", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } },
+    { id: "es-015", name: "Omar Benali", number: 33, nationality: "Argélia", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 58, consistency: 57 } },
+    { id: "es-016", name: "Nattapong Srisai", number: 51, nationality: "Tailândia", age: 17, attributes: { racePace: 55, qualifying: 57, overtaking: 58, defending: 55, consistency: 56 } }
+  ] },
+  { id: "f4es-euskadi-racing", name: "Euskadi Racing", country: "Espanha", base: "Bilbao, País Basco", drivers: [
+    { id: "es-017", name: "Iker Etxeberria", number: 11, nationality: "Espanha", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 57, consistency: 55 } },
+    { id: "es-018", name: "Tomás Silva", number: 21, nationality: "Uruguai", age: 17, attributes: { racePace: 56, qualifying: 54, overtaking: 57, defending: 58, consistency: 56 } },
+    { id: "es-019", name: "Elias Haddad", number: 37, nationality: "Líbano", age: 18, attributes: { racePace: 55, qualifying: 56, overtaking: 54, defending: 57, consistency: 58 } },
+    { id: "es-020", name: "Min-jun Park", number: 54, nationality: "Coreia do Sul", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 55, consistency: 57 } }
+  ] },
+  { id: "f4es-galicia-competition", name: "Galicia Competition", country: "Espanha", base: "Vigo, Galícia", drivers: [
+    { id: "es-021", name: "Martín Castro", number: 13, nationality: "Espanha", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 58 } },
+    { id: "es-022", name: "Rafael Nascimento", number: 25, nationality: "Brasil", age: 18, attributes: { racePace: 57, qualifying: 56, overtaking: 58, defending: 55, consistency: 57 } },
+    { id: "es-023", name: "Aiden Campbell", number: 39, nationality: "Austrália", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 56, defending: 58, consistency: 54 } },
+    { id: "es-024", name: "Tiago Sousa", number: 63, nationality: "Portugal", age: 15, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } }
+  ] }
 ];
 
 const formula4GermanyFoundingTeams: Team[] = [
