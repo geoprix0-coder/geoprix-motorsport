@@ -243,12 +243,42 @@ const formula4SpainFoundingTeams: Team[] = [
 ];
 
 const formula4GermanyFoundingTeams: Team[] = [
-  { id: "f4de-rhein-motorsport", name: "Rhein Motorsport", country: "Alemanha", base: "Colônia, Renânia do Norte-Vestfália", drivers: [] },
-  { id: "f4de-bavaria-racing", name: "Bavaria Racing", country: "Alemanha", base: "Munique, Baviera", drivers: [] },
-  { id: "f4de-berlin-motorsport", name: "Berlin Motorsport", country: "Alemanha", base: "Berlim", drivers: [] },
-  { id: "f4de-sachsen-competition", name: "Sachsen Competition", country: "Alemanha", base: "Leipzig, Saxônia", drivers: [] },
-  { id: "f4de-baden-wurttemberg-racing", name: "Baden-Württemberg Racing", country: "Alemanha", base: "Stuttgart, Baden-Württemberg", drivers: [] },
-  { id: "f4de-hanseatic-motorsport", name: "Hanseatic Motorsport", country: "Alemanha", base: "Hamburgo", drivers: [] },
+  { id: "f4de-rhein-motorsport", name: "Rhein Motorsport", country: "Alemanha", base: "Colônia, Renânia do Norte-Vestfália", drivers: [
+    { id: "de-001", name: "Lukas Schneider", number: 4, nationality: "Alemanha", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "de-002", name: "Elias van der Meer", number: 12, nationality: "Países Baixos", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 54, consistency: 56 } },
+    { id: "de-003", name: "Amadou Diallo", number: 23, nationality: "Senegal", age: 17, attributes: { racePace: 55, qualifying: 56, overtaking: 54, defending: 58, consistency: 57 } },
+    { id: "de-004", name: "João Carvalho", number: 35, nationality: "Portugal", age: 16, attributes: { racePace: 57, qualifying: 55, overtaking: 56, defending: 57, consistency: 55 } }
+  ] },
+  { id: "f4de-bavaria-racing", name: "Bavaria Racing", country: "Alemanha", base: "Munique, Baviera", drivers: [
+    { id: "de-005", name: "Felix Hartmann", number: 6, nationality: "Alemanha", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 58, defending: 57, consistency: 59 } },
+    { id: "de-006", name: "Maximilian Bauer", number: 15, nationality: "Áustria", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 55, defending: 56, consistency: 57 } },
+    { id: "de-007", name: "Riku Aalto", number: 28, nationality: "Finlândia", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 55, consistency: 58 } },
+    { id: "de-008", name: "Diego Ramírez", number: 42, nationality: "Costa Rica", age: 17, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 54, consistency: 57 } }
+  ] },
+  { id: "f4de-berlin-motorsport", name: "Berlin Motorsport", country: "Alemanha", base: "Berlim", drivers: [
+    { id: "de-009", name: "Jonas Richter", number: 7, nationality: "Alemanha", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 58 } },
+    { id: "de-010", name: "Adam Zieliński", number: 17, nationality: "Polônia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 58, defending: 57, consistency: 56 } },
+    { id: "de-011", name: "Zayd Al-Khatib", number: 31, nationality: "Jordânia", age: 18, attributes: { racePace: 55, qualifying: 54, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "de-012", name: "Ethan Brooks", number: 46, nationality: "Estados Unidos", age: 16, attributes: { racePace: 58, qualifying: 57, overtaking: 56, defending: 59, consistency: 55 } }
+  ] },
+  { id: "f4de-sachsen-competition", name: "Sachsen Competition", country: "Alemanha", base: "Leipzig, Saxônia", drivers: [
+    { id: "de-013", name: "Moritz Keller", number: 9, nationality: "Alemanha", age: 17, attributes: { racePace: 59, qualifying: 60, overtaking: 58, defending: 57, consistency: 58 } },
+    { id: "de-014", name: "Jakub Dvořák", number: 19, nationality: "República Tcheca", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 58, consistency: 54 } },
+    { id: "de-015", name: "Thabo Mokoena", number: 33, nationality: "África do Sul", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 59, defending: 57, consistency: 56 } },
+    { id: "de-016", name: "Wei Chen", number: 51, nationality: "China", age: 16, attributes: { racePace: 54, qualifying: 57, overtaking: 55, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4de-baden-wurttemberg-racing", name: "Baden-Württemberg Racing", country: "Alemanha", base: "Stuttgart, Baden-Württemberg", drivers: [
+    { id: "de-017", name: "Paul Wagner", number: 11, nationality: "Alemanha", age: 18, attributes: { racePace: 60, qualifying: 58, overtaking: 59, defending: 57, consistency: 58 } },
+    { id: "de-018", name: "Matteo Greco", number: 21, nationality: "Itália", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 58, consistency: 57 } },
+    { id: "de-019", name: "Santiago Álvarez", number: 37, nationality: "Argentina", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 56, defending: 54, consistency: 58 } },
+    { id: "de-020", name: "Arif Rahman", number: 54, nationality: "Indonésia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 58, defending: 57, consistency: 56 } }
+  ] },
+  { id: "f4de-hanseatic-motorsport", name: "Hanseatic Motorsport", country: "Alemanha", base: "Hamburgo", drivers: [
+    { id: "de-021", name: "Niklas Fischer", number: 13, nationality: "Alemanha", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "de-022", name: "Emil Sørensen", number: 25, nationality: "Dinamarca", age: 17, attributes: { racePace: 55, qualifying: 56, overtaking: 54, defending: 58, consistency: 56 } },
+    { id: "de-023", name: "Kacper Lewandowski", number: 39, nationality: "Polônia", age: 15, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } },
+    { id: "de-024", name: "Min-ho Kim", number: 63, nationality: "Coreia do Sul", age: 18, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 58 } }
+  ] }
 ];
 
 const formula4UnitedStatesFoundingTeams: Team[] = [
