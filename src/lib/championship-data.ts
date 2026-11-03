@@ -399,12 +399,42 @@ const formula4JapanFoundingTeams: Team[] = [
 ];
 
 const formula4MongoliaFoundingTeams: Team[] = [
-  { id: "f4mn-ulaanbaatar-motorsport", name: "Ulaanbaatar Motorsport", country: "Mongólia", base: "Ulaanbaatar", drivers: [] },
-  { id: "f4mn-steppe-racing", name: "Steppe Racing", country: "Mongólia", base: "Darkhan", drivers: [] },
-  { id: "f4mn-gobi-grand-prix", name: "Gobi Grand Prix", country: "Mongólia", base: "Dalanzadgad", drivers: [] },
-  { id: "f4mn-khentii-competition", name: "Khentii Competition", country: "Mongólia", base: "Öndörkhaan", drivers: [] },
-  { id: "f4mn-orkhon-motorsport", name: "Orkhon Motorsport", country: "Mongólia", base: "Erdenet", drivers: [] },
-  { id: "f4mn-altai-racing", name: "Altai Racing", country: "Mongólia", base: "Khovd", drivers: [] },
+  { id: "f4mn-ulaanbaatar-motorsport", name: "Ulaanbaatar Motorsport", country: "Mongólia", base: "Ulaanbaatar", drivers: [
+    { id: "mn-001", name: "Temuulen Batbayar", number: 4, nationality: "Mongólia", age: 17, attributes: { racePace: 52, qualifying: 53, overtaking: 54, defending: 52, consistency: 55 } },
+    { id: "mn-002", name: "Anar Erdenebat", number: 12, nationality: "Mongólia", age: 16, attributes: { racePace: 53, qualifying: 56, overtaking: 59, defending: 56, consistency: 57 } },
+    { id: "mn-003", name: "Caio Ribeiro", number: 23, nationality: "Brasil", age: 17, attributes: { racePace: 54, qualifying: 59, overtaking: 56, defending: 60, consistency: 59 } },
+    { id: "mn-004", name: "Bruno Azevedo", number: 35, nationality: "Brasil", age: 16, attributes: { racePace: 55, qualifying: 53, overtaking: 61, defending: 55, consistency: 61 } }
+  ] },
+  { id: "f4mn-steppe-racing", name: "Steppe Racing", country: "Mongólia", base: "Darkhan", drivers: [
+    { id: "mn-005", name: "Bilguun Ganbold", number: 6, nationality: "Mongólia", age: 18, attributes: { racePace: 56, qualifying: 56, overtaking: 58, defending: 59, consistency: 56 } },
+    { id: "mn-006", name: "Munkh-Orgil Batsaikhan", number: 15, nationality: "Mongólia", age: 16, attributes: { racePace: 57, qualifying: 59, overtaking: 55, defending: 54, consistency: 58 } },
+    { id: "mn-007", name: "Santiago Luna", number: 28, nationality: "México", age: 17, attributes: { racePace: 58, qualifying: 53, overtaking: 60, defending: 58, consistency: 60 } },
+    { id: "mn-008", name: "Emiliano Vargas", number: 42, nationality: "México", age: 16, attributes: { racePace: 59, qualifying: 56, overtaking: 57, defending: 53, consistency: 55 } }
+  ] },
+  { id: "f4mn-gobi-grand-prix", name: "Gobi Grand Prix", country: "Mongólia", base: "Dalanzadgad", drivers: [
+    { id: "mn-009", name: "Khuslen Tserendorj", number: 7, nationality: "Mongólia", age: 17, attributes: { racePace: 60, qualifying: 59, overtaking: 54, defending: 57, consistency: 57 } },
+    { id: "mn-010", name: "Enkhjin Bold", number: 17, nationality: "Mongólia", age: 15, attributes: { racePace: 61, qualifying: 53, overtaking: 59, defending: 52, consistency: 59 } },
+    { id: "mn-011", name: "Park Ji-ho", number: 31, nationality: "Coreia do Sul", age: 18, attributes: { racePace: 52, qualifying: 56, overtaking: 56, defending: 56, consistency: 61 } },
+    { id: "mn-012", name: "Kim Seo-jun", number: 46, nationality: "Coreia do Sul", age: 16, attributes: { racePace: 53, qualifying: 59, overtaking: 61, defending: 60, consistency: 56 } }
+  ] },
+  { id: "f4mn-khentii-competition", name: "Khentii Competition", country: "Mongólia", base: "Öndörkhaan", drivers: [
+    { id: "mn-013", name: "Sukhbat Naranbaatar", number: 9, nationality: "Mongólia", age: 16, attributes: { racePace: 54, qualifying: 53, overtaking: 58, defending: 55, consistency: 58 } },
+    { id: "mn-014", name: "Tuvshinbayar Dorj", number: 19, nationality: "Mongólia", age: 17, attributes: { racePace: 55, qualifying: 56, overtaking: 55, defending: 59, consistency: 60 } },
+    { id: "mn-015", name: "Alessandro Vitale", number: 33, nationality: "Itália", age: 17, attributes: { racePace: 56, qualifying: 59, overtaking: 60, defending: 54, consistency: 55 } },
+    { id: "mn-016", name: "Lorenzo Moretti", number: 51, nationality: "Itália", age: 16, attributes: { racePace: 57, qualifying: 53, overtaking: 57, defending: 58, consistency: 57 } }
+  ] },
+  { id: "f4mn-orkhon-motorsport", name: "Orkhon Motorsport", country: "Mongólia", base: "Erdenet", drivers: [
+    { id: "mn-017", name: "Bat-Erdene Munkhbayar", number: 11, nationality: "Mongólia", age: 18, attributes: { racePace: 58, qualifying: 56, overtaking: 54, defending: 53, consistency: 59 } },
+    { id: "mn-018", name: "Nomin-Erdene Enkh", number: 21, nationality: "Mongólia", age: 16, attributes: { racePace: 59, qualifying: 59, overtaking: 59, defending: 57, consistency: 61 } },
+    { id: "mn-019", name: "Austin Brooks", number: 37, nationality: "Estados Unidos", age: 17, attributes: { racePace: 60, qualifying: 53, overtaking: 56, defending: 52, consistency: 56 } },
+    { id: "mn-020", name: "Zhang Haoran", number: 54, nationality: "China", age: 16, attributes: { racePace: 61, qualifying: 56, overtaking: 61, defending: 56, consistency: 58 } }
+  ] },
+  { id: "f4mn-altai-racing", name: "Altai Racing", country: "Mongólia", base: "Khovd", drivers: [
+    { id: "mn-021", name: "Ganzorig Purev", number: 13, nationality: "Mongólia", age: 17, attributes: { racePace: 52, qualifying: 59, overtaking: 58, defending: 60, consistency: 60 } },
+    { id: "mn-022", name: "Erdenebat Otgon", number: 25, nationality: "Mongólia", age: 15, attributes: { racePace: 53, qualifying: 53, overtaking: 55, defending: 55, consistency: 55 } },
+    { id: "mn-023", name: "Munkhjin Amar", number: 39, nationality: "Mongólia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 60, defending: 59, consistency: 57 } },
+    { id: "mn-024", name: "Lachlan Fraser", number: 63, nationality: "Austrália", age: 17, attributes: { racePace: 55, qualifying: 59, overtaking: 57, defending: 54, consistency: 59 } }
+  ] }
 ];
 
 const formula4ChinaFoundingTeams: Team[] = [
