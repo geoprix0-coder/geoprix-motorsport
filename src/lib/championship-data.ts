@@ -122,6 +122,15 @@ const formula4SpainFoundingTeams: Team[] = [
   { id: "f4es-galicia-competition", name: "Galicia Competition", country: "Espanha", base: "Vigo, Galícia", drivers: [] },
 ];
 
+const formula4GermanyFoundingTeams: Team[] = [
+  { id: "f4de-rhein-motorsport", name: "Rhein Motorsport", country: "Alemanha", base: "Colônia, Renânia do Norte-Vestfália", drivers: [] },
+  { id: "f4de-bavaria-racing", name: "Bavaria Racing", country: "Alemanha", base: "Munique, Baviera", drivers: [] },
+  { id: "f4de-berlin-motorsport", name: "Berlin Motorsport", country: "Alemanha", base: "Berlim", drivers: [] },
+  { id: "f4de-sachsen-competition", name: "Sachsen Competition", country: "Alemanha", base: "Leipzig, Saxônia", drivers: [] },
+  { id: "f4de-baden-wurttemberg-racing", name: "Baden-Württemberg Racing", country: "Alemanha", base: "Stuttgart, Baden-Württemberg", drivers: [] },
+  { id: "f4de-hanseatic-motorsport", name: "Hanseatic Motorsport", country: "Alemanha", base: "Hamburgo", drivers: [] },
+];
+
 // Equipes fundadoras são inseridas sem apagar cadastros feitos pelo usuário.
 export function initialTeamsForChampionship(championshipId: string): Team[] {
   if (championshipId === "world-formula-2026") return worldFormulaFoundingTeams;
@@ -133,6 +142,7 @@ export function initialTeamsForChampionship(championshipId: string): Team[] {
   if (championshipId === "formula-4-france-2026") return formula4FranceFoundingTeams;
   if (championshipId === "formula-4-italy-2026") return formula4ItalyFoundingTeams;
   if (championshipId === "formula-4-spain-2026") return formula4SpainFoundingTeams;
+  if (championshipId === "formula-4-germany-2026") return formula4GermanyFoundingTeams;
   if (championshipId === "formula-4-united-kingdom-2026") return formula4UnitedKingdomFoundingTeams;
   return [];
 }
