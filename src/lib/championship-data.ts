@@ -477,12 +477,42 @@ const formula4ChinaFoundingTeams: Team[] = [
 ];
 
 const formula4IndonesiaFoundingTeams: Team[] = [
-  { id: "f4id-garuda-motorsport", name: "Garuda Motorsport", country: "Indonésia", base: "Jacarta, Java", drivers: [] },
-  { id: "f4id-nusantara-racing", name: "Nusantara Racing", country: "Indonésia", base: "Bandung, Java", drivers: [] },
-  { id: "f4id-bali-performance", name: "Bali Performance", country: "Indonésia", base: "Denpasar, Bali", drivers: [] },
-  { id: "f4id-surabaya-competition", name: "Surabaya Competition", country: "Indonésia", base: "Surabaya, Java", drivers: [] },
-  { id: "f4id-sumatra-grand-prix", name: "Sumatra Grand Prix", country: "Indonésia", base: "Medan, Sumatra", drivers: [] },
-  { id: "f4id-sulawesi-motorsport", name: "Sulawesi Motorsport", country: "Indonésia", base: "Makassar, Sulawesi", drivers: [] },
+  { id: "f4id-garuda-motorsport", name: "Garuda Motorsport", country: "Indonésia", base: "Jacarta, Java", drivers: [
+    { id: "id-001", name: "Rizky Pratama", number: 3, nationality: "Indonésia", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 56 } },
+    { id: "id-002", name: "Dimas Saputra", number: 12, nationality: "Indonésia", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 54, consistency: 55 } },
+    { id: "id-003", name: "Nattawut Srisai", number: 23, nationality: "Tailândia", age: 17, attributes: { racePace: 56, qualifying: 54, overtaking: 58, defending: 56, consistency: 54 } },
+    { id: "id-004", name: "Thanakorn Chaiyaporn", number: 35, nationality: "Tailândia", age: 16, attributes: { racePace: 53, qualifying: 55, overtaking: 54, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4id-nusantara-racing", name: "Nusantara Racing", country: "Indonésia", base: "Bandung, Java", drivers: [
+    { id: "id-005", name: "Aditya Mahendra", number: 7, nationality: "Indonésia", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "id-006", name: "Fajar Ramadhan", number: 18, nationality: "Indonésia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 57, consistency: 54 } },
+    { id: "id-007", name: "Miguel Reyes", number: 27, nationality: "Filipinas", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "id-008", name: "Rafael Santos", number: 42, nationality: "Filipinas", age: 16, attributes: { racePace: 53, qualifying: 54, overtaking: 56, defending: 55, consistency: 57 } }
+  ] },
+  { id: "f4id-bali-performance", name: "Bali Performance", country: "Indonésia", base: "Denpasar, Bali", drivers: [
+    { id: "id-009", name: "Made Wirawan", number: 5, nationality: "Indonésia", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 58, consistency: 56 } },
+    { id: "id-010", name: "Putu Arya", number: 16, nationality: "Indonésia", age: 15, attributes: { racePace: 52, qualifying: 54, overtaking: 55, defending: 53, consistency: 54 } },
+    { id: "id-011", name: "Ethan Tan", number: 29, nationality: "Singapura", age: 18, attributes: { racePace: 59, qualifying: 57, overtaking: 56, defending: 55, consistency: 58 } },
+    { id: "id-012", name: "Daniel Lim", number: 38, nationality: "Singapura", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 57, defending: 54, consistency: 55 } }
+  ] },
+  { id: "f4id-surabaya-competition", name: "Surabaya Competition", country: "Indonésia", base: "Surabaya, Java", drivers: [
+    { id: "id-013", name: "Bagas Wicaksono", number: 9, nationality: "Indonésia", age: 17, attributes: { racePace: 56, qualifying: 58, overtaking: 57, defending: 55, consistency: 56 } },
+    { id: "id-014", name: "Arif Setiawan", number: 21, nationality: "Indonésia", age: 16, attributes: { racePace: 53, qualifying: 55, overtaking: 54, defending: 57, consistency: 55 } },
+    { id: "id-015", name: "Haruto Nakamura", number: 31, nationality: "Japão", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "id-016", name: "Kaito Fujimoto", number: 44, nationality: "Japão", age: 16, attributes: { racePace: 55, qualifying: 57, overtaking: 58, defending: 54, consistency: 56 } }
+  ] },
+  { id: "f4id-sumatra-grand-prix", name: "Sumatra Grand Prix", country: "Indonésia", base: "Medan, Sumatra", drivers: [
+    { id: "id-017", name: "Muhammad Alif", number: 11, nationality: "Indonésia", age: 18, attributes: { racePace: 60, qualifying: 57, overtaking: 58, defending: 56, consistency: 57 } },
+    { id: "id-018", name: "Ilham Fadli", number: 24, nationality: "Indonésia", age: 16, attributes: { racePace: 54, qualifying: 53, overtaking: 56, defending: 55, consistency: 54 } },
+    { id: "id-019", name: "Park Min-jae", number: 33, nationality: "Coreia do Sul", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 55, defending: 58, consistency: 56 } },
+    { id: "id-020", name: "Kim Seo-jun", number: 47, nationality: "Coreia do Sul", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 55, consistency: 57 } }
+  ] },
+  { id: "f4id-sulawesi-motorsport", name: "Sulawesi Motorsport", country: "Indonésia", base: "Makassar, Sulawesi", drivers: [
+    { id: "id-021", name: "Andi Faturrahman", number: 14, nationality: "Indonésia", age: 17, attributes: { racePace: 57, qualifying: 55, overtaking: 58, defending: 56, consistency: 55 } },
+    { id: "id-022", name: "Muhammad Reza", number: 26, nationality: "Indonésia", age: 15, attributes: { racePace: 52, qualifying: 53, overtaking: 54, defending: 55, consistency: 54 } },
+    { id: "id-023", name: "Nguyễn Hoàng", number: 36, nationality: "Vietnã", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "id-024", name: "Phạm Quang", number: 49, nationality: "Vietnã", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 57, consistency: 55 } }
+  ] }
 ];
 
 const formula4AustraliaFoundingTeams: Team[] = [
