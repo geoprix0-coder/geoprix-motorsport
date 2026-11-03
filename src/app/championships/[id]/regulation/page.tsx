@@ -1,8 +1,5 @@
 "use client";
 
-export function generateStaticParams() { return [{ id: "__empty__" }]; }
-
-
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { Save, Scale, Trophy, Plus, Trash2 } from "lucide-react";
