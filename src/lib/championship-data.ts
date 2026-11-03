@@ -87,12 +87,42 @@ const asiaPacificFormulaRegionalFoundingTeams: Team[] = [
 ];
 
 const formula4FranceFoundingTeams: Team[] = [
-  { id: "f4fr-ecurie-lumiere", name: "Écurie Lumière", country: "França", base: "Paris, França", drivers: [] },
-  { id: "f4fr-provence-motorsport", name: "Provence Motorsport", country: "França", base: "Marselha, França", drivers: [] },
-  { id: "f4fr-alpine-racing-france", name: "Alpine Racing France", country: "França", base: "Grenoble, França", drivers: [] },
-  { id: "f4fr-atlantic-competition", name: "Atlantic Competition", country: "França", base: "Nantes, França", drivers: [] },
-  { id: "f4fr-lyon-grand-prix", name: "Lyon Grand Prix", country: "França", base: "Lyon, França", drivers: [] },
-  { id: "f4fr-cote-azur-racing", name: "Côte d’Azur Racing", country: "França", base: "Nice, França", drivers: [] },
+  { id: "f4fr-ecurie-lumiere", name: "Écurie Lumière", country: "França", base: "Paris, França", drivers: [
+    { id: "fr-001", name: "Hugo Delacroix", number: 1, nationality: "França", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 55, defending: 54, consistency: 56 } },
+    { id: "fr-002", name: "Matteo Ricci", number: 7, nationality: "Itália", age: 16, attributes: { racePace: 56, qualifying: 59, overtaking: 53, defending: 52, consistency: 54 } },
+    { id: "fr-003", name: "Liam O'Connor", number: 18, nationality: "Irlanda", age: 17, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 53, consistency: 52 } },
+    { id: "fr-004", name: "Adam Kowalski", number: 24, nationality: "Polônia", age: 16, attributes: { racePace: 53, qualifying: 52, overtaking: 54, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4fr-provence-motorsport", name: "Provence Motorsport", country: "França", base: "Marselha, França", drivers: [
+    { id: "fr-005", name: "Noah Martin", number: 12, nationality: "França", age: 16, attributes: { racePace: 57, qualifying: 55, overtaking: 56, defending: 54, consistency: 57 } },
+    { id: "fr-006", name: "Tiago Almeida", number: 21, nationality: "Portugal", age: 17, attributes: { racePace: 55, qualifying: 54, overtaking: 58, defending: 55, consistency: 53 } },
+    { id: "fr-007", name: "Emil Johansson", number: 31, nationality: "Suécia", age: 16, attributes: { racePace: 52, qualifying: 56, overtaking: 53, defending: 55, consistency: 57 } },
+    { id: "fr-008", name: "Lucas Weber", number: 44, nationality: "Alemanha", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 57, consistency: 55 } }
+  ] },
+  { id: "f4fr-alpine-racing-france", name: "Alpine Racing France", country: "França", base: "Grenoble, França", drivers: [
+    { id: "fr-009", name: "Gabriel Moreau", number: 5, nationality: "França", age: 17, attributes: { racePace: 60, qualifying: 61, overtaking: 57, defending: 55, consistency: 58 } },
+    { id: "fr-010", name: "Enzo Bianchi", number: 16, nationality: "Itália", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 54, defending: 52, consistency: 53 } },
+    { id: "fr-011", name: "Oliver Smith", number: 27, nationality: "Reino Unido", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 56, consistency: 54 } },
+    { id: "fr-012", name: "Mateusz Nowak", number: 38, nationality: "Polônia", age: 18, attributes: { racePace: 58, qualifying: 54, overtaking: 57, defending: 59, consistency: 56 } }
+  ] },
+  { id: "f4fr-atlantic-competition", name: "Atlantic Competition", country: "França", base: "Nantes, França", drivers: [
+    { id: "fr-013", name: "Arthur Bernard", number: 9, nationality: "França", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 57, consistency: 56 } },
+    { id: "fr-014", name: "Rafael Costa", number: 22, nationality: "Brasil", age: 17, attributes: { racePace: 57, qualifying: 54, overtaking: 59, defending: 53, consistency: 52 } },
+    { id: "fr-015", name: "Santiago Ruiz", number: 33, nationality: "Espanha", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "fr-016", name: "Finn van Dijk", number: 46, nationality: "Países Baixos", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 55, defending: 58, consistency: 57 } }
+  ] },
+  { id: "f4fr-lyon-grand-prix", name: "Lyon Grand Prix", country: "França", base: "Lyon, França", drivers: [
+    { id: "fr-017", name: "Louis Garnier", number: 3, nationality: "França", age: 18, attributes: { racePace: 61, qualifying: 59, overtaking: 58, defending: 57, consistency: 60 } },
+    { id: "fr-018", name: "Kai Nakamura", number: 14, nationality: "Japão", age: 16, attributes: { racePace: 56, qualifying: 60, overtaking: 55, defending: 54, consistency: 56 } },
+    { id: "fr-019", name: "Theo Campbell", number: 29, nationality: "Austrália", age: 17, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 56, consistency: 53 } },
+    { id: "fr-020", name: "Andrei Popescu", number: 52, nationality: "Romênia", age: 16, attributes: { racePace: 53, qualifying: 54, overtaking: 56, defending: 55, consistency: 54 } }
+  ] },
+  { id: "f4fr-cote-azur-racing", name: "Côte d’Azur Racing", country: "França", base: "Nice, França", drivers: [
+    { id: "fr-021", name: "Maxime Laurent", number: 11, nationality: "França", age: 17, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 58, consistency: 59 } },
+    { id: "fr-022", name: "Diego Fernández", number: 19, nationality: "Argentina", age: 16, attributes: { racePace: 55, qualifying: 54, overtaking: 58, defending: 55, consistency: 54 } },
+    { id: "fr-023", name: "Sebastian Müller", number: 41, nationality: "Suíça", age: 18, attributes: { racePace: 57, qualifying: 56, overtaking: 54, defending: 59, consistency: 58 } },
+    { id: "fr-024", name: "Milan Petrović", number: 63, nationality: "Sérvia", age: 17, attributes: { racePace: 54, qualifying: 53, overtaking: 57, defending: 58, consistency: 55 } }
+  ] },
 ];
 
 const formula4UnitedKingdomFoundingTeams: Team[] = [
@@ -245,5 +275,10 @@ export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): T
     !savedIds.has(team.id) &&
     !savedNames.has(team.name.trim().toLocaleLowerCase("pt-BR"))
   );
-  return [...savedTeams, ...missing];
+  const seeded = savedTeams.map(saved => {
+    const source = initial.find(team => team.id === saved.id);
+    if (!source || saved.drivers.length > 0 || source.drivers.length === 0) return saved;
+    return { ...saved, drivers: source.drivers };
+  });
+  return [...seeded, ...missing];
 }
