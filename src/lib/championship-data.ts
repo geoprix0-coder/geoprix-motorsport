@@ -595,12 +595,42 @@ const formula4NewZealandFoundingTeams: Team[] = [
 ];
 
 const formula4BrazilFoundingTeams: Team[] = [
-  { id: "f4br-paulista-motorsport", name: "Paulista Motorsport", country: "Brasil", base: "São Paulo, SP", drivers: [] },
-  { id: "f4br-minas-racing", name: "Minas Racing", country: "Brasil", base: "Belo Horizonte, MG", drivers: [] },
-  { id: "f4br-sul-brasil-competition", name: "Sul Brasil Competition", country: "Brasil", base: "Curitiba, PR", drivers: [] },
-  { id: "f4br-cerrado-motorsport", name: "Cerrado Motorsport", country: "Brasil", base: "Goiânia, GO", drivers: [] },
-  { id: "f4br-nordeste-racing", name: "Nordeste Racing", country: "Brasil", base: "Recife, PE", drivers: [] },
-  { id: "f4br-rio-grand-prix", name: "Rio Grand Prix", country: "Brasil", base: "Rio de Janeiro, RJ", drivers: [] },
+  { id: "f4br-paulista-motorsport", name: "Paulista Motorsport", country: "Brasil", base: "São Paulo, SP", drivers: [
+    { id: "br-001", name: "Pedro Almeida", number: 1, nationality: "Brasil", age: 17, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-002", name: "Lucas Ferreira", number: 12, nationality: "Brasil", age: 16, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-003", name: "Gabriel Monteiro", number: 23, nationality: "Brasil", age: 18, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-004", name: "Santiago Pérez", number: 35, nationality: "Colômbia", age: 17, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] },
+  { id: "f4br-minas-racing", name: "Minas Racing", country: "Brasil", base: "Belo Horizonte, MG", drivers: [
+    { id: "br-005", name: "Rafael Costa", number: 2, nationality: "Brasil", age: 17, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-006", name: "Enzo Martins", number: 14, nationality: "Brasil", age: 16, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-007", name: "Felipe Andrade", number: 25, nationality: "Brasil", age: 18, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-008", name: "Mateo González", number: 37, nationality: "Argentina", age: 17, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] },
+  { id: "f4br-sul-brasil-competition", name: "Sul Brasil Competition", country: "Brasil", base: "Curitiba, PR", drivers: [
+    { id: "br-009", name: "João Pedro Silva", number: 4, nationality: "Brasil", age: 17, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-010", name: "Gustavo Ribeiro", number: 16, nationality: "Brasil", age: 16, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-011", name: "Arthur Oliveira", number: 27, nationality: "Brasil", age: 18, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-012", name: "Tomás Rojas", number: 39, nationality: "Chile", age: 16, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] },
+  { id: "f4br-cerrado-motorsport", name: "Cerrado Motorsport", country: "Brasil", base: "Goiânia, GO", drivers: [
+    { id: "br-013", name: "Bruno Carvalho", number: 5, nationality: "Brasil", age: 18, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-014", name: "Matheus Nascimento", number: 18, nationality: "Brasil", age: 16, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-015", name: "Davi Barbosa", number: 29, nationality: "Brasil", age: 17, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-016", name: "Nicolás Fernández", number: 41, nationality: "Uruguai", age: 17, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] },
+  { id: "f4br-nordeste-racing", name: "Nordeste Racing", country: "Brasil", base: "Recife, PE", drivers: [
+    { id: "br-017", name: "Miguel Santos", number: 6, nationality: "Brasil", age: 17, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-018", name: "Caio Rodrigues", number: 20, nationality: "Brasil", age: 15, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-019", name: "Leonardo Lima", number: 32, nationality: "Brasil", age: 18, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-020", name: "Thiago Benítez", number: 43, nationality: "Paraguai", age: 16, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] },
+  { id: "f4br-rio-grand-prix", name: "Rio Grand Prix", country: "Brasil", base: "Rio de Janeiro, RJ", drivers: [
+    { id: "br-021", name: "Daniel Souza", number: 8, nationality: "Brasil", age: 18, attributes: {"racePace":58,"qualifying":57,"overtaking":56,"defending":55,"consistency":57} },
+    { id: "br-022", name: "Vitor Mendes", number: 22, nationality: "Brasil", age: 16, attributes: {"racePace":55,"qualifying":58,"overtaking":57,"defending":54,"consistency":56} },
+    { id: "br-023", name: "Henrique Azevedo", number: 34, nationality: "Brasil", age: 17, attributes: {"racePace":59,"qualifying":60,"overtaking":58,"defending":57,"consistency":58} },
+    { id: "br-024", name: "Alex Chen", number: 47, nationality: "China", age: 17, attributes: {"racePace":54,"qualifying":56,"overtaking":59,"defending":55,"consistency":54} }
+  ] }
 ];
 
 export function initialTeamsForChampionship(championshipId: string): Team[] {
