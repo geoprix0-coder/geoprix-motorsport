@@ -556,12 +556,42 @@ const formula4AustraliaFoundingTeams: Team[] = [
 
 // Equipes fundadoras são inseridas sem apagar cadastros feitos pelo usuário.
 const formula4NewZealandFoundingTeams: Team[] = [
-  { id: "f4nz-kiwi-motorsport", name: "Kiwi Motorsport", country: "Nova Zelândia", base: "Auckland, Ilha Norte", drivers: [] },
-  { id: "f4nz-southern-pacific-racing", name: "Southern Pacific Racing", country: "Nova Zelândia", base: "Christchurch, Ilha Sul", drivers: [] },
-  { id: "f4nz-wellington-motorsport", name: "Wellington Motorsport", country: "Nova Zelândia", base: "Wellington, Ilha Norte", drivers: [] },
-  { id: "f4nz-waikato-performance", name: "Waikato Performance", country: "Nova Zelândia", base: "Hamilton, Ilha Norte", drivers: [] },
-  { id: "f4nz-otago-grand-prix", name: "Otago Grand Prix", country: "Nova Zelândia", base: "Dunedin, Ilha Sul", drivers: [] },
-  { id: "f4nz-bay-of-plenty-racing", name: "Bay of Plenty Racing", country: "Nova Zelândia", base: "Tauranga, Ilha Norte", drivers: [] },
+  { id: "f4nz-kiwi-motorsport", name: "Kiwi Motorsport", country: "Nova Zelândia", base: "Auckland, Ilha Norte", drivers: [
+    { id: "nz-001", name: "Liam Thompson", number: 3, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "nz-002", name: "Oliver Fraser", number: 12, nationality: "Nova Zelândia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 57, defending: 55, consistency: 55 } },
+    { id: "nz-003", name: "Noah Williams", number: 23, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "nz-004", name: "Arjun Mehta", number: 35, nationality: "Índia", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 55, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4nz-southern-pacific-racing", name: "Southern Pacific Racing", country: "Nova Zelândia", base: "Christchurch, Ilha Sul", drivers: [
+    { id: "nz-005", name: "Ethan McCarthy", number: 7, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "nz-006", name: "Caleb Anderson", number: 18, nationality: "Nova Zelândia", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 57, consistency: 55 } },
+    { id: "nz-007", name: "Finn Robertson", number: 27, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 59 } },
+    { id: "nz-008", name: "Hiroshi Sato", number: 42, nationality: "Japão", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 56, defending: 54, consistency: 56 } }
+  ] },
+  { id: "f4nz-wellington-motorsport", name: "Wellington Motorsport", country: "Nova Zelândia", base: "Wellington, Ilha Norte", drivers: [
+    { id: "nz-009", name: "Jack Harrison", number: 5, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 57, defending: 58, consistency: 59 } },
+    { id: "nz-010", name: "Mason Clarke", number: 16, nationality: "Nova Zelândia", age: 16, attributes: { racePace: 54, qualifying: 56, overtaking: 55, defending: 57, consistency: 55 } },
+    { id: "nz-011", name: "Theo Campbell", number: 29, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "nz-012", name: "Chen Yuxuan", number: 38, nationality: "China", age: 17, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 55, consistency: 56 } }
+  ] },
+  { id: "f4nz-waikato-performance", name: "Waikato Performance", country: "Nova Zelândia", base: "Hamilton, Ilha Norte", drivers: [
+    { id: "nz-013", name: "William Bennett", number: 9, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "nz-014", name: "Lucas Morgan", number: 21, nationality: "Nova Zelândia", age: 15, attributes: { racePace: 52, qualifying: 54, overtaking: 55, defending: 53, consistency: 54 } },
+    { id: "nz-015", name: "Samuel Cooper", number: 31, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 56, defending: 57, consistency: 58 } },
+    { id: "nz-016", name: "Min-jun Lee", number: 44, nationality: "Coreia do Sul", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 55, consistency: 56 } }
+  ] },
+  { id: "f4nz-otago-grand-prix", name: "Otago Grand Prix", country: "Nova Zelândia", base: "Dunedin, Ilha Sul", drivers: [
+    { id: "nz-017", name: "Daniel Mitchell", number: 11, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 60, qualifying: 58, overtaking: 57, defending: 57, consistency: 59 } },
+    { id: "nz-018", name: "Blake Wilson", number: 24, nationality: "Nova Zelândia", age: 16, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 56, consistency: 55 } },
+    { id: "nz-019", name: "Ryan O'Connor", number: 33, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 58, defending: 55, consistency: 56 } },
+    { id: "nz-020", name: "Muhammad Aiman", number: 47, nationality: "Malásia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4nz-bay-of-plenty-racing", name: "Bay of Plenty Racing", country: "Nova Zelândia", base: "Tauranga, Ilha Norte", drivers: [
+    { id: "nz-021", name: "Harrison Taylor", number: 14, nationality: "Nova Zelândia", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 56, defending: 58, consistency: 57 } },
+    { id: "nz-022", name: "Cooper Evans", number: 26, nationality: "Nova Zelândia", age: 15, attributes: { racePace: 52, qualifying: 53, overtaking: 54, defending: 55, consistency: 54 } },
+    { id: "nz-023", name: "Alex Sullivan", number: 36, nationality: "Nova Zelândia", age: 18, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 59 } },
+    { id: "nz-024", name: "Gabriel Costa", number: 49, nationality: "Brasil", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 55, consistency: 56 } }
+  ] }
 ];
 
 const formula4BrazilFoundingTeams: Team[] = [
