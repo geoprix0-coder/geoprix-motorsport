@@ -360,12 +360,42 @@ const formula4MexicoFoundingTeams: Team[] = [
 ];
 
 const formula4JapanFoundingTeams: Team[] = [
-  { id: "f4jp-sakura-racing", name: "Sakura Racing", country: "Japão", base: "Suzuka, Mie", drivers: [] },
-  { id: "f4jp-tokyo-motorsport", name: "Tokyo Motorsport", country: "Japão", base: "Tóquio", drivers: [] },
-  { id: "f4jp-osaka-performance", name: "Osaka Performance", country: "Japão", base: "Osaka", drivers: [] },
-  { id: "f4jp-fuji-grand-prix", name: "Fuji Grand Prix", country: "Japão", base: "Gotemba, Shizuoka", drivers: [] },
-  { id: "f4jp-hokkaido-racing", name: "Hokkaido Racing", country: "Japão", base: "Sapporo, Hokkaido", drivers: [] },
-  { id: "f4jp-kyushu-motorsport", name: "Kyushu Motorsport", country: "Japão", base: "Fukuoka, Kyushu", drivers: [] },
+  { id: "f4jp-sakura-racing", name: "Sakura Racing", country: "Japão", base: "Suzuka, Mie", drivers: [
+    { id: "jp-001", name: "Haruto Tanaka", number: 4, nationality: "Japão", age: 17, attributes: { racePace: 52, qualifying: 53, overtaking: 54, defending: 52, consistency: 55 } },
+    { id: "jp-002", name: "Ren Sato", number: 12, nationality: "Japão", age: 16, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 61 } },
+    { id: "jp-003", name: "Lucas Oliveira", number: 23, nationality: "Brasil", age: 17, attributes: { racePace: 56, qualifying: 54, overtaking: 60, defending: 60, consistency: 60 } },
+    { id: "jp-004", name: "Daniel Müller", number: 35, nationality: "Alemanha", age: 16, attributes: { racePace: 53, qualifying: 59, overtaking: 55, defending: 55, consistency: 59 } }
+  ] },
+  { id: "f4jp-tokyo-motorsport", name: "Tokyo Motorsport", country: "Japão", base: "Tóquio", drivers: [
+    { id: "jp-005", name: "Yuto Nakamura", number: 6, nationality: "Japão", age: 18, attributes: { racePace: 60, qualifying: 55, overtaking: 58, defending: 59, consistency: 58 } },
+    { id: "jp-006", name: "Kaito Yamamoto", number: 15, nationality: "Japão", age: 16, attributes: { racePace: 57, qualifying: 60, overtaking: 61, defending: 54, consistency: 57 } },
+    { id: "jp-007", name: "Mateo González", number: 28, nationality: "México", age: 17, attributes: { racePace: 54, qualifying: 56, overtaking: 56, defending: 58, consistency: 56 } },
+    { id: "jp-008", name: "Oliver Evans", number: 42, nationality: "Reino Unido", age: 17, attributes: { racePace: 61, qualifying: 61, overtaking: 59, defending: 53, consistency: 55 } }
+  ] },
+  { id: "f4jp-osaka-performance", name: "Osaka Performance", country: "Japão", base: "Osaka", drivers: [
+    { id: "jp-009", name: "Riku Kobayashi", number: 7, nationality: "Japão", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 54, defending: 57, consistency: 61 } },
+    { id: "jp-010", name: "Sota Fujimoto", number: 17, nationality: "Japão", age: 15, attributes: { racePace: 55, qualifying: 53, overtaking: 57, defending: 52, consistency: 60 } },
+    { id: "jp-011", name: "Rafael Mendes", number: 31, nationality: "Portugal", age: 18, attributes: { racePace: 52, qualifying: 58, overtaking: 60, defending: 56, consistency: 59 } },
+    { id: "jp-012", name: "Min-seok Lee", number: 46, nationality: "Coreia do Sul", age: 16, attributes: { racePace: 59, qualifying: 54, overtaking: 55, defending: 60, consistency: 58 } }
+  ] },
+  { id: "f4jp-fuji-grand-prix", name: "Fuji Grand Prix", country: "Japão", base: "Gotemba, Shizuoka", drivers: [
+    { id: "jp-013", name: "Takumi Watanabe", number: 9, nationality: "Japão", age: 16, attributes: { racePace: 56, qualifying: 59, overtaking: 58, defending: 55, consistency: 57 } },
+    { id: "jp-014", name: "Daiki Suzuki", number: 19, nationality: "Japão", age: 17, attributes: { racePace: 53, qualifying: 55, overtaking: 61, defending: 59, consistency: 56 } },
+    { id: "jp-015", name: "Matteo Ricci", number: 33, nationality: "Itália", age: 17, attributes: { racePace: 60, qualifying: 60, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "jp-016", name: "Ethan Miller", number: 51, nationality: "Estados Unidos", age: 16, attributes: { racePace: 57, qualifying: 56, overtaking: 59, defending: 58, consistency: 61 } }
+  ] },
+  { id: "f4jp-hokkaido-racing", name: "Hokkaido Racing", country: "Japão", base: "Sapporo, Hokkaido", drivers: [
+    { id: "jp-017", name: "Shun Matsuda", number: 11, nationality: "Japão", age: 18, attributes: { racePace: 54, qualifying: 61, overtaking: 54, defending: 53, consistency: 60 } },
+    { id: "jp-018", name: "Akira Ito", number: 21, nationality: "Japão", age: 16, attributes: { racePace: 61, qualifying: 57, overtaking: 57, defending: 57, consistency: 59 } },
+    { id: "jp-019", name: "Chen Wei", number: 37, nationality: "China", age: 17, attributes: { racePace: 58, qualifying: 53, overtaking: 60, defending: 52, consistency: 58 } },
+    { id: "jp-020", name: "Noah Wilson", number: 54, nationality: "Austrália", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 55, defending: 56, consistency: 57 } }
+  ] },
+  { id: "f4jp-kyushu-motorsport", name: "Kyushu Motorsport", country: "Japão", base: "Fukuoka, Kyushu", drivers: [
+    { id: "jp-021", name: "Tsubasa Mori", number: 13, nationality: "Japão", age: 17, attributes: { racePace: 52, qualifying: 54, overtaking: 58, defending: 60, consistency: 56 } },
+    { id: "jp-022", name: "Kenta Hayashi", number: 25, nationality: "Japão", age: 15, attributes: { racePace: 59, qualifying: 59, overtaking: 61, defending: 55, consistency: 55 } },
+    { id: "jp-023", name: "Hiroto Kato", number: 39, nationality: "Japão", age: 16, attributes: { racePace: 56, qualifying: 55, overtaking: 56, defending: 59, consistency: 61 } },
+    { id: "jp-024", name: "Alejandro Torres", number: 63, nationality: "Espanha", age: 17, attributes: { racePace: 53, qualifying: 60, overtaking: 59, defending: 54, consistency: 60 } }
+  ] }
 ];
 
 const formula4MongoliaFoundingTeams: Team[] = [
