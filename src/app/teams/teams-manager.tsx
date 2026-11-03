@@ -41,7 +41,7 @@ if(championshipId==="formula-regional-oceania-2026"){
   const placeholder=!name||name.includes("agente livre")||name.includes("substituicao automatica");
   const duplicate=!placeholder&&occupied.has(name);
   if(!placeholder&&!duplicate){occupied.add(name);return driver;}
-  if(placeholder&&team.id==="fro-kiwi"&&driver.number===14){
+  if(team.name.trim().toLocaleLowerCase("pt-BR").includes("kiwi motorsport")&&driver.number===14&&name!=="aiden mckenzie"){
    const replacementName="Aiden McKenzie";
    occupied.add(normalizeName(replacementName));
    changed=true;
