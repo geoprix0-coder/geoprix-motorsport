@@ -321,12 +321,42 @@ const formula4UnitedStatesFoundingTeams: Team[] = [
 ];
 
 const formula4MexicoFoundingTeams: Team[] = [
-  { id: "f4mx-azteca-motorsport", name: "Azteca Motorsport", country: "México", base: "Cidade do México", drivers: [] },
-  { id: "f4mx-jalisco-racing", name: "Jalisco Racing", country: "México", base: "Guadalajara, Jalisco", drivers: [] },
-  { id: "f4mx-monterrey-competition", name: "Monterrey Competition", country: "México", base: "Monterrey, Nuevo León", drivers: [] },
-  { id: "f4mx-puebla-motorsport", name: "Puebla Motorsport", country: "México", base: "Puebla, Puebla", drivers: [] },
-  { id: "f4mx-yucatan-racing", name: "Yucatán Racing", country: "México", base: "Mérida, Yucatán", drivers: [] },
-  { id: "f4mx-bajio-grand-prix", name: "Bajío Grand Prix", country: "México", base: "León, Guanajuato", drivers: [] },
+  { id: "f4mx-azteca-motorsport", name: "Azteca Motorsport", country: "México", base: "Cidade do México", drivers: [
+    { id: "mx-001", name: "Santiago Hernández", number: 4, nationality: "México", age: 17, attributes: { racePace: 52, qualifying: 53, overtaking: 54, defending: 52, consistency: 55 } },
+    { id: "mx-002", name: "Emiliano Torres", number: 12, nationality: "México", age: 16, attributes: { racePace: 59, qualifying: 58, overtaking: 57, defending: 56, consistency: 61 } },
+    { id: "mx-003", name: "Gabriel Costa", number: 23, nationality: "Brasil", age: 17, attributes: { racePace: 56, qualifying: 54, overtaking: 60, defending: 60, consistency: 60 } },
+    { id: "mx-004", name: "Daniel Miller", number: 35, nationality: "Estados Unidos", age: 16, attributes: { racePace: 53, qualifying: 59, overtaking: 55, defending: 55, consistency: 59 } }
+  ] },
+  { id: "f4mx-jalisco-racing", name: "Jalisco Racing", country: "México", base: "Guadalajara, Jalisco", drivers: [
+    { id: "mx-005", name: "Sebastián Ramírez", number: 6, nationality: "México", age: 18, attributes: { racePace: 60, qualifying: 55, overtaking: 58, defending: 59, consistency: 58 } },
+    { id: "mx-006", name: "Diego Castillo", number: 15, nationality: "México", age: 16, attributes: { racePace: 57, qualifying: 60, overtaking: 61, defending: 54, consistency: 57 } },
+    { id: "mx-007", name: "Tomás Rojas", number: 28, nationality: "Colômbia", age: 17, attributes: { racePace: 54, qualifying: 56, overtaking: 56, defending: 58, consistency: 56 } },
+    { id: "mx-008", name: "Nicolás Silva", number: 42, nationality: "Chile", age: 16, attributes: { racePace: 61, qualifying: 61, overtaking: 59, defending: 53, consistency: 55 } }
+  ] },
+  { id: "f4mx-monterrey-competition", name: "Monterrey Competition", country: "México", base: "Monterrey, Nuevo León", drivers: [
+    { id: "mx-009", name: "Alejandro Mendoza", number: 7, nationality: "México", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 54, defending: 57, consistency: 61 } },
+    { id: "mx-010", name: "Rodrigo Salinas", number: 17, nationality: "México", age: 15, attributes: { racePace: 55, qualifying: 53, overtaking: 57, defending: 52, consistency: 60 } },
+    { id: "mx-011", name: "Thiago Almeida", number: 31, nationality: "Brasil", age: 18, attributes: { racePace: 52, qualifying: 58, overtaking: 60, defending: 56, consistency: 59 } },
+    { id: "mx-012", name: "Lucas Martin", number: 46, nationality: "França", age: 17, attributes: { racePace: 59, qualifying: 54, overtaking: 55, defending: 60, consistency: 58 } }
+  ] },
+  { id: "f4mx-puebla-motorsport", name: "Puebla Motorsport", country: "México", base: "Puebla, Puebla", drivers: [
+    { id: "mx-013", name: "Andrés Navarro", number: 9, nationality: "México", age: 16, attributes: { racePace: 56, qualifying: 59, overtaking: 58, defending: 55, consistency: 57 } },
+    { id: "mx-014", name: "Mauricio Flores", number: 19, nationality: "México", age: 17, attributes: { racePace: 53, qualifying: 55, overtaking: 61, defending: 59, consistency: 56 } },
+    { id: "mx-015", name: "Joaquín Benítez", number: 33, nationality: "Argentina", age: 16, attributes: { racePace: 60, qualifying: 60, overtaking: 56, defending: 54, consistency: 55 } },
+    { id: "mx-016", name: "Ethan Wilson", number: 51, nationality: "Estados Unidos", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 59, defending: 58, consistency: 61 } }
+  ] },
+  { id: "f4mx-yucatan-racing", name: "Yucatán Racing", country: "México", base: "Mérida, Yucatán", drivers: [
+    { id: "mx-017", name: "Leonardo Cruz", number: 11, nationality: "México", age: 18, attributes: { racePace: 54, qualifying: 61, overtaking: 54, defending: 53, consistency: 60 } },
+    { id: "mx-018", name: "Fernando Aguilar", number: 21, nationality: "México", age: 16, attributes: { racePace: 61, qualifying: 57, overtaking: 57, defending: 57, consistency: 59 } },
+    { id: "mx-019", name: "Mateo Vargas", number: 37, nationality: "Costa Rica", age: 17, attributes: { racePace: 58, qualifying: 53, overtaking: 60, defending: 52, consistency: 58 } },
+    { id: "mx-020", name: "Oliver Campbell", number: 54, nationality: "Canadá", age: 16, attributes: { racePace: 55, qualifying: 58, overtaking: 55, defending: 56, consistency: 57 } }
+  ] },
+  { id: "f4mx-bajio-grand-prix", name: "Bajío Grand Prix", country: "México", base: "León, Guanajuato", drivers: [
+    { id: "mx-021", name: "Ricardo Valdez", number: 13, nationality: "México", age: 17, attributes: { racePace: 52, qualifying: 54, overtaking: 58, defending: 60, consistency: 56 } },
+    { id: "mx-022", name: "Esteban Paredes", number: 25, nationality: "México", age: 15, attributes: { racePace: 59, qualifying: 59, overtaking: 61, defending: 55, consistency: 55 } },
+    { id: "mx-023", name: "Javier Cárdenas", number: 39, nationality: "México", age: 16, attributes: { racePace: 56, qualifying: 55, overtaking: 56, defending: 59, consistency: 61 } },
+    { id: "mx-024", name: "Kenji Mori", number: 63, nationality: "Japão", age: 17, attributes: { racePace: 53, qualifying: 60, overtaking: 59, defending: 54, consistency: 60 } }
+  ] }
 ];
 
 const formula4JapanFoundingTeams: Team[] = [
