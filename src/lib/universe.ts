@@ -20,10 +20,17 @@ function ensureEmptyUniverseMigration(): void {
 
 export function readUniverseChampionships(): Championship[] {
   if (typeof window === "undefined") return initialChampionships;
-  ensureEmptyUniverseMigration();
-  // O cadastro inicial foi zerado: não recuperar campeonatos antigos salvos.
-  localStorage.setItem(UNIVERSE_CHAMPIONSHIPS_KEY, "[]");
-  return [];
+  try {
+    ensureEmptyUniverseMigration();
+    const raw = localStorage.getItem(UNIVERSE_CHAMPIONSHIPS_KEY);
+    const saved = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((item): item is Championship =>
+      !!item && typeof item.id === "string" && typeof item.name === "string"
+    );
+  } catch {
+    return [];
+  }
 }
 
 export function saveUniverseChampionship(championship: Championship): Championship[] {
