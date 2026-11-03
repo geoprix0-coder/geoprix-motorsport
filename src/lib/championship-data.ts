@@ -282,12 +282,42 @@ const formula4GermanyFoundingTeams: Team[] = [
 ];
 
 const formula4UnitedStatesFoundingTeams: Team[] = [
-  { id: "f4us-pacific-coast-racing", name: "Pacific Coast Racing", country: "Estados Unidos", base: "Los Angeles, Califórnia", drivers: [] },
-  { id: "f4us-lone-star-motorsport", name: "Lone Star Motorsport", country: "Estados Unidos", base: "Austin, Texas", drivers: [] },
-  { id: "f4us-atlantic-performance", name: "Atlantic Performance", country: "Estados Unidos", base: "Miami, Flórida", drivers: [] },
-  { id: "f4us-great-lakes-racing", name: "Great Lakes Racing", country: "Estados Unidos", base: "Detroit, Michigan", drivers: [] },
-  { id: "f4us-northeast-competition", name: "Northeast Competition", country: "Estados Unidos", base: "Boston, Massachusetts", drivers: [] },
-  { id: "f4us-mountain-west-motorsport", name: "Mountain West Motorsport", country: "Estados Unidos", base: "Denver, Colorado", drivers: [] },
+  { id: "f4us-pacific-coast-racing", name: "Pacific Coast Racing", country: "Estados Unidos", base: "Los Angeles, Califórnia", drivers: [
+    { id: "us-001", name: "Mason Carter", number: 4, nationality: "Estados Unidos", age: 17, attributes: { racePace: 58, qualifying: 59, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "us-002", name: "Diego Herrera", number: 12, nationality: "México", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 54, consistency: 56 } },
+    { id: "us-003", name: "Liam O'Connor", number: 23, nationality: "Irlanda", age: 17, attributes: { racePace: 55, qualifying: 56, overtaking: 54, defending: 58, consistency: 57 } },
+    { id: "us-004", name: "Ethan Nakamura", number: 35, nationality: "Japão", age: 16, attributes: { racePace: 57, qualifying: 55, overtaking: 56, defending: 57, consistency: 55 } }
+  ] },
+  { id: "f4us-lone-star-motorsport", name: "Lone Star Motorsport", country: "Estados Unidos", base: "Austin, Texas", drivers: [
+    { id: "us-005", name: "Jackson Reed", number: 6, nationality: "Estados Unidos", age: 18, attributes: { racePace: 60, qualifying: 59, overtaking: 58, defending: 57, consistency: 59 } },
+    { id: "us-006", name: "Mateo González", number: 15, nationality: "México", age: 17, attributes: { racePace: 57, qualifying: 58, overtaking: 55, defending: 56, consistency: 57 } },
+    { id: "us-007", name: "Lucas Oliveira", number: 28, nationality: "Brasil", age: 16, attributes: { racePace: 56, qualifying: 57, overtaking: 58, defending: 55, consistency: 58 } },
+    { id: "us-008", name: "Caleb Morgan", number: 42, nationality: "Estados Unidos", age: 17, attributes: { racePace: 54, qualifying: 55, overtaking: 56, defending: 54, consistency: 57 } }
+  ] },
+  { id: "f4us-atlantic-performance", name: "Atlantic Performance", country: "Estados Unidos", base: "Miami, Flórida", drivers: [
+    { id: "us-009", name: "Ethan Brooks", number: 7, nationality: "Estados Unidos", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 58 } },
+    { id: "us-010", name: "Nicolás Pereira", number: 17, nationality: "Colômbia", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 58, defending: 57, consistency: 56 } },
+    { id: "us-011", name: "Oliver Bennett", number: 31, nationality: "Reino Unido", age: 18, attributes: { racePace: 55, qualifying: 54, overtaking: 57, defending: 56, consistency: 58 } },
+    { id: "us-012", name: "Noah Williams", number: 46, nationality: "Estados Unidos", age: 17, attributes: { racePace: 58, qualifying: 57, overtaking: 56, defending: 59, consistency: 55 } }
+  ] },
+  { id: "f4us-great-lakes-racing", name: "Great Lakes Racing", country: "Estados Unidos", base: "Detroit, Michigan", drivers: [
+    { id: "us-013", name: "Caleb Turner", number: 9, nationality: "Estados Unidos", age: 17, attributes: { racePace: 59, qualifying: 60, overtaking: 58, defending: 57, consistency: 58 } },
+    { id: "us-014", name: "Lucas Dubois", number: 19, nationality: "Canadá", age: 16, attributes: { racePace: 55, qualifying: 56, overtaking: 57, defending: 58, consistency: 54 } },
+    { id: "us-015", name: "Matías Fernández", number: 33, nationality: "Argentina", age: 17, attributes: { racePace: 56, qualifying: 55, overtaking: 59, defending: 57, consistency: 56 } },
+    { id: "us-016", name: "Ryan Mitchell", number: 51, nationality: "Estados Unidos", age: 16, attributes: { racePace: 54, qualifying: 57, overtaking: 55, defending: 56, consistency: 55 } }
+  ] },
+  { id: "f4us-northeast-competition", name: "Northeast Competition", country: "Estados Unidos", base: "Boston, Massachusetts", drivers: [
+    { id: "us-017", name: "Noah Parker", number: 11, nationality: "Estados Unidos", age: 18, attributes: { racePace: 60, qualifying: 58, overtaking: 59, defending: 57, consistency: 58 } },
+    { id: "us-018", name: "Tiago Costa", number: 21, nationality: "Portugal", age: 17, attributes: { racePace: 57, qualifying: 56, overtaking: 55, defending: 58, consistency: 57 } },
+    { id: "us-019", name: "Felix Weber", number: 37, nationality: "Alemanha", age: 17, attributes: { racePace: 55, qualifying: 57, overtaking: 56, defending: 54, consistency: 58 } },
+    { id: "us-020", name: "Logan Scott", number: 54, nationality: "Estados Unidos", age: 16, attributes: { racePace: 56, qualifying: 55, overtaking: 58, defending: 57, consistency: 56 } }
+  ] },
+  { id: "f4us-mountain-west-motorsport", name: "Mountain West Motorsport", country: "Estados Unidos", base: "Denver, Colorado", drivers: [
+    { id: "us-021", name: "Logan Mitchell", number: 13, nationality: "Estados Unidos", age: 16, attributes: { racePace: 57, qualifying: 58, overtaking: 56, defending: 55, consistency: 57 } },
+    { id: "us-022", name: "Daniel Rojas", number: 25, nationality: "México", age: 17, attributes: { racePace: 55, qualifying: 56, overtaking: 54, defending: 58, consistency: 56 } },
+    { id: "us-023", name: "Kai Nakamura", number: 39, nationality: "Austrália", age: 18, attributes: { racePace: 54, qualifying: 55, overtaking: 57, defending: 56, consistency: 55 } },
+    { id: "us-024", name: "Adrian Cooper", number: 63, nationality: "Estados Unidos", age: 15, attributes: { racePace: 58, qualifying: 57, overtaking: 59, defending: 56, consistency: 58 } }
+  ] }
 ];
 
 const formula4MexicoFoundingTeams: Team[] = [
