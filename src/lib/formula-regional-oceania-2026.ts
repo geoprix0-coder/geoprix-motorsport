@@ -33,7 +33,7 @@ export const initialFormulaRegionalOceaniaTeams: Team[] = [
     driver("fro-tj-speed-ricardo-baptista", "Ricardo Baptista", 41, "Brasil", 18),
   ]),
   team("fro-kiwi", "Kiwi Motorsport", "Nova Zelândia", "Cresson, Texas, Estados Unidos", [
-    driver("fro-kiwi-cooper-shipman-slot", "Agente livre (substituição automática)", 14, "—", 18),
+    driver("fro-kiwi-cooper-shipman-slot", "Aiden McKenzie", 14, "Nova Zelândia", 18),
     driver("fro-kiwi-yev-an-david", "Yevan David", 21, "Sri Lanka", 19),
   ]),
   team("fro-giles", "Giles Motorsport", "Nova Zelândia", "Taupō, Nova Zelândia", [
