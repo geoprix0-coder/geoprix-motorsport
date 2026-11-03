@@ -1,3 +1,5 @@
+export function generateStaticParams() { return [{ id: "__empty__" }]; }
+
 "use client";
 import { useEffect, useState } from "react";
 import { CalendarDays, Plus, Save, Trash2, Pencil, Flag, Trophy, ClipboardList } from "lucide-react";
