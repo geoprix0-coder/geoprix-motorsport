@@ -724,7 +724,11 @@ export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): T
     !savedNames.has(team.name.trim().toLocaleLowerCase("pt-BR"))
   );
   const seeded = savedTeams.map(saved => {
-    const source = initial.find(team => team.id === saved.id);
+    const savedName = saved.name.trim().toLocaleLowerCase("pt-BR");
+    const source = initial.find(team =>
+      team.id === saved.id ||
+      team.name.trim().toLocaleLowerCase("pt-BR") === savedName
+    );
     if (!source || source.drivers.length === 0) return saved;
     const savedDriverIds = new Set(saved.drivers.map(driver => driver.id));
     const savedDriverNames = new Set(saved.drivers.map(driver => driver.name.trim().toLocaleLowerCase("pt-BR")));
