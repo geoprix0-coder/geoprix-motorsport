@@ -12,7 +12,7 @@ import { replaceF3SeedVacancy } from "@/lib/free-agents";
 import { initializeDriverContracts } from "@/lib/market";
 import { getNationalChampionshipMeta } from "@/app/lib/national-championships";
 type Driver={id:string;name:string;number:number;nationality:string;age?:number;attributes?:{racePace:number;qualifying:number;overtaking:number;defending:number;consistency:number}};
-type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number}};
+type Team={id:string;name:string;country:string;base:string;drivers:Driver[];development?:TeamDevelopment;carAttributes?:{power:number;downforce:number};geoprixProfile?:{founded:number;colors:string[];ownership:string;owner:string;staff:string;finance:string;reputation:string}};
 const newDriver=(n:number,baseline=80,age=25):Driver=>({id:crypto.randomUUID(),name:"",number:n,nationality:"",age,attributes:{racePace:baseline,qualifying:baseline,overtaking:baseline,defending:baseline,consistency:baseline}});
 const newTeam=(carBaseline=80,driverCount=2,driverAge=25,driverBaseline=carBaseline):Team=>({id:crypto.randomUUID(),name:"",country:"",base:"",drivers:Array.from({length:driverCount},(_,i)=>newDriver(i+1,driverBaseline,driverAge)),development:{developmentCapacity:80,investment:80,technicalEfficiency:80,technicalStability:80},carAttributes:{power:carBaseline,downforce:carBaseline}});
 export default function TeamsManager(){
