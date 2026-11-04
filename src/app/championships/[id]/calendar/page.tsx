@@ -7,6 +7,7 @@ import { initialChampionships } from "@/lib/seed";
 import { initialTeamsForChampionship, mergeInitialTeams, teamStorageKey } from "@/lib/championship-data";
 import { registerF3Debuts, removeF1DriversFromF2 } from "@/lib/career-hierarchy";
 import { replaceF3SeedVacancy } from "@/lib/free-agents";
+import { getNationalChampionshipMeta } from "@/app/lib/national-championships";
 type ResultStatus="finished"|"retired"|"disqualified"|"dns";
 type DriverResult={id:string;driverId:string;driverName:string;teamId:string;teamName:string;status:ResultStatus;qualifyingStatus?:ResultStatus;qualifyingPosition:number|null;position:number|null;points:number};
 type ResultSlot={driverId:string;status:ResultStatus};
@@ -121,7 +122,8 @@ export default function ChampionshipCalendarPage({params}:{params:Promise<{id:st
  useEffect(()=>{if(ready&&championshipId){localStorage.setItem("geoprix-calendar-"+championshipId,JSON.stringify(rounds));window.dispatchEvent(new Event("geoprix-calendar-updated"));}},[rounds,ready,championshipId]);
  const championship=initialChampionships.find(c=>c.id===championshipId);
  const normalizeCategory=(value:string)=>String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
- const championshipCategoryKeys=[normalizeCategory(championship?.name||""),normalizeCategory(championship?.category||"")].filter(Boolean);
+ const nationalMeta=getNationalChampionshipMeta(championshipId);
+ const championshipCategoryKeys=[normalizeCategory(championship?.name||""),normalizeCategory(championship?.category||""),normalizeCategory(nationalMeta?.category||"")].filter(Boolean);
  const contractedCircuits=circuits.filter(circuit=>String(circuit.status).toLowerCase()==="active"&&contracts.some(contract=>{
   const linkedCircuit=circuits.find(item=>String(item.id)===String(contract.circuitId));
   const sameCircuit=String(contract.circuitId)===String(circuit.id)||(linkedCircuit&&normalizeCategory(linkedCircuit.name)===normalizeCategory(circuit.name));
