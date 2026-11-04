@@ -692,8 +692,46 @@ const formula4BrazilFoundingTeams: Team[] = [
 ];
 
 export function initialTeamsForChampionship(championshipId: string): Team[] {
-  const indonesiaTeams = indonesiaNationalTeams(championshipId);
-  if (indonesiaTeams.length) return indonesiaTeams;
+  const indonesiaMatch = championshipId.match(/^national-indonesia-([abc])-2026$/);
+  if (indonesiaMatch) {
+    const teams: Team[] = [
+      { id: "idn-gar", name: "Garuda Apex Racing", country: "Indonésia", base: "Jacarta, Indonésia", drivers: [] },
+      { id: "idn-mer", name: "Merapi Motorsport", country: "Indonésia", base: "Bandung, Indonésia", drivers: [] },
+      { id: "idn-sur", name: "Surya Kartika Racing", country: "Indonésia", base: "Surabaya, Indonésia", drivers: [] },
+      { id: "idn-raj", name: "Rajawali Competition", country: "Indonésia", base: "Yogyakarta, Indonésia", drivers: [] },
+      { id: "idn-bat", name: "Batavia Velocity", country: "Indonésia", base: "Semarang, Indonésia", drivers: [] },
+      { id: "idn-sum", name: "Sumatra Prima Motorsport", country: "Indonésia", base: "Medan, Indonésia", drivers: [] },
+      { id: "idn-sri", name: "Sriwijaya Racing", country: "Indonésia", base: "Palembang, Indonésia", drivers: [] },
+      { id: "idn-cel", name: "Celebes Racing", country: "Indonésia", base: "Makassar, Indonésia", drivers: [] },
+      { id: "idn-bmm", name: "Bali Mandala Motorsport", country: "Indonésia", base: "Denpasar, Indonésia", drivers: [] },
+      { id: "idn-bor", name: "Borneo Dynamics", country: "Indonésia", base: "Balikpapan, Indonésia", drivers: [] },
+      { id: "idn-mat", name: "Mataram Racing", country: "Indonésia", base: "Malang, Indonésia", drivers: [] },
+      { id: "idn-kra", name: "Krakatau Performance", country: "Indonésia", base: "Surakarta, Indonésia", drivers: [] },
+      { id: "idn-npr", name: "Nusantara Pulse Racing", country: "Indonésia", base: "Pekanbaru, Indonésia", drivers: [] },
+      { id: "idn-cak", name: "Cakra Motorsport", country: "Indonésia", base: "Manado, Indonésia", drivers: [] },
+      { id: "idn-kha", name: "Khatulistiwa Racing", country: "Indonésia", base: "Pontianak, Indonésia", drivers: [] },
+      { id: "idn-bsc", name: "Batam Straits Competition", country: "Indonésia", base: "Batam, Indonésia", drivers: [] },
+      { id: "idn-mah", name: "Mahakam Racing", country: "Indonésia", base: "Samarinda, Indonésia", drivers: [] },
+      { id: "idn-lax", name: "Lombok Apex", country: "Indonésia", base: "Mataram, Indonésia", drivers: [] },
+      { id: "idn-bar", name: "Baruna Motorsport", country: "Indonésia", base: "Banjarmasin, Indonésia", drivers: [] },
+      { id: "idn-pus", name: "Pusaka Racing", country: "Indonésia", base: "Cirebon, Indonésia", drivers: [] },
+      { id: "idn-sat", name: "Satria Racing", country: "Indonésia", base: "Bogor, Indonésia", drivers: [] },
+      { id: "idn-and", name: "Andalas Motorsport", country: "Indonésia", base: "Padang, Indonésia", drivers: [] },
+      { id: "idn-tan", name: "Tanjung Racing", country: "Indonésia", base: "Tangerang, Indonésia", drivers: [] },
+      { id: "idn-srm", name: "Serang Raya Motorsport", country: "Indonésia", base: "Serang, Indonésia", drivers: [] },
+      { id: "idn-tjr", name: "Timor Junior Racing", country: "Indonésia", base: "Kupang, Indonésia", drivers: [] },
+      { id: "idn-amc", name: "Aceh Muda Competition", country: "Indonésia", base: "Banda Aceh, Indonésia", drivers: [] },
+      { id: "idn-jrp", name: "Jambi Racing Project", country: "Indonésia", base: "Jambi, Indonésia", drivers: [] },
+      { id: "idn-rmm", name: "Riau Muda Motorsport", country: "Indonésia", base: "Bekasi, Indonésia", drivers: [] },
+    ];
+    const categoryIds: Record<string, string[]> = {
+      "a": ["idn-gar", "idn-mer", "idn-sur", "idn-raj", "idn-bat", "idn-sum", "idn-sri", "idn-cel", "idn-bmm", "idn-bor", "idn-mat", "idn-kra"],
+      "b": ["idn-npr", "idn-cak", "idn-kha", "idn-bsc", "idn-mah", "idn-lax", "idn-bar", "idn-pus", "idn-sat", "idn-and"],
+      "c": ["idn-tan", "idn-srm", "idn-tjr", "idn-amc", "idn-jrp", "idn-rmm"],
+    };
+    const allowedIds = new Set(categoryIds[indonesiaMatch[1]] ?? []);
+    return teams.filter(team => allowedIds.has(team.id));
+  }
   if (championshipId === "world-formula-2026") return worldFormulaFoundingTeams;
   if (championshipId === "formula-2-2026") return formula2FoundingTeams;
   if (championshipId === "formula-3-2026") return formula3FoundingTeams;
