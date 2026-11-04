@@ -276,3 +276,14 @@
 .nr-circuit-row button{border:1px solid var(--line);border-radius:5px;background:#111923;color:#9ba8b7;padding:8px;display:grid;place-items:center;cursor:pointer}
 .nr-result a{display:inline-block;margin-top:9px;color:var(--accent);font-size:11px;text-decoration:underline}
 @media(max-width:620px){.nr-controls{grid-template-columns:1fr}.nr-circuit-row{gap:8px}.nr-circuit-row strong{font-size:10px}}
+
+
+.gx-nav-group{display:grid;gap:3px}
+.gx-nav-group>.gx-nav-link{width:100%;border:0;background:transparent;text-align:left;font:inherit;cursor:pointer;list-style:none}
+.gx-nav-group>summary::-webkit-details-marker{display:none}
+.gx-nav-group>summary::marker{content:""}
+.gx-nav-group>summary:after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .18s;opacity:.7}
+.gx-nav-group[open]>summary:after{transform:rotate(225deg) translate(-1px,-1px)}
+.gx-nav-submenu{display:grid;gap:2px;margin:0 0 5px 29px;padding-left:12px;border-left:1px solid #29343d}
+.gx-nav-submenu a{display:block;padding:8px 9px;border-radius:5px;color:#87949e;font-size:11px;line-height:1.35;transition:.18s}
+.gx-nav-submenu a:hover{color:var(--gx-accent);background:#141e25}
