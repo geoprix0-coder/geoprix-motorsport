@@ -98,52 +98,52 @@ const europeanFormulaRegionalFoundingTeams: Team[] = [
 
 
 const americasFormulaRegionalFoundingTeams: Team[] = [
-  { id: "afr-pacific-racing", name: "Pacific Racing", country: Estados Unidos, base: Los Angeles, Estados Unidos, drivers: [
+  { id: "afr-pacific-racing", name: "Pacific Racing", country: "Estados Unidos", base: "Los Angeles, Estados Unidos", drivers: [
     { id: "afr-001", name: "Ethan Walker", number: 1, nationality: "Estados Unidos", age: 17, attributes: { racePace: 48, qualifying: 47, overtaking: 44, defending: 43, consistency: 46 } },
     { id: "afr-002", name: "Lucas Bennett", number: 2, nationality: "Canadá", age: 16, attributes: { racePace: 43, qualifying: 45, overtaking: 41, defending: 42, consistency: 44 } },
     { id: "afr-003", name: "Diego Ramírez", number: 3, nationality: "México", age: 18, attributes: { racePace: 45, qualifying: 43, overtaking: 46, defending: 42, consistency: 41 } }
   ] },
-  { id: "afr-northstar-motorsport", name: "Northstar Motorsport", country: Canadá, base: Toronto, Canadá, drivers: [
+  { id: "afr-northstar-motorsport", name: "Northstar Motorsport", country: "Canadá", base: "Toronto, Canadá", drivers: [
     { id: "afr-004", name: "Liam Thompson", number: 4, nationality: "Canadá", age: 17, attributes: { racePace: 47, qualifying: 48, overtaking: 43, defending: 42, consistency: 45 } },
     { id: "afr-005", name: "Noah Campbell", number: 5, nationality: "Canadá", age: 16, attributes: { racePace: 42, qualifying: 44, overtaking: 45, defending: 43, consistency: 41 } },
     { id: "afr-006", name: "Santiago Herrera", number: 6, nationality: "Colômbia", age: 18, attributes: { racePace: 44, qualifying: 42, overtaking: 43, defending: 46, consistency: 45 } }
   ] },
-  { id: "afr-azteca-racing", name: "Azteca Racing", country: México, base: Cidade do México, México, drivers: [
+  { id: "afr-azteca-racing", name: "Azteca Racing", country: "México", base: "Cidade do México, México", drivers: [
     { id: "afr-007", name: "Emiliano Vargas", number: 7, nationality: "México", age: 17, attributes: { racePace: 46, qualifying: 44, overtaking: 45, defending: 43, consistency: 44 } },
     { id: "afr-008", name: "Santiago Ortega", number: 8, nationality: "México", age: 16, attributes: { racePace: 42, qualifying: 43, overtaking: 44, defending: 45, consistency: 42 } },
     { id: "afr-009", name: "Gabriel Castillo", number: 9, nationality: "Guatemala", age: 18, attributes: { racePace: 40, qualifying: 42, overtaking: 41, defending: 39, consistency: 43 } }
   ] },
-  { id: "afr-caribbean-motorsport", name: "Caribbean Motorsport", country: República Dominicana, base: Santo Domingo, República Dominicana, drivers: [
+  { id: "afr-caribbean-motorsport", name: "Caribbean Motorsport", country: "República Dominicana", base: "Santo Domingo, República Dominicana", drivers: [
     { id: "afr-010", name: "Alejandro Batista", number: 10, nationality: "República Dominicana", age: 17, attributes: { racePace: 45, qualifying: 43, overtaking: 47, defending: 44, consistency: 42 } },
     { id: "afr-011", name: "Javier Morales", number: 11, nationality: "Porto Rico", age: 16, attributes: { racePace: 42, qualifying: 46, overtaking: 43, defending: 41, consistency: 44 } },
     { id: "afr-012", name: "Daniel Campbell", number: 12, nationality: "Jamaica", age: 18, attributes: { racePace: 43, qualifying: 41, overtaking: 45, defending: 46, consistency: 42 } }
   ] },
-  { id: "afr-istmo-racing", name: "Istmo Racing", country: Panamá, base: Cidade do Panamá, Panamá, drivers: [
+  { id: "afr-istmo-racing", name: "Istmo Racing", country: "Panamá", base: "Cidade do Panamá, Panamá", drivers: [
     { id: "afr-013", name: "Sebastián González", number: 13, nationality: "Panamá", age: 17, attributes: { racePace: 46, qualifying: 44, overtaking: 45, defending: 43, consistency: 44 } },
     { id: "afr-014", name: "Andrés Solís", number: 14, nationality: "Costa Rica", age: 16, attributes: { racePace: 42, qualifying: 43, overtaking: 44, defending: 41, consistency: 45 } },
     { id: "afr-015", name: "Mateo Fuentes", number: 15, nationality: "Guatemala", age: 18, attributes: { racePace: 44, qualifying: 42, overtaking: 43, defending: 46, consistency: 41 } }
   ] },
-  { id: "afr-andean-motorsport", name: "Andean Motorsport", country: Colômbia, base: Bogotá, Colômbia, drivers: [
+  { id: "afr-andean-motorsport", name: "Andean Motorsport", country: "Colômbia", base: "Bogotá, Colômbia", drivers: [
     { id: "afr-016", name: "Nicolás Restrepo", number: 16, nationality: "Colômbia", age: 17, attributes: { racePace: 47, qualifying: 45, overtaking: 46, defending: 43, consistency: 44 } },
     { id: "afr-017", name: "Joaquín Salazar", number: 17, nationality: "Peru", age: 16, attributes: { racePace: 43, qualifying: 44, overtaking: 45, defending: 42, consistency: 43 } },
     { id: "afr-018", name: "Martín Cárdenas", number: 18, nationality: "Equador", age: 18, attributes: { racePace: 44, qualifying: 42, overtaking: 41, defending: 46, consistency: 45 } }
   ] },
-  { id: "afr-condor-grand-prix", name: "Condor Grand Prix", country: Argentina, base: Buenos Aires, Argentina, drivers: [
+  { id: "afr-condor-grand-prix", name: "Condor Grand Prix", country: "Argentina", base: "Buenos Aires, Argentina", drivers: [
     { id: "afr-019", name: "Franco Bianchi", number: 19, nationality: "Argentina", age: 17, attributes: { racePace: 48, qualifying: 46, overtaking: 47, defending: 44, consistency: 43 } },
     { id: "afr-020", name: "Tomás Benítez", number: 20, nationality: "Paraguai", age: 16, attributes: { racePace: 42, qualifying: 43, overtaking: 46, defending: 41, consistency: 44 } },
     { id: "afr-021", name: "Santiago Méndez", number: 21, nationality: "Uruguai", age: 19, attributes: { racePace: 45, qualifying: 44, overtaking: 43, defending: 46, consistency: 47 } }
   ] },
-  { id: "afr-vertice-motorsport", name: "Vértice Motorsport", country: Brasil, base: São Paulo, Brasil, drivers: [
+  { id: "afr-vertice-motorsport", name: "Vértice Motorsport", country: "Brasil", base: "São Paulo, Brasil", drivers: [
     { id: "afr-022", name: "Pedro Almeida", number: 22, nationality: "Brasil", age: 17, attributes: { racePace: 47, qualifying: 48, overtaking: 45, defending: 43, consistency: 44 } },
     { id: "afr-023", name: "Enzo Oliveira", number: 23, nationality: "Brasil", age: 16, attributes: { racePace: 44, qualifying: 46, overtaking: 43, defending: 42, consistency: 45 } },
     { id: "afr-024", name: "Lucas Ferreira", number: 24, nationality: "Brasil", age: 18, attributes: { racePace: 46, qualifying: 43, overtaking: 48, defending: 44, consistency: 41 } }
   ] },
-  { id: "afr-pacific-andes-racing", name: "Pacific Andes Racing", country: Chile, base: Santiago, Chile, drivers: [
+  { id: "afr-pacific-andes-racing", name: "Pacific Andes Racing", country: "Chile", base: "Santiago, Chile", drivers: [
     { id: "afr-025", name: "Vicente Fuentes", number: 25, nationality: "Chile", age: 17, attributes: { racePace: 46, qualifying: 45, overtaking: 44, defending: 43, consistency: 46 } },
     { id: "afr-026", name: "Benjamín Rojas", number: 26, nationality: "Chile", age: 16, attributes: { racePace: 43, qualifying: 47, overtaking: 42, defending: 41, consistency: 44 } },
     { id: "afr-027", name: "Diego Quispe", number: 27, nationality: "Bolívia", age: 18, attributes: { racePace: 41, qualifying: 42, overtaking: 45, defending: 44, consistency: 43 } }
   ] },
-  { id: "afr-pampa-motorsport", name: "Pampa Motorsport", country: Uruguai, base: Montevidéu, Uruguai, drivers: [
+  { id: "afr-pampa-motorsport", name: "Pampa Motorsport", country: "Uruguai", base: "Montevidéu, Uruguai", drivers: [
     { id: "afr-028", name: "Mateo Rodríguez", number: 28, nationality: "Uruguai", age: 17, attributes: { racePace: 45, qualifying: 44, overtaking: 46, defending: 43, consistency: 45 } },
     { id: "afr-029", name: "Bruno Sosa", number: 29, nationality: "Argentina", age: 16, attributes: { racePace: 42, qualifying: 43, overtaking: 44, defending: 41, consistency: 42 } },
     { id: "afr-030", name: "Thiago Nascimento", number: 30, nationality: "Brasil", age: 18, attributes: { racePace: 44, qualifying: 46, overtaking: 43, defending: 42, consistency: 44 } }
