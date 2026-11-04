@@ -1,4 +1,5 @@
 import type { Team } from "./types";
+import { indonesiaNationalTeams } from "./indonesia-national-teams";
 
 export function teamStorageKey(championshipId: string): string {
   return championshipId === "formula-1-2026"
@@ -692,6 +693,8 @@ const formula4BrazilFoundingTeams: Team[] = [
 ];
 
 export function initialTeamsForChampionship(championshipId: string): Team[] {
+  const indonesiaTeams = indonesiaNationalTeams(championshipId);
+  if (indonesiaTeams.length) return indonesiaTeams;
   if (championshipId === "world-formula-2026") return worldFormulaFoundingTeams;
   if (championshipId === "formula-2-2026") return formula2FoundingTeams;
   if (championshipId === "formula-3-2026") return formula3FoundingTeams;
