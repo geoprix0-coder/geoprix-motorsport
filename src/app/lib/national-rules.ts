@@ -1,16 +1,17 @@
 export type NationalCategory = "Nacional A" | "Nacional B" | "Nacional C";
 export type Circuit = { id: string; name: string; country: string; lengthKm: number };
 export type NationalStage = { id: string; category: NationalCategory; stage: number; circuitId: string; laps: number; distanceKm: number };
-export const NATIONAL_RULES: Record<NationalCategory, { reference: number; min: number; max: number }> = {
-  "Nacional A": { reference: 100, min: 80, max: 120 },
-  "Nacional B": { reference: 80, min: 64, max: 96 },
-  "Nacional C": { reference: 60, min: 48, max: 72 },
+export const NATIONAL_RULES: Record<NationalCategory, { reference: number; min: number; max: number; minCircuitKm: number; minLaps: number; maxLaps: number }> = {
+  "Nacional A": { reference: 100, min: 80, max: 120, minCircuitKm: 4, minLaps: 20, maxLaps: 40 },
+  "Nacional B": { reference: 80, min: 64, max: 96, minCircuitKm: 3, minLaps: 20, maxLaps: 40 },
+  "Nacional C": { reference: 60, min: 48, max: 72, minCircuitKm: 2, minLaps: 20, maxLaps: 40 },
 };
 export function calculateRaceDistance(category: NationalCategory, lengthKm: number) {
   if (!Number.isFinite(lengthKm) || lengthKm <= 0) return null;
   const rule = NATIONAL_RULES[category];
-  const first = Math.ceil(rule.min / lengthKm);
-  const last = Math.floor(rule.max / lengthKm);
+  if (lengthKm < rule.minCircuitKm) return null;
+  const first = Math.max(rule.minLaps, Math.ceil(rule.min / lengthKm));
+  const last = Math.min(rule.maxLaps, Math.floor(rule.max / lengthKm));
   if (first > last) return null;
   let bestLaps = first;
   let bestDistance = first * lengthKm;
