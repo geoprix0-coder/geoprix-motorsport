@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Trophy, Globe2, Flag, CheckCircle2, Gauge, ArrowUpRight } from "lucide-react";
 import { NATIONAL_COUNTRIES, NATIONAL_CATEGORIES, nationalChampionshipId } from "../lib/national-championships";
 
-const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" : "";
+
 
 const countries = NATIONAL_COUNTRIES;
 
@@ -24,7 +24,7 @@ export default function NationalChampionshipsPage() {
   return (
     <main className="nr-shell">
       <header className="nr-topbar">
-        <Link href={basePath + "/"} className="nr-back"><ArrowLeft size={16} /> Visão geral</Link>
+        <Link href="/" className="nr-back"><ArrowLeft size={16} /> Visão geral</Link>
         <span className="nr-brand"><Gauge size={17} /> GEOPRIX <i>· CAMPEONATOS NACIONAIS</i></span>
       </header>
 
@@ -71,7 +71,7 @@ export default function NationalChampionshipsPage() {
                   <div><strong>{category}</strong><small>categoria nacional</small></div>
                 </div>
                 <p>Este campeonato terá equipes e pilotos, calendário, resultados, histórico e regulamento próprios, separados dos demais campeonatos.</p>
-                <Link className="nr-submit nr-open-championship" href={basePath + "/championships/" + nationalChampionshipId(country, category) + "/teams/"}>Abrir campeonato <ArrowUpRight size={16} /></Link>
+                <Link className="nr-submit nr-open-championship" href={"/championships/" + nationalChampionshipId(country, category) + "/teams/"}>Abrir campeonato <ArrowUpRight size={16} /></Link>
               </div>
             ) : (
               <p className="nr-footnote">Escolha uma das três categorias para continuar.</p>
