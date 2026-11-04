@@ -24,6 +24,7 @@ const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" :
 const navigation = [
   { label: "Visão geral", icon: Gauge, href: "#overview" },
   { label: "Pirâmide", icon: Layers3, href: "#pyramid" },
+  { label: "Regulamento nacional", icon: FileText, href: basePath + "/regulamento/" },
   { label: "Campeonatos", icon: Trophy, href: "#championships" },
   { label: "Gestão automática", icon: Network, href: "#automation" },
   { label: "Relatórios", icon: FileText, href: "#reports" },
