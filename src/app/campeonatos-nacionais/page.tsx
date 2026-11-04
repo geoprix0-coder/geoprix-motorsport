@@ -2,76 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Trophy, Globe2, Flag, CheckCircle2, Gauge } from "lucide-react";
+import { ArrowLeft, Trophy, Globe2, Flag, CheckCircle2, Gauge, ArrowUpRight } from "lucide-react";
+import { NATIONAL_COUNTRIES, NATIONAL_CATEGORIES, nationalChampionshipId } from "../lib/national-championships";
 
 const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" : "";
 
-const countries = [
-  "Indonésia",
-  "Tuvalu",
-  "Austrália",
-  "Nova Zelândia",
-  "Brasil",
-  "Argentina",
-  "Chile",
-  "EUA",
-  "Panamá",
-  "Cuba",
-  "México",
-  "Canadá",
-  "Suécia",
-  "Rússia",
-  "Finlândia",
-  "Itália",
-  "Polônia",
-  "França",
-  "Bulgária",
-  "Reino Unido",
-  "Dinamarca",
-  "Grécia",
-  "Espanha",
-  "Chipre",
-  "Alemanha",
-  "Suíça",
-  "Hungria",
-  "Áustria",
-  "Holanda",
-  "Bélgica",
-  "Azerbaijão",
-  "Turquia",
-  "Portugal",
-  "República Tcheca",
-  "Ucrânia",
-  "Cazaquistão",
-  "Japão",
-  "Filipinas",
-  "Mongólia",
-  "Bahrein",
-  "Líbano",
-  "Tailândia",
-  "China",
-  "Índia",
-  "Coreia do Sul",
-  "Emirados Árabes Unidos",
-  "Catar",
-  "Cingapura",
-  "Arábia Saudita",
-  "Malásia",
-  "Vietnã",
-  "Irã",
-  "Kuwait",
-  "Tunísia",
-  "Senegal",
-  "África do Sul",
-  "Marrocos",
-  "Moçambique",
-  "Egito",
-  "Nigéria",
-  "Tanzânia",
-  "Angola"
-];
+const countries = NATIONAL_COUNTRIES;
 
-const categories = ["Nacional A", "Nacional B", "Nacional C"] as const;
+const categories = NATIONAL_CATEGORIES;
 type NationalCategory = (typeof categories)[number];
 
 export default function NationalChampionshipsPage() {
@@ -132,7 +70,8 @@ export default function NationalChampionshipsPage() {
                   <div><strong>{country}</strong><small>país</small></div>
                   <div><strong>{category}</strong><small>categoria nacional</small></div>
                 </div>
-                <p>Esta é a seleção do campeonato nacional. A área de gestão específica desta competição poderá ser conectada a esta estrutura na próxima etapa.</p>
+                <p>Este campeonato terá equipes e pilotos, calendário, resultados, histórico e regulamento próprios, separados dos demais campeonatos.</p>
+                <Link className="nr-submit nr-open-championship" href={basePath + "/championships/" + nationalChampionshipId(country, category) + "/teams/"}>Abrir campeonato <ArrowUpRight size={16} /></Link>
               </div>
             ) : (
               <p className="nr-footnote">Escolha uma das três categorias para continuar.</p>
