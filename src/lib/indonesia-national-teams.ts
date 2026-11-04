@@ -1,7 +1,7 @@
 import type { Team } from "./types";
 
 type IndonesiaProfile = { founded:number; colors:string[]; ownership:string; owner:string; staff:string; finance:string; reputation:string };
-const rows: Array<{id:string;name:string;city:string;category:"a"|"b"|"c";power:number;downforce:number;profile:IndonesiaProfile}> = [
+const rows: Array<[string,string,string,"a"|"b"|"c",number,number,number,string[],string,string,string,string,string]> = [
 ["gar","Garuda Apex Racing","Jacarta","a",15,14,1998,["Vermelho","Dourado","Preto"],"Privada independente","Família Wiratama","Estrutura ampla; chefe de equipe, diretor esportivo, engenharia e operações","Porte muito alto; capital familiar, patrocínios e investidores","Prestígio elevado; candidata a títulos"],
 ["mer","Merapi Motorsport","Bandung","a",14,15,2005,["Vermelho-escuro","Grafite","Branco"],"Subsidiária","Merapi Industrial Holdings","Gestão profissional e engenharia própria","Porte alto; apoio industrial e patrocínios","Disciplinada, técnica e consistente"],
 ["sur","Surya Kartika Racing","Surabaya","a",15,15,2002,["Azul-marinho","Amarelo","Branco"],"Propriedade compartilhada","Surya Capital & Industries e investidores","Departamentos esportivo, administrativo e de engenharia","Porte alto; capital empresarial e acordos comerciais","Ambiciosa e orientada a resultados"],
@@ -40,5 +40,5 @@ const indonesiaTeams: Team[] = rows.map(row => ({
 }));
 export function indonesiaNationalTeams(championshipId:string):Team[]{
  const match=championshipId.match(/^national-indonesia-([abc])-2026$/);
- return match?indonesiaTeams.filter((_,index)=>rows[index].category===match[1]):[];
+ return match?indonesiaTeams.filter((_,index)=>rows[index][3]===match[1]):[];
 }
