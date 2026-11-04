@@ -3,37 +3,22 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Calculator, CheckCircle2, Flag, Gauge, Info, Route } from "lucide-react";
+import { NATIONAL_RULES, calculateRaceDistance, type NationalCategory } from "../lib/national-rules";
 
-const categories = {
-  "Nacional A": { target: 100, min: 80, max: 120 },
-  "Nacional B": { target: 80, min: 64, max: 96 },
-  "Nacional C": { target: 60, min: 48, max: 72 },
-} as const;
-
-type Category = keyof typeof categories;
+const categories: NationalCategory[] = ["Nacional A", "Nacional B", "Nacional C"];
 
 export default function NationalRegulationPage() {
-  const [category, setCategory] = useState<Category>("Nacional A");
+  const [category, setCategory] = useState<NationalCategory>("Nacional A");
   const [circuitLength, setCircuitLength] = useState("4.2");
-  const rules = categories[category];
+  const rules = NATIONAL_RULES[category];
   const length = Number(circuitLength.replace(",", "."));
+  const calculation = useMemo(() => calculateRaceDistance(category, length), [category, length]);
 
-  const calculation = useMemo(() => {
-    if (!Number.isFinite(length) || length <= 0) return null;
-    const firstLapCount = Math.ceil(rules.min / length);
-    const lastLapCount = Math.floor(rules.max / length);
-    if (firstLapCount > lastLapCount) return { compatible: false as const };
-    let best = firstLapCount;
-    let bestDistance = best * length;
-    for (let laps = firstLapCount + 1; laps <= lastLapCount; laps += 1) {
-      const distance = laps * length;
-      if (Math.abs(distance - rules.target) < Math.abs(bestDistance - rules.target)) {
-        best = laps;
-        bestDistance = distance;
-      }
-    }
-    return { compatible: true as const, laps: best, distance: bestDistance };
-  }, [length, rules]);
+  const incompatibility = !Number.isFinite(length) || length <= 0
+    ? "Informe uma extensão de circuito válida, maior que zero."
+    : length < rules.minCircuitKm
+      ? `A extensão mínima para ${category} é de ${rules.minCircuitKm} km.`
+      : `Não existe uma quantidade de voltas entre ${rules.minLaps} e ${rules.maxLaps} que mantenha a corrida entre ${rules.min} e ${rules.max} km.`;
 
   return (
     <main className="nr-shell">
@@ -58,38 +43,34 @@ export default function NationalRegulationPage() {
         </section>
 
         <section className="nr-distance">
-          <div className="nr-section-head"><span className="nr-icon"><Route size={18} /></span><div><small>QUILOMETRAGEM OFICIAL</small><h2>Distância por categoria</h2></div></div>
+          <div className="nr-section-head"><span className="nr-icon"><Route size={18} /></span><div><small>QUILOMETRAGEM OFICIAL</small><h2>Distância e limites por categoria</h2></div></div>
           <div className="nr-table-wrap">
             <table className="nr-table">
-              <thead><tr><th>Categoria</th><th>Referência</th><th>Mínimo</th><th>Máximo</th></tr></thead>
+              <thead><tr><th>Categoria</th><th>Referência</th><th>Distância permitida</th><th>Pista mínima</th><th>Voltas</th></tr></thead>
               <tbody>
-                <tr><td>Nacional A</td><td>100 km</td><td>80 km</td><td>120 km</td></tr>
-                <tr><td>Nacional B</td><td>80 km</td><td>64 km</td><td>96 km</td></tr>
-                <tr><td>Nacional C</td><td>60 km</td><td>48 km</td><td>72 km</td></tr>
+                {categories.map(c => { const r = NATIONAL_RULES[c]; return <tr key={c}><td>{c}</td><td>{r.reference} km</td><td>{r.min}–{r.max} km</td><td>{r.minCircuitKm.toFixed(1)} km</td><td>{r.minLaps}–{r.maxLaps}</td></tr>; })}
               </tbody>
             </table>
           </div>
-          <p className="nr-footnote">O limite mínimo e máximo corresponde a uma variação de até 20% sobre a distância de referência.</p>
+          <p className="nr-footnote">Para ser compatível, o circuito precisa cumprir a extensão mínima, e a corrida precisa respeitar simultaneamente a faixa de distância e o limite de voltas.</p>
         </section>
 
         <section className="nr-calculator">
           <div className="nr-section-head"><span className="nr-icon"><Calculator size={18} /></span><div><small>FERRAMENTA DE CÁLCULO</small><h2>Calcular voltas do circuito</h2></div></div>
-          <p className="nr-calculator-copy">Informe a categoria e a extensão do autódromo. O GEOPRIX seleciona o número inteiro de voltas cuja distância fique dentro dos limites e mais próxima da referência.</p>
+          <p className="nr-calculator-copy">O GEOPRIX considera a extensão mínima do circuito, o intervalo de 20 a 40 voltas e a distância regulamentar para escolher o número inteiro de voltas mais próximo da referência.</p>
           <div className="nr-controls">
-            <label>Categoria<select value={category} onChange={(event) => setCategory(event.target.value as Category)}><option>Nacional A</option><option>Nacional B</option><option>Nacional C</option></select></label>
-            <label>Extensão do circuito (km)<input type="number" min="0.1" step="0.001" value={circuitLength} onChange={(event) => setCircuitLength(event.target.value)} placeholder="Ex.: 4.2" /></label>
+            <label>Categoria<select value={category} onChange={(event) => setCategory(event.target.value as NationalCategory)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
+            <label>Extensão do circuito (km)<input type="number" min="0.001" step="0.001" value={circuitLength} onChange={(event) => setCircuitLength(event.target.value)} placeholder="Ex.: 4.2" /></label>
           </div>
-          <div className="nr-target-line"><span>Referência: <b>{rules.target} km</b></span><span>Faixa permitida: <b>{rules.min}–{rules.max} km</b></span></div>
-          {calculation === null ? (
-            <div className="nr-result nr-invalid">Informe uma extensão de circuito válida, maior que zero.</div>
-          ) : calculation.compatible ? (
+          <div className="nr-target-line"><span>Referência: <b>{rules.reference} km</b></span><span>Faixa permitida: <b>{rules.min}–{rules.max} km</b></span><span>Pista mínima: <b>{rules.minCircuitKm} km</b></span><span>Voltas: <b>{rules.minLaps}–{rules.maxLaps}</b></span></div>
+          {calculation ? (
             <div className="nr-result nr-valid">
               <div className="nr-result-title"><CheckCircle2 size={17} /> Circuito compatível</div>
-              <div className="nr-result-grid"><div><strong>{calculation.laps}</strong><small>voltas por corrida</small></div><div><strong>{calculation.distance.toLocaleString("pt-BR", { maximumFractionDigits: 3 })} km</strong><small>distância de cada corrida</small></div></div>
+              <div className="nr-result-grid"><div><strong>{calculation.laps}</strong><small>voltas por corrida</small></div><div><strong>{calculation.distanceKm.toLocaleString("pt-BR", { maximumFractionDigits: 3 })} km</strong><small>distância de cada corrida</small></div></div>
               <p>As três corridas da etapa utilizarão {calculation.laps} voltas cada.</p>
             </div>
           ) : (
-            <div className="nr-result nr-invalid"><b>Circuito incompatível com esta categoria.</b><p>Não existe uma quantidade inteira de voltas que mantenha a distância entre {rules.min} km e {rules.max} km. O GEOPRIX não deve gerar a etapa com este circuito nesta categoria.</p></div>
+            <div className="nr-result nr-invalid"><b>Circuito incompatível.</b><p>{incompatibility}</p></div>
           )}
         </section>
 
@@ -97,16 +78,16 @@ export default function NationalRegulationPage() {
           <div className="nr-section-head"><span className="nr-icon"><CheckCircle2 size={18} /></span><div><small>MÉTODO OFICIAL</small><h2>Como o cálculo funciona</h2></div></div>
           <ol>
             <li>O sistema consulta a extensão cadastrada do circuito.</li>
-            <li>Calcula todas as quantidades inteiras de voltas que respeitam o mínimo e o máximo da categoria.</li>
+            <li>Verifica se o circuito atende à extensão mínima da categoria.</li>
+            <li>Calcula as quantidades inteiras de voltas entre 20 e 40 que respeitam a faixa de distância permitida.</li>
             <li>Escolhe a quantidade cuja distância total fique mais próxima da quilometragem de referência.</li>
             <li>Aplica o mesmo número de voltas às três corridas da etapa.</li>
-            <li>Se nenhuma quantidade inteira respeitar os limites, o circuito é marcado como incompatível com aquela categoria.</li>
+            <li>Se nenhum número de voltas respeitar todos os limites, o circuito é marcado como incompatível com aquela categoria.</li>
           </ol>
-          <div className="nr-note"><Info size={15} /><span>O cálculo considera apenas quilometragem e extensão do circuito. Não utiliza tempo de corrida nem velocidade média.</span></div>
+          <div className="nr-note"><Info size={15} /><span>O cálculo considera apenas quilometragem, extensão do circuito e limites de voltas. Não utiliza tempo de corrida nem velocidade média. A escolha e a repetição dos circuitos no calendário ficam sob seu controle.</span></div>
         </section>
         <footer className="nr-footer">GEOPRIX · REGULAMENTO NACIONAL · CONFIGURAÇÃO DO UNIVERSO</footer>
       </div>
     </main>
   );
 }
-
