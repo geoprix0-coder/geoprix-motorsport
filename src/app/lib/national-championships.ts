@@ -7,7 +7,7 @@ export const NATIONAL_COUNTRIES = [
 export const NATIONAL_CATEGORIES: NationalCategory[] = ["Nacional A","Nacional B","Nacional C"];
 
 export function nationalChampionshipId(country: string, category: NationalCategory) {
-  const countrySlug = country.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  const countrySlug = country.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
   const letter = category.slice(-1).toLowerCase();
   return `national-${countrySlug}-${letter}-2026`;
 }
@@ -17,7 +17,7 @@ export function getNationalChampionshipMeta(id: string) {
   if (!match) return null;
   const countrySlug = match[1];
   const country = NATIONAL_COUNTRIES.find(item =>
-    item.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") === countrySlug
+    item.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") === countrySlug
   );
   if (!country) return null;
   const category = NATIONAL_CATEGORIES.find(item => item.endsWith(match[2].toUpperCase()));
