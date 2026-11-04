@@ -21,18 +21,6 @@ import {
 
 const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" : "";
 
-const navigation = [
-  { label: "Visão geral", icon: Gauge, href: "#overview" },
-  { label: "Pirâmide", icon: Layers3, href: "#pyramid" },
-  { label: "Regulamento nacional", icon: FileText, href: basePath + "/regulamento/" },
-  { label: "Circuitos", icon: Flag, href: basePath + "/circuitos/" },
-  { label: "Calendário nacional", icon: CalendarDays, href: basePath + "/calendario/" },
-  { label: "Campeonatos nacionais", icon: Trophy, href: basePath + "/campeonatos-nacionais/" },
-  { label: "Campeonatos", icon: Trophy, href: "#championships" },
-  { label: "Gestão automática", icon: Network, href: "#automation" },
-  { label: "Relatórios", icon: FileText, href: "#reports" },
-];
-
 const levels = [
   { number: "08", title: "Elite mundial", subtitle: "O topo do automobilismo de monopostos", width: "42%" },
   { number: "07", title: "Internacional", subtitle: "Disputa entre os principais talentos", width: "50%" },
@@ -60,11 +48,22 @@ export default function Home() {
         </a>
         <div className="gx-nav-caption">CENTRAL DO UNIVERSO</div>
         <nav className="gx-nav">
-          {navigation.map(({ label, icon: Icon, href }, index) => (
-            <a className={index === 0 ? "gx-nav-link active" : "gx-nav-link"} href={href} key={label}>
-              <Icon size={17} /><span>{label}</span>{index === 0 ? <span className="gx-nav-indicator" /> : null}
-            </a>
-          ))}
+          <details className="gx-nav-group" open>
+            <summary className="gx-nav-link active"><Gauge size={17} /><span>Visão geral</span><span className="gx-nav-indicator" /></summary>
+            <div className="gx-nav-submenu">
+              <a href="#pyramid">Pirâmide</a>
+              <a href={basePath + "/regulamento/"}>Regulamento nacional</a>
+              <a href="#automation">Gestão automática</a>
+            </div>
+          </details>
+          <a className="gx-nav-link" href={basePath + "/circuitos/"}><Flag size={17} /><span>Circuitos</span></a>
+          <details className="gx-nav-group">
+            <summary className="gx-nav-link"><Trophy size={17} /><span>Campeonatos</span></summary>
+            <div className="gx-nav-submenu">
+              <a href={basePath + "/campeonatos-nacionais/"}>Campeonatos nacionais</a>
+            </div>
+          </details>
+          <a className="gx-nav-link" href="#reports"><FileText size={17} /><span>Relatórios</span></a>
         </nav>
         <div className="gx-sidebar-bottom">
           <div className="gx-sidebar-status"><span className="gx-status-dot" /> PROJETO EM CONSTRUÇÃO</div>
