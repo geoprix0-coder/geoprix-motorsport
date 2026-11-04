@@ -1,5 +1,4 @@
 import type { Team } from "./types";
-import { indonesiaNationalTeams } from "./indonesia-national-teams";
 
 export function teamStorageKey(championshipId: string): string {
   return championshipId === "formula-1-2026"
