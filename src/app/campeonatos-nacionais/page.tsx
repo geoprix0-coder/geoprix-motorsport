@@ -7,6 +7,7 @@ import { NATIONAL_COUNTRIES, NATIONAL_CATEGORIES, nationalChampionshipId } from 
 
 
 
+const basePath = process.env.NODE_ENV === "production" ? "/geoprix-motorsport" : "";
 const countries = NATIONAL_COUNTRIES;
 
 const categories = NATIONAL_CATEGORIES;
@@ -24,7 +25,7 @@ export default function NationalChampionshipsPage() {
   return (
     <main className="nr-shell">
       <header className="nr-topbar">
-        <Link href="/" className="nr-back"><ArrowLeft size={16} /> Visão geral</Link>
+        <a href={basePath + "/"} className="nr-back"><ArrowLeft size={16} /> Visão geral</a>
         <span className="nr-brand"><Gauge size={17} /> GEOPRIX <i>· CAMPEONATOS NACIONAIS</i></span>
       </header>
 
