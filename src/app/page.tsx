@@ -15,7 +15,6 @@ import {
   Network,
   ShieldCheck,
   Sparkles,
-  Trophy,
   Users,
 } from "lucide-react";
 
