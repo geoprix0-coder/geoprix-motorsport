@@ -1,7 +1,7 @@
 import type { NationalCategory } from "./national-rules";
 
 export const NATIONAL_COUNTRIES = [
-  "Indonésia","Tuvalu","Austrália","Nova Zelândia","Brasil","Argentina","Chile","EUA","Panamá","Cuba","México","Canadá","Suécia","Rússia","Finlândia","Itália","Polônia","França","Bulgária","Reino Unido","Dinamarca","Grécia","Espanha","Chipre","Alemanha","Suíça","Hungria","Áustria","Holanda","Bélgica","Azerbaijão","Turquia","Portugal","República Tcheca","Ucrânia","Cazaquistão","Japão","Filipinas","Mongólia","Bahrein","Líbano","Tailândia","China","Índia","Coreia do Sul","Emirados Árabes Unidos","Catar","Cingapura","Arábia Saudita","Malásia","Vietnã","Irã","Kuwait","Tunísia","Senegal","África do Sul","Marrocos","Moçambique","Egito","Nigéria","Tanzânia","Angola"
+  "Indonésia","Tuvalu","Austrália","Nova Zelândia","Brasil","Argentina","Chile","EUA","Panamá","Cuba","México","Canadá","Suécia","Rússia","Finlândia","Itália","Polônia","França","Bulgária","Reino Unido","Dinamarca","Grécia","Espanha","Chipre","Alemanha","Suíça","Hungria","Áustria","Holanda","Bélgica","Azerbaijão","Turquia","Portugal","República Tcheca","Ucrânia","Cazaquistão","Japão","Filipinas","Mongólia","Bahrein","Líbano","Tailândia","China","Índia","Coreia do Sul","Emirados Árabes Unidos","Catar","Cingapura","Arábia Saudita","Malásia","Vietnã","Irã","Kuwait","Tunísia","Senegal","África do Sul","Marrocos","Moçambique","Egito","Nigéria","Tanzânia","Angola","Jordânia"
 ] as const;
 
 export const NATIONAL_CATEGORIES: NationalCategory[] = ["Nacional A","Nacional B","Nacional C"];
