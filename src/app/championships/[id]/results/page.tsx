@@ -43,7 +43,7 @@ export default function ChampionshipResultsPage(){
   setLoaded(true);
  },[id]);
  return <main className="manager-shell"><div className="manager-content">
-  <div className="manager-heading"><div><span className="eyebrow">GESTÃO DO CAMPEONATO</span><h1>Resultados</h1><p>Classificação de pilotos e equipes calculada a partir das etapas concluídas.</p></div></div>
+  <div className="manager-heading"><div><span className="eyebrow">GESTÃO DO CAMPEONATO</span><h1>Classificação</h1><p>Classificação de pilotos e equipes calculada a partir das etapas concluídas.</p></div></div>
   {!loaded?<p>Carregando classificação...</p>:drivers.length===0?<section className="team-list"><div className="empty-state"><Activity size={28}/><b>Nenhum resultado registrado</b><span>A classificação aparecerá aqui assim que você salvar os resultados de uma etapa.</span></div></section>:<>
    <section className="team-list"><div className="list-heading"><h2><Trophy size={17}/> Campeonato de pilotos</h2><span>{drivers.length} pilotos</span></div>
     {drivers.map((d,i)=><article className="standing-row" key={d.id}><b className="standing-position">{i+1}</b><div className="standing-name"><b>{d.name}</b><small>{d.teamName}</small></div><span className="standing-detail">{d.wins} vitórias · {d.podiums} pódios</span><strong>{d.points} pts</strong></article>)}
