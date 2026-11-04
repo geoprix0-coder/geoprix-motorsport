@@ -93,7 +93,7 @@ export default function NationalChampionshipsPage() {
           </section>
         )}
 
-        <footer className="nr-footer">GEOPRIX · 62 PAÍSES · 3 CATEGORIAS NACIONAIS</footer>
+        <footer className="nr-footer">GEOPRIX · 63 PAÍSES · 3 CATEGORIAS NACIONAIS</footer>
       </div>
     </main>
   );
