@@ -800,7 +800,7 @@ export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): T
       team.id === saved.id ||
       team.name.trim().toLocaleLowerCase("pt-BR") === savedName
     );
-    if (!source) return saved;
+    if (!source) return ensureNationalCarAttributes(championshipId, saved);
     const merged = { ...source, ...saved, carAttributes: saved.carAttributes ?? source.carAttributes, geoprixProfile: saved.geoprixProfile ?? source.geoprixProfile, base: saved.base || source.base };
     const savedDriverIds = new Set(saved.drivers.map(driver => driver.id));
     const savedDriverNames = new Set(saved.drivers.map(driver => driver.name.trim().toLocaleLowerCase("pt-BR")));
