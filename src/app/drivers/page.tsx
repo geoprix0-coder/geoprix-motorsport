@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {ArrowRightLeft,Flag} from "lucide-react";
+
 import {initialChampionships} from "@/lib/seed";
 import {readUniverseChampionships} from "@/lib/universe";
 import {initialTeamsForChampionship,mergeInitialTeams,teamStorageKey} from "@/lib/championship-data";
@@ -18,13 +18,10 @@ export default function DriversPage(){
  const [teamsByCategory,setTeamsByCategory]=useState<Record<string,Team[]>>({});
  const [contractsByCategory,setContractsByCategory]=useState<Record<string,MarketContract[]>>({});
  const [selectedCategory,setSelectedCategory]=useState("all");
- const [retiredDrivers,setRetiredDrivers]=useState<RetiredDriver[]>([]);
- const [freeAgents,setFreeAgents]=useState<Driver[]>([]);
 
  useEffect(()=>{
   const load=()=>{
    const registered=readUniverseChampionships();
-   setRetiredDrivers(getRetiredDrivers().slice().reverse());
    setChampionships(registered);
    const nextTeams:Record<string,Team[]>={},nextContracts:Record<string,MarketContract[]>={};
    for(const championship of registered){
@@ -47,18 +44,15 @@ export default function DriversPage(){
    }
    setTeamsByCategory(nextTeams);
    setContractsByCategory(nextContracts);
-   setFreeAgents(registered.length ? ensureFreeAgentPool(10) : []);
    if(selectedCategory!=="all"&&!registered.some(c=>c.id===selectedCategory))setSelectedCategory("all");
   };
   load();
   window.addEventListener("geoprix-championships-updated",load);
   window.addEventListener("geoprix-rosters-updated",load);
-  window.addEventListener("geoprix-free-agents-updated",load);
   window.addEventListener("storage",load);
   return()=>{
    window.removeEventListener("geoprix-championships-updated",load);
    window.removeEventListener("geoprix-rosters-updated",load);
-   window.removeEventListener("geoprix-free-agents-updated",load);
    window.removeEventListener("storage",load);
   };
  },[]);
@@ -77,32 +71,9 @@ export default function DriversPage(){
  return <main className="manager-shell">
   <header className="manager-top"><Link className="back-link" href="/">← Visão geral</Link><span className="eyebrow">UNIVERSO MOTORSPORT</span></header>
   <div className="manager-content">
-   <div className="manager-heading"><div><span className="eyebrow">CADASTRO GLOBAL</span><h1>Pilotos</h1><p>Consulte todos os pilotos cadastrados nas equipes de todas as categorias, além dos agentes livres e dos atletas aposentados.</p></div><Link className="action-button" href="/market/"><ArrowRightLeft size={16}/> Mercado de pilotos</Link></div>
+   <div className="manager-heading"><div><span className="eyebrow">CADASTRO GLOBAL</span><h1>Pilotos</h1><p>Consulte todos os pilotos cadastrados nas equipes de todas as categorias.</p></div></div>
 
    <section className="team-list">
-    <div className="retirement-notice" style={{padding:"16px 18px",borderBottom:"1px solid var(--border)"}}>
-     <div className="list-heading"><h2>Pilotos aposentados</h2><span>{retiredDrivers.length} registros</span></div>
-     {retiredDrivers.length===0?<div className="empty-state">Nenhum piloto se aposentou até o momento.</div>:retiredDrivers.map(item=><div key={item.driverId+"-"+item.retirementSeason} style={{padding:"8px 0"}}><b>{item.driverName}</b><small style={{display:"block"}}>Aposentou-se ao fim de {item.retirementSeason}, aos {item.age} anos · {item.championshipName}</small></div>)}
-    </div>
-
-    <div style={{padding:"18px",borderBottom:"1px solid var(--border)"}}>
-     <div className="list-heading"><h2><Flag size={17}/> Agentes livres</h2><span>{freeAgents.length} disponíveis · mínimo 10</span></div>
-     <p className="storage-note" style={{margin:"4px 0 14px"}}>Novos talentos fictícios são gerados automaticamente para manter um banco de pelo menos 10 pilotos. As contratações acontecem sem intervenção do usuário, somente para preencher vagas na Formula 3 e respeitando o limite de 3 pilotos por equipe. Pilotos que já estrearam na F2 ficam fora deste banco.</p>
-     
-     {freeAgents.length===0?<div className="empty-state">Não foi possível gerar agentes livres. Verifique o armazenamento do navegador.</div>:<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(245px,1fr))",gap:10}}>
-      {freeAgents.map(driver=><article key={driver.id} style={{border:"1px solid var(--border)",borderRadius:9,padding:13,background:"var(--surface)"}}>
-       <div style={{display:"flex",justifyContent:"space-between",gap:8,alignItems:"flex-start"}}>
-        <div><b>{driver.name}</b><small style={{display:"block",color:"var(--muted)",marginTop:4}}>{driver.nationality} · {driver.age} anos</small></div>
-        <strong style={{fontFamily:"monospace",fontSize:14}}>#{driver.number}</strong>
-       </div>
-       <div style={{display:"flex",flexWrap:"wrap",gap:6,margin:"12px 0",fontSize:9,color:"var(--muted)"}}>
-        <span>Race Pace 60</span><span>Qualifying 60</span><span>Overtaking 60</span><span>Defending 60</span><span>Consistency 60</span>
-       </div>
-       <small style={{display:"block",color:"var(--muted)"}}>Disponível para contratação automática quando surgir uma vaga na F3</small>
-      </article>)}
-     </div>}
-    </div>
-
     <div className="list-heading"><h2>Todos os pilotos cadastrados</h2><span>{drivers.length} pilotos</span></div>
     <div className="driver-category-filter" style={{padding:"0 18px 18px",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
      <label htmlFor="driver-category-filter" style={{fontWeight:700}}>FILTRAR POR CATEGORIA</label>
@@ -113,7 +84,7 @@ export default function DriversPage(){
     {drivers.map(d=>d.id.startsWith("free-")?<article className="team-row driver-global-row" key={d.championshipId+"-"+d.id}><div><b>{d.name}</b><small>{d.nationality}{typeof d.age==="number"?" · "+d.age+" anos":""}</small></div><div className="team-drivers"><span>#{d.number}</span></div><small>{d.team} · {championships.find(c=>c.id===d.championshipId)?.name}</small><span className="driver-open">Piloto gerado pelo GEOPRIX</span></article>:<Link className="team-row driver-global-row driver-profile-link" href={"/drivers/"+d.id+"/"} key={d.championshipId+"-"+d.id}><div><b>{d.name}</b><small>{d.nationality}{typeof d.age==="number"?" · "+d.age+" anos":""}</small></div><div className="team-drivers"><span>#{d.number}</span></div><small>{d.team} · {championships.find(c=>c.id===d.championshipId)?.name}</small><span className="driver-open">Ver ficha →</span></Link>)}
     {drivers.length===0&&<div className="empty-state"><b>Nenhum piloto cadastrado nesta seleção</b><span>Cadastre equipes e pilotos no campeonato ou selecione outra categoria.</span></div>}
    </section>
-   <p className="storage-note">A lista reúne todos os pilotos registrados nos elencos das equipes, independentemente da situação contratual. Use o filtro para consultar uma categoria específica. Agentes livres e aposentados aparecem em suas respectivas seções.</p>
+   <p className="storage-note">A lista reúne todos os pilotos registrados nos elencos das equipes, independentemente da situação contratual. Use o filtro para consultar uma categoria específica.</p>
   </div>
  </main>;
 }
