@@ -1,5 +1,13 @@
 import type { Driver } from "./types";
 
+// Política permanente para grids de campeonatos nacionais: maioria do país-sede e exceções regionais pontuais.
+export const NATIONAL_DRIVER_NATIONALITY_POLICY = {
+  homeCountryShareMin: 0.90,
+  homeCountryShareTarget: 0.95,
+  allowNeighboringCountries: true,
+  requireGeographicProximity: true,
+} as const;
+
 // Seed fixo dos grids nacionais da Indonésia — temporada inaugural 2026.
 // Tupla: [id, nome, número, nacionalidade, idade, racePace, qualifying, overtaking, defending, consistency]
 type Seed = [string,string,number,string,number,number,number,number,number,number];
