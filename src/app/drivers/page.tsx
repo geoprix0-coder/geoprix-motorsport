@@ -67,10 +67,9 @@ export default function DriversPage(){
   return championships.flatMap(championship=>{
    if(selectedCategory!=="all"&&selectedCategory!==championship.id)return [];
    const teams=teamsByCategory[championship.id]||[];
-   const contracts=contractsByCategory[championship.id]||[];
-   const season=Number(typeof window!=="undefined"?localStorage.getItem("geoprix-season-"+championship.id):null)||championship.season||2026;
-   const active=new Set(contracts.filter(c=>c.status==="active"&&c.endSeason>=season).map(c=>c.driverId));
-   return teams.flatMap(team=>team.drivers.filter(driver=>active.has(driver.id)).map(driver=>({...driver,team:team.name,championshipId:championship.id})));
+   // A central global directory must include every driver registered in a team roster,
+   // regardless of current contract status.
+   return teams.flatMap(team=>team.drivers.map(driver=>({...driver,team:team.name,championshipId:championship.id})));
   });
  },[championships,teamsByCategory,contractsByCategory,selectedCategory]);
 
@@ -78,7 +77,7 @@ export default function DriversPage(){
  return <main className="manager-shell">
   <header className="manager-top"><Link className="back-link" href="/">← Visão geral</Link><span className="eyebrow">UNIVERSO MOTORSPORT</span></header>
   <div className="manager-content">
-   <div className="manager-heading"><div><span className="eyebrow">CADASTRO GLOBAL</span><h1>Pilotos</h1><p>Consulte pilotos contratados, agentes livres e atletas aposentados de todas as categorias.</p></div><Link className="action-button" href="/market/"><ArrowRightLeft size={16}/> Mercado de pilotos</Link></div>
+   <div className="manager-heading"><div><span className="eyebrow">CADASTRO GLOBAL</span><h1>Pilotos</h1><p>Consulte todos os pilotos cadastrados nas equipes de todas as categorias, além dos agentes livres e dos atletas aposentados.</p></div><Link className="action-button" href="/market/"><ArrowRightLeft size={16}/> Mercado de pilotos</Link></div>
 
    <section className="team-list">
     <div className="retirement-notice" style={{padding:"16px 18px",borderBottom:"1px solid var(--border)"}}>
@@ -104,7 +103,7 @@ export default function DriversPage(){
      </div>}
     </div>
 
-    <div className="list-heading"><h2>Pilotos contratados</h2><span>{drivers.length} pilotos</span></div>
+    <div className="list-heading"><h2>Todos os pilotos cadastrados</h2><span>{drivers.length} pilotos</span></div>
     <div className="driver-category-filter" style={{padding:"0 18px 18px",display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
      <label htmlFor="driver-category-filter" style={{fontWeight:700}}>FILTRAR POR CATEGORIA</label>
      <select id="driver-category-filter" aria-label="Selecionar categoria de pilotos" value={selectedCategory} onChange={event=>setSelectedCategory(event.target.value)} style={{minWidth:240,padding:"11px 14px",borderRadius:8,border:"1px solid var(--border)",background:"var(--surface)",color:"inherit",fontWeight:600}}>
@@ -112,9 +111,9 @@ export default function DriversPage(){
      </select>
     </div>
     {drivers.map(d=>d.id.startsWith("free-")?<article className="team-row driver-global-row" key={d.championshipId+"-"+d.id}><div><b>{d.name}</b><small>{d.nationality}{typeof d.age==="number"?" · "+d.age+" anos":""}</small></div><div className="team-drivers"><span>#{d.number}</span></div><small>{d.team} · {championships.find(c=>c.id===d.championshipId)?.name}</small><span className="driver-open">Piloto gerado pelo GEOPRIX</span></article>:<Link className="team-row driver-global-row driver-profile-link" href={"/drivers/"+d.id+"/"} key={d.championshipId+"-"+d.id}><div><b>{d.name}</b><small>{d.nationality}{typeof d.age==="number"?" · "+d.age+" anos":""}</small></div><div className="team-drivers"><span>#{d.number}</span></div><small>{d.team} · {championships.find(c=>c.id===d.championshipId)?.name}</small><span className="driver-open">Ver ficha →</span></Link>)}
-    {drivers.length===0&&<div className="empty-state"><b>Nenhum piloto com contrato ativo nesta seleção</b><span>Cadastre equipes e pilotos no campeonato ou selecione outra categoria.</span></div>}
+    {drivers.length===0&&<div className="empty-state"><b>Nenhum piloto cadastrado nesta seleção</b><span>Cadastre equipes e pilotos no campeonato ou selecione outra categoria.</span></div>}
    </section>
-   <p className="storage-note">A lista considera somente pilotos com contrato ativo e vigente na categoria selecionada. Os agentes livres permanecem disponíveis até serem contratados; o estoque é reposto automaticamente após contratações e encerramentos de temporada.</p>
+   <p className="storage-note">A lista reúne todos os pilotos registrados nos elencos das equipes, independentemente da situação contratual. Use o filtro para consultar uma categoria específica. Agentes livres e aposentados aparecem em suas respectivas seções.</p>
   </div>
  </main>;
 }
