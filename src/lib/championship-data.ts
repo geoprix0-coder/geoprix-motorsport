@@ -786,6 +786,32 @@ export function initialTeamsForChampionship(championshipId: string): Team[] {
   return [];
 }
 
+function ensureNationalCarAttributes(championshipId: string, team: Team): Team {
+  const match = championshipId.match(/-([abc])-\\d{4}$/i);
+  if (!match) return team;
+  const ranges: Record<string, [number, number]> = {
+    a: [13, 15],
+    b: [7, 12],
+    c: [1, 6],
+  };
+  const range = ranges[match[1].toLowerCase()];
+  if (!range) return team;
+  const score = (key: string) => {
+    let hash = 2166136261;
+    for (const char of team.id + ":" + key) {
+      hash = Math.imul(hash ^ char.charCodeAt(0), 16777619);
+    }
+    return range[0] + ((hash >>> 0) % (range[1] - range[0] + 1));
+  };
+  return {
+    ...team,
+    carAttributes: team.carAttributes ?? {
+      power: score("power"),
+      downforce: score("downforce"),
+    },
+  };
+}
+
 export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): Team[] {
   const initial = initialTeamsForChampionship(championshipId);
   const savedIds = new Set(savedTeams.map(team => team.id));
