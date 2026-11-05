@@ -1,4 +1,5 @@
 import type { Team } from "./types";
+import { indonesianNationalDrivers } from "./indonesia-national-drivers";
 
 export function teamStorageKey(championshipId: string): string {
   return championshipId === "formula-1-2026"
@@ -759,7 +760,7 @@ export function initialTeamsForChampionship(championshipId: string): Team[] {
       "idn-jrp": { power:6, downforce:5, founded:2021, colors:["Azul","Amarelo","Grafite"], ownership:"Subsidiária", owner:"Mataram Consolidated", staff:"Estrutura de formação e operações compactas; 5 vagas", finance:"Médio para a categoria; apoio empresarial direcionado", reputation:"Projeto de longo prazo para revelar talentos" },
       "idn-rmm": { power:3, downforce:5, founded:2022, colors:["Verde","Preto","Branco"], ownership:"Privada independente", owner:"Nadia Prasetyo e dois investidores minoritários", staff:"Equipe administrativa enxuta; 5 vagas", finance:"Baixo-médio; capital privado e patrocínios locais", reputation:"Nova equipe focada em formação e crescimento" }
     };
-    const enrichedTeams = teams.map(team => { const p=profiles[team.id]; return p ? {...team, carAttributes:{power:p.power,downforce:p.downforce}, geoprixProfile:{founded:p.founded,colors:p.colors,ownership:p.ownership,owner:p.owner,staff:p.staff,finance:p.finance,reputation:p.reputation}} : team; });
+    const enrichedTeams = teams.map(team => { const p=profiles[team.id]; const drivers=indonesianNationalDrivers[team.id] ?? team.drivers; return p ? {...team, drivers, carAttributes:{power:p.power,downforce:p.downforce}, geoprixProfile:{founded:p.founded,colors:p.colors,ownership:p.ownership,owner:p.owner,staff:p.staff,finance:p.finance,reputation:p.reputation}} : {...team, drivers}; });
     const allowedIds = new Set(categoryIds[indonesiaMatch[1]] ?? []);
     return enrichedTeams.filter(team => allowedIds.has(team.id));
   }
