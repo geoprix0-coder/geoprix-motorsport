@@ -57,6 +57,7 @@ export default function Home() {
             </div>
           </details>
           <a className="gx-nav-link" href={basePath + "/circuitos/"}><Flag size={17} /><span>Circuitos</span></a>
+          <a className="gx-nav-link" href={basePath + "/drivers/"}><Users size={17} /><span>Pilotos</span></a>
           <details className="gx-nav-group">
             <summary className="gx-nav-link"><Trophy size={17} /><span>Campeonatos</span></summary>
             <div className="gx-nav-submenu">
