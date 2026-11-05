@@ -729,8 +729,39 @@ export function initialTeamsForChampionship(championshipId: string): Team[] {
       "b": ["idn-npr", "idn-cak", "idn-kha", "idn-bsc", "idn-mah", "idn-lax", "idn-bar", "idn-pus", "idn-sat", "idn-and"],
       "c": ["idn-tan", "idn-srm", "idn-tjr", "idn-amc", "idn-jrp", "idn-rmm"],
     };
+    const profiles: Record<string,{power:number;downforce:number;founded:number;colors:string[];ownership:string;owner:string;staff:string;finance:string;reputation:string}> = {
+      "idn-gar": { power:15, downforce:14, founded:1998, colors:["Vermelho","Dourado","Preto"], ownership:"Privada independente", owner:"Família Wiratama", staff:"Estrutura própria de gestão, engenharia e operações; 3 vagas", finance:"Muito alto; capital familiar, patrocínios e investidores", reputation:"Prestígio elevado; candidata a títulos" },
+      "idn-mer": { power:14, downforce:15, founded:2005, colors:["Vermelho-escuro","Grafite","Branco"], ownership:"Subsidiária", owner:"Merapi Industrial Holdings", staff:"Gestão profissional e engenharia própria; 3 vagas", finance:"Alto; apoio industrial e patrocínios", reputation:"Disciplinada, técnica e consistente" },
+      "idn-sur": { power:15, downforce:15, founded:2002, colors:["Azul-marinho","Amarelo","Branco"], ownership:"Propriedade compartilhada", owner:"Surya Capital & Industries e investidores", staff:"Departamentos esportivo, administrativo e engenharia; 3 vagas", finance:"Alto; capital empresarial e acordos comerciais", reputation:"Ambiciosa e orientada a resultados" },
+      "idn-raj": { power:14, downforce:13, founded:2010, colors:["Branco","Vermelho","Azul-real"], ownership:"Controlada por investidores", owner:"Rajawali Ventures", staff:"Engenharia e gestão esportiva de porte médio-alto; 3 vagas", finance:"Médio-alto; investidores e patrocínios", reputation:"Em ascensão; aposta em talentos" },
+      "idn-bat": { power:15, downforce:13, founded:1996, colors:["Verde-escuro","Branco","Dourado"], ownership:"Equipe de fábrica", owner:"Batavia Automotive Group", staff:"Estrutura profissional ampla; 3 vagas", finance:"Muito alto; grupo, patrocínios e receitas comerciais", reputation:"Tradicional; pressão por resultados" },
+      "idn-sum": { power:14, downforce:14, founded:2007, colors:["Laranja","Preto","Prata"], ownership:"Subsidiária", owner:"Archipelago Sports Holdings", staff:"Engenharia e operações de porte médio-alto; 3 vagas", finance:"Alto; investimentos do grupo e patrocínios regionais", reputation:"Competitiva e agressiva no mercado" },
+      "idn-sri": { power:13, downforce:14, founded:2013, colors:["Azul","Branco","Vermelho"], ownership:"Privada independente", owner:"Família Pranoto e investidores minoritários", staff:"Gestão compacta e engenharia média; 3 vagas", finance:"Médio; patrocinadores regionais e capital privado", reputation:"Projeto de crescimento sustentável" },
+      "idn-cel": { power:13, downforce:15, founded:2004, colors:["Azul-turquesa","Preto","Branco"], ownership:"Subsidiária", owner:"Celebes Engineering Group", staff:"Engenharia forte e gestão profissional; 3 vagas", finance:"Alto; apoio industrial e contratos comerciais", reputation:"Reconhecida pela organização técnica" },
+      "idn-bmm": { power:14, downforce:15, founded:2012, colors:["Azul-turquesa","Branco","Dourado"], ownership:"Subsidiária", owner:"Bali Mandala Group", staff:"Gestão profissional e departamento comercial; 3 vagas", finance:"Médio-alto; turismo, patrocínios e investimentos", reputation:"Em expansão; ambição internacional" },
+      "idn-bor": { power:15, downforce:14, founded:2009, colors:["Verde","Preto","Amarelo"], ownership:"Equipe de fábrica", owner:"Borneo Energy & Mobility", staff:"Engenharia e operações de porte alto; 3 vagas", finance:"Alto; apoio industrial e patrocínios", reputation:"Pragmática e operacionalmente forte" },
+      "idn-mat": { power:13, downforce:13, founded:2001, colors:["Vinho","Branco","Prata"], ownership:"Subsidiária", owner:"Mataram Consolidated", staff:"Departamentos esportivo, administrativo e engenharia; 3 vagas", finance:"Médio-alto; receitas diversificadas e apoio empresarial", reputation:"Experiente, estável e planejadora" },
+      "idn-kra": { power:14, downforce:14, founded:2015, colors:["Grafite","Laranja","Branco"], ownership:"Subsidiária", owner:"Krakatau Industrial Partners", staff:"Gestão e engenharia de porte médio; 3 vagas", finance:"Médio; apoio empresarial e patrocínios", reputation:"Jovem, ambiciosa e em crescimento" },
+      "idn-npr": { power:11, downforce:10, founded:2011, colors:["Azul-elétrico","Branco","Preto"], ownership:"Subsidiária", owner:"Nusantara Mobility Group", staff:"Direção esportiva e engenharia média; 3 vagas", finance:"Médio-alto na categoria; apoio empresarial", reputation:"Ambiciosa; busca chegar à Nacional A" },
+      "idn-cak": { power:10, downforce:11, founded:2008, colors:["Vermelho","Branco","Cinza"], ownership:"Subsidiária", owner:"Merapi Industrial Holdings", staff:"Gestão esportiva e estrutura técnica próprias; 3 vagas", finance:"Médio; apoio industrial e patrocínios regionais", reputation:"Disciplinada e eficiente" },
+      "idn-kha": { power:8, downforce:9, founded:2014, colors:["Verde","Amarelo","Preto"], ownership:"Privada independente", owner:"Ratna Kusuma e dois investidores locais", staff:"Administração compacta; 3 vagas", finance:"Médio-baixo; patrocínios regionais", reputation:"Independente e focada em crescimento" },
+      "idn-bsc": { power:12, downforce:11, founded:2006, colors:["Azul-marinho","Prata","Laranja"], ownership:"Subsidiária", owner:"Batavia Automotive Group", staff:"Direção profissional e operações próprias; 3 vagas", finance:"Médio-alto; apoio do grupo e contratos comerciais", reputation:"Profissional e comercialmente agressiva" },
+      "idn-mah": { power:10, downforce:12, founded:2010, colors:["Verde-escuro","Dourado","Branco"], ownership:"Subsidiária", owner:"Borneo Energy & Mobility", staff:"Gestão esportiva e engenharia média; 3 vagas", finance:"Médio-alto; apoio empresarial e patrocínios industriais", reputation:"Estável e operacionalmente forte" },
+      "idn-lax": { power:9, downforce:10, founded:2016, colors:["Turquesa","Azul-marinho","Branco"], ownership:"Subsidiária", owner:"Bali Mandala Group", staff:"Estrutura compacta e gestão profissional; 3 vagas", finance:"Médio; patrocínios e apoio empresarial", reputation:"Projeto de desenvolvimento de talentos" },
+      "idn-bar": { power:8, downforce:8, founded:2003, colors:["Azul-marinho","Vermelho","Branco"], ownership:"Privada familiar", owner:"Família Santoso", staff:"Gestão familiar e estrutura média; 3 vagas", finance:"Médio; capital familiar e patrocínios", reputation:"Tradicional e conservadora" },
+      "idn-pus": { power:9, downforce:8, founded:2012, colors:["Preto","Dourado","Vermelho"], ownership:"Subsidiária", owner:"Krakatau Industrial Partners", staff:"Estrutura técnica e administrativa compacta; 3 vagas", finance:"Médio; apoio do grupo e patrocínios", reputation:"Disciplinada e eficiente" },
+      "idn-sat": { power:11, downforce:12, founded:2009, colors:["Vermelho","Branco","Azul"], ownership:"Propriedade compartilhada", owner:"Rajawali Ventures e investidores", staff:"Engenharia e gestão esportiva médias; 3 vagas", finance:"Médio-alto; capital empresarial e patrocínios", reputation:"Competitiva; mira a Nacional A" },
+      "idn-and": { power:7, downforce:9, founded:2017, colors:["Verde","Branco","Prata"], ownership:"Privada independente", owner:"Fajar Mahendra e investidores locais", staff:"Estrutura enxuta e gestão própria; 3 vagas", finance:"Médio-baixo; patrocínios regionais", reputation:"Emergente e focada em desenvolvimento" },
+      "idn-tan": { power:5, downforce:4, founded:2018, colors:["Laranja","Preto","Branco"], ownership:"Subsidiária", owner:"Nusantara Mobility Group", staff:"Estrutura de formação e operações compactas; 5 vagas", finance:"Médio para a categoria; apoio empresarial", reputation:"Desenvolvimento de jovens pilotos" },
+      "idn-srm": { power:3, downforce:4, founded:2019, colors:["Azul","Branco","Vermelho"], ownership:"Privada familiar", owner:"Família Hidayat", staff:"Administração pequena e operações enxutas; 5 vagas", finance:"Baixo-médio; capital familiar e patrocinadores locais", reputation:"Independente e focada em estabilidade" },
+      "idn-tjr": { power:2, downforce:3, founded:2020, colors:["Vermelho","Amarelo","Preto"], ownership:"Privada independente", owner:"Markus Leki e investidores locais", staff:"Estrutura de formação compacta; 5 vagas", finance:"Baixo; patrocínios regionais e capital privado", reputation:"Projeto para pilotos iniciantes" },
+      "idn-amc": { power:4, downforce:2, founded:2017, colors:["Verde","Branco","Dourado"], ownership:"Propriedade compartilhada", owner:"Consórcio de empresários locais", staff:"Estrutura administrativa reduzida; 5 vagas", finance:"Baixo-médio; investidores e patrocinadores regionais", reputation:"Identidade regional forte e crescimento gradual" },
+      "idn-jrp": { power:6, downforce:5, founded:2021, colors:["Azul","Amarelo","Grafite"], ownership:"Subsidiária", owner:"Mataram Consolidated", staff:"Estrutura de formação e operações compactas; 5 vagas", finance:"Médio para a categoria; apoio empresarial direcionado", reputation:"Projeto de longo prazo para revelar talentos" },
+      "idn-rmm": { power:3, downforce:5, founded:2022, colors:["Verde","Preto","Branco"], ownership:"Privada independente", owner:"Nadia Prasetyo e dois investidores minoritários", staff:"Equipe administrativa enxuta; 5 vagas", finance:"Baixo-médio; capital privado e patrocínios locais", reputation:"Nova equipe focada em formação e crescimento" }
+    };
+    const enrichedTeams = teams.map(team => { const p=profiles[team.id]; return p ? {...team, carAttributes:{power:p.power,downforce:p.downforce}, geoprixProfile:{founded:p.founded,colors:p.colors,ownership:p.ownership,owner:p.owner,staff:p.staff,finance:p.finance,reputation:p.reputation}} : team; });
     const allowedIds = new Set(categoryIds[indonesiaMatch[1]] ?? []);
-    return teams.filter(team => allowedIds.has(team.id));
+    return enrichedTeams.filter(team => allowedIds.has(team.id));
   }
   if (championshipId === "world-formula-2026") return worldFormulaFoundingTeams;
   if (championshipId === "formula-2-2026") return formula2FoundingTeams;
@@ -769,7 +800,8 @@ export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): T
       team.id === saved.id ||
       team.name.trim().toLocaleLowerCase("pt-BR") === savedName
     );
-    if (!source || source.drivers.length === 0) return saved;
+    if (!source) return saved;
+    const merged = { ...source, ...saved, carAttributes: saved.carAttributes ?? source.carAttributes, geoprixProfile: saved.geoprixProfile ?? source.geoprixProfile, base: saved.base || source.base };
     const savedDriverIds = new Set(saved.drivers.map(driver => driver.id));
     const savedDriverNames = new Set(saved.drivers.map(driver => driver.name.trim().toLocaleLowerCase("pt-BR")));
     const missingDrivers = source.drivers.filter(driver =>
@@ -777,8 +809,8 @@ export function mergeInitialTeams(championshipId: string, savedTeams: Team[]): T
       !savedDriverNames.has(driver.name.trim().toLocaleLowerCase("pt-BR"))
     );
     return missingDrivers.length > 0
-      ? { ...saved, drivers: [...saved.drivers, ...missingDrivers] }
-      : saved;
+      ? { ...merged, drivers: [...saved.drivers, ...missingDrivers] }
+      : merged;
   });
   return [...seeded, ...missing];
 }
