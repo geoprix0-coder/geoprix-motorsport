@@ -32,7 +32,7 @@ export default function NationalChampionshipsPage() {
       <div className="nr-content">
         <div className="nr-eyebrow">UNIVERSO · COMPETIÇÕES POR PAÍS</div>
         <h1>Campeonatos <em>nacionais</em></h1>
-        <p className="nr-intro">Selecione um dos 63 países para visualizar as três categorias nacionais disponíveis.</p>
+        <p className="nr-intro">Selecione um dos 62 países para visualizar as três categorias nacionais disponíveis.</p>
 
         <section className="nr-calculator">
           <div className="nr-section-head">
@@ -47,7 +47,7 @@ export default function NationalChampionshipsPage() {
               </select>
             </label>
           </div>
-          <p className="nr-footnote">63 países cadastrados · Os campeonatos poderão ser configurados individualmente.</p>
+          <p className="nr-footnote">62 países cadastrados · Os campeonatos poderão ser configurados individualmente.</p>
         </section>
 
         {country ? (
@@ -88,7 +88,7 @@ export default function NationalChampionshipsPage() {
               <article><b>A</b><span>Nacional A</span></article>
               <article><b>B</b><span>Nacional B</span></article>
               <article><b>C</b><span>Nacional C</span></article>
-              <article><b>63</b><span>países na estrutura</span></article>
+              <article><b>62</b><span>países na estrutura</span></article>
             </div>
           </section>
         )}
